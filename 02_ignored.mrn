@@ -1,0 +1,24 @@
+// Confirm that `DONE()` indeed terminates the function.
+// TODO(dkorolev): Or should it be `RETURN()`? Because it's the function, not the fiber, that is terminated?
+// TODO(dkorolev): Or perhaps a fiber needs some `STOP()` or `EXIT()`?
+
+MAROON(second_step_ignored) {
+  FIBER(global) {
+    FN(main) {
+      STMT({
+        DEBUG("yes");
+        DONE();
+      });
+      STMT({
+        DEBUG("no");
+        DONE();
+      });
+    };
+  };
+};
+
+TEST_SIMPLE_RUN(
+  second_step_ignored,
+  {
+    {0, "yes"}
+  })

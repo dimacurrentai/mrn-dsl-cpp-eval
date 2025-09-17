@@ -1,0 +1,41 @@
+{
+  "maroon": {
+    "two_steps": {
+      "fibers": {
+        "global": {
+          "functions": {
+            "main": [
+              {
+                "MaroonIRCodeStatement": {
+                  "code": "{ DEBUG(\"hello\"); NEXT(); }"
+                }
+              },
+              {
+                "MaroonIRCodeStatement": {
+                  "code": "{ DEBUG(\"world\"); DONE(); }"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "tests": [
+    {
+      "MaroonTestCaseSimple": {
+        "maroon": "two_steps",
+        "debug_statements": [
+          {
+            "ts": 0,
+            "msg": "hello"
+          },
+          {
+            "ts": 0,
+            "msg": "world"
+          }
+        ]
+      }
+    }
+  ]
+}

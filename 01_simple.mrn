@@ -1,0 +1,23 @@
+// This is the test of two steps.
+
+MAROON(two_steps) {
+  FIBER(global) {
+    FN(main) {
+      STMT({
+        DEBUG("hello");
+        NEXT();
+      });
+      STMT({
+        DEBUG("world");
+        DONE();
+      });
+    };
+  };
+};
+
+TEST_SIMPLE_RUN(
+  two_steps,
+  {
+    {0, "hello"},
+    {0, "world"}
+  })

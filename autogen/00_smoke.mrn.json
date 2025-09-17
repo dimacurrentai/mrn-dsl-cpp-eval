@@ -1,0 +1,32 @@
+{
+  "maroon": {
+    "code": {
+      "fibers": {
+        "global": {
+          "functions": {
+            "main": [
+              {
+                "MaroonIRCodeStatement": {
+                  "code": "{ DEBUG(\"hello\"); DONE(); }"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "tests": [
+    {
+      "MaroonTestCaseSimple": {
+        "maroon": "code",
+        "debug_statements": [
+          {
+            "ts": 0,
+            "msg": "hello"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "maroon": {
+    "second_step_ignored": {
+      "fibers": {
+        "global": {
+          "functions": {
+            "main": [
+              {
+                "MaroonIRCodeStatement": {
+                  "code": "{ DEBUG(\"yes\"); DONE(); }"
+                }
+              },
+              {
+                "MaroonIRCodeStatement": {
+                  "code": "{ DEBUG(\"no\"); DONE(); }"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "tests": [
+    {
+      "MaroonTestCaseSimple": {
+        "maroon": "second_step_ignored",
+        "debug_statements": [
+          {
+            "ts": 0,
+            "msg": "yes"
+          }
+        ]
+      }
+    }
+  ]
+}
