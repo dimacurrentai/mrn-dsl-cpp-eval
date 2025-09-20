@@ -28,3 +28,11 @@
     } \
     ctx.out.tests.push_back(std::move(t)); \
   }
+
+#define TEST_SHOULD_THROW(maroon_name, err) \
+  { \
+    MaroonTestCaseShouldThrow t; \
+    t.maroon = #maroon_name; \
+    t.error = err; \
+    ctx.out.tests.push_back(std::move(t)); \
+  }

@@ -58,12 +58,13 @@ CURRENT_STRUCT(MaroonTestCaseSimple) {
   CURRENT_FIELD(debug_statements, std::vector<MaroonDebugStatement>);
 };
 
-CURRENT_STRUCT(MaroonTestCaseComplex) {
-  // TODO(dkorolev): Add this and more.
+CURRENT_STRUCT(MaroonTestCaseShouldThrow) {
+  CURRENT_FIELD(maroon, std::string);
+  CURRENT_FIELD(error, std::string);
 };
 
 // TODO(dkorolev): Support more complex testing.
-CURRENT_VARIANT(MaroonTestCase, MaroonTestCaseSimple);  // , MaroonTestCaseComplex);
+CURRENT_VARIANT(MaroonTestCase, MaroonTestCaseSimple, MaroonTestCaseShouldThrow);
 
 CURRENT_STRUCT(MaroonIRScenarios) {
   CURRENT_FIELD(maroon, (std::map<std::string, MaroonIRNamespace>));

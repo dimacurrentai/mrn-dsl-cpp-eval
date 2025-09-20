@@ -72,11 +72,7 @@ struct ImplFunction {
 
 template <class T_MAROON>
 struct MaroonEngine final {
-  std::string const report;
-  MaroonEngine() : report(run()) {}
-
- private:
-  static std::string run() {
+  std::pair<std::string, std::string> run() {
     try {
       std::ostringstream oss;
       ImplEnv env(oss);
@@ -89,7 +85,7 @@ struct MaroonEngine final {
       size_t current_index = 0u;
       while (true) {
         if (current_index >= main_fiber.body_.size()) {
-          CURRENT_THROW(ImplException("Should not `next();` from the last `STMT()`."));
+          CURRENT_THROW(ImplException("NEXT() out of bounds."));
         }
         ImplStatement& stmt = main_fiber.body_[current_index];
 
@@ -103,9 +99,9 @@ struct MaroonEngine final {
         }
       }
 
-      return oss.str();
+      return { oss.str(), "" };
     } catch (ImplException const& e) {
-      return "EXCEPTION: " + e.DetailedDescription();
+      return { "", e.OriginalDescription() };
     }
   }
 };
