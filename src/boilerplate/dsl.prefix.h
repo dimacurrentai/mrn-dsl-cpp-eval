@@ -41,7 +41,7 @@ struct RegisterFiber final {
   RegisterFiber(Ctx& ctx, std::string const& name) : ctx(ctx) {
     if (!ctx.current_maroon_ptr) {
       std::cerr << "`FIBER(" << name << ")` should be defined within some `MAROON()`." << std::endl;
-      std::exit(1); \
+      std::exit(1);
     }
     if (ctx.current_maroon_ptr->fibers.count(name)) {
       std::cerr << "`FIBER(" << name << ")` is defined more than once in `MAROON(" << ctx.current_maroon_name << ")`." << std::endl;
@@ -72,7 +72,7 @@ struct RegisterFn final {
     if (ctx.current_fiber_ptr->functions.count(name)) {
       std::cerr << "`FN(" << name << ")` is defined more than once in `FIBER(" << ctx.current_fiber_name << ")` of `MAROON(" << ctx.current_maroon_name << ")`." << std::endl;
       std::exit(1);
-    } \
+    }
     ctx.current_function_name = name;
     ctx.current_function_stack_ptrs.clear();
     ctx.current_function_stack_ptrs.push_back(&ctx.current_fiber_ptr->functions[name]);

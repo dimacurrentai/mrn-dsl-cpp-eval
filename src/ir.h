@@ -43,7 +43,7 @@ CURRENT_STRUCT(MaroonIRFiber) {
 CURRENT_STRUCT(MaroonIRNamespace) {
   // TODO(dkorolev): Support types, heaps, etc.
   // CURRENT_FIELD(types, ...);
-  // NOTE(dkorolev): The `main` fiber should absolutely exist, others optional.
+  // NOTE(dkorolev): The `global` fiber should absolutely exist, others optional.
   CURRENT_FIELD(fibers, (std::map<std::string, MaroonIRFiber>));
 };
 

@@ -15,7 +15,6 @@ struct ImplMaroon {
   ~ImplMaroon() = default;
 };
 
-// TODO(dkorolev): Catch them and test for those too!
 struct ImplException : current::Exception {
   using current::Exception::Exception;
 };
