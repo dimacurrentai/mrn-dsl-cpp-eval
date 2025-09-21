@@ -2,6 +2,18 @@
 
 set -e
 
+VERIFY=0
+if [ "$2" == "--verify" ] ; then
+  make autogen/diff_ir.bin >/dev/null
+  VERIFY=1
+fi
+
+JQ="cat"
+
+if jq --version >/dev/null 2>&1 ; then
+  JQ="jq ."
+fi
+
 if [ "$1" == "" ] ; then
   echo 'Need an argument, the `.mrn` file in this directory.'
   exit 1
@@ -29,7 +41,24 @@ echo -e "  ;\n  std::cout << JSON<JSONFormat::Minimalistic>(ctx.out) << std::end
 clang-format -i autogen/"$IN.mrn.cc"
 
 # Build and run the source file that was just put together to generate the JSON IR.
-g++ -std=c++17 autogen/"$IN.mrn.cc" -o autogen/"$IN.mrn.bin" && autogen/"$IN.mrn.bin" | jq . >autogen/"$IN.mrn.json"
+g++ -std=c++17 autogen/"$IN.mrn.cc" -o autogen/"$IN.mrn.bin" && autogen/"$IN.mrn.bin" | $JQ > autogen/"$IN.mrn.json.tmp"
+
+if [ $VERIFY -eq 1 ] ; then
+  if ! autogen/diff_ir.bin --a autogen/"$IN.mrn.json.tmp" -b autogen/"$IN.mrn.json" ; then
+    echo "With $IN.mrn:"
+    echo
+    echo "=== EXPECTED ==="
+    cat autogen/"$IN.mrn.json.tmp"
+    echo
+    echo "=== ACTUAL ==="
+    echo
+    cat autogen/"$IN.mrn.json"
+    echo
+    exit 1
+  fi
+else
+  mv autogen/"$IN.mrn.json.tmp" autogen/"$IN.mrn.json"
+fi
 
 # Remove the now-unneeded "original header file".
 rm -f "autogen/$IN.mrn.h"

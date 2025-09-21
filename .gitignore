@@ -9,3 +9,4 @@ autogen/*.mrn.cc
 autogen/*.mrn.h
 autogen/*.mrn.bin
 autogen/*.mrn.test.h
+autogen/*.tmp
