@@ -17,9 +17,7 @@ DEFINE_string(out, "/dev/stdout", "The output file to dump the C++ code into.");
 inline std::string StatementAsCode(MaroonIRStatement const& stmt) {
   struct StatementAsCodeVisitor final {
     std::ostringstream oss;
-    void operator()(MaroonIRCodeStatement const& stmt) {
-      oss << "ImplStmt(" << stmt.code << ')';
-    }
+    void operator()(MaroonIRCodeStatement const& stmt) { oss << "ImplStmt(" << stmt.code << ')'; }
   };
   StatementAsCodeVisitor visitor;
   stmt.Call(visitor);

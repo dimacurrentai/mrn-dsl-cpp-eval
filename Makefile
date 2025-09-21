@@ -1,4 +1,4 @@
-.PHONY: all clean test verify
+.PHONY: all clean test verify fmt
 
 SRCS := $(wildcard src/*.cc)
 BINS := $(patsubst src/%.cc, autogen/%.bin, $(SRCS))
@@ -12,6 +12,10 @@ test: all
 
 verify:
 	./verify.sh
+
+fmt:
+	for i in $$(find src/ -name '*.cc'); do clang-format -i "$$i" ; done
+	for i in $$(find src/ -name '*.h'); do clang-format -i "$$i" ; done
 
 all: $(BINS) $(JSONS) $(TESTS)
 

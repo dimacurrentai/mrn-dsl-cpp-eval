@@ -4,7 +4,7 @@
 
 #include <vector>
 #include <functional>
-#include <iostream> 
+#include <iostream>
 #include <sstream>
 
 #include "current/bricks/exception.h"
@@ -61,9 +61,11 @@ struct ImplStatement final {
   ImplStatement(stmt_t stmt) : stmt_(std::move(stmt)) {}
 };
 
-// TODO(dkorolev): Update `.clang-format` to have `ImplEnv& env` format as this. In `C5T/Current`!
+// NOTE(dkorolev): In macros expansion, `clang-format` decouples the `&` from the type. Undesirable.
+// clang-format off
 #define ImplStmt(body) \
   ImplStatement([](ImplEnv& env, ImplResultCollector& result) body)
+// clang-format on
 
 // TODO(dkorolev): Add "death" tests that require `.next()`, `.done()`, etc.
 #define DEBUG(s) env.debug(s)
@@ -113,9 +115,9 @@ struct MaroonEngine final {
         }
       }
 
-      return { oss.str(), "" };
+      return {oss.str(), ""};
     } catch (ImplException const& e) {
-      return { "", e.OriginalDescription() };
+      return {"", e.OriginalDescription()};
     }
   }
 };

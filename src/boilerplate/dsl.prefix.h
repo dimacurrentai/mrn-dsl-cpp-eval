@@ -30,9 +30,7 @@ struct RegisterMaroon final {
     ctx.current_maroon_name = "";
   }
 
-  void operator<<(std::function<void()> f) {
-    f();
-  }
+  void operator<<(std::function<void()> f) { f(); }
 };
 
 struct RegisterFiber final {
@@ -44,7 +42,8 @@ struct RegisterFiber final {
       std::exit(1);
     }
     if (ctx.current_maroon_ptr->fibers.count(name)) {
-      std::cerr << "`FIBER(" << name << ")` is defined more than once in `MAROON(" << ctx.current_maroon_name << ")`." << std::endl;
+      std::cerr << "`FIBER(" << name << ")` is defined more than once in `MAROON(" << ctx.current_maroon_name << ")`."
+                << std::endl;
       std::exit(1);
     }
     ctx.current_fiber_ptr = &ctx.current_maroon_ptr->fibers[name];
@@ -56,9 +55,7 @@ struct RegisterFiber final {
     ctx.current_fiber_name = "";
   }
 
-  void operator<<(std::function<void()> f) {
-    f();
-  }
+  void operator<<(std::function<void()> f) { f(); }
 };
 
 struct RegisterFn final {
@@ -70,7 +67,8 @@ struct RegisterFn final {
       std::exit(1);
     }
     if (ctx.current_fiber_ptr->functions.count(name)) {
-      std::cerr << "`FN(" << name << ")` is defined more than once in `FIBER(" << ctx.current_fiber_name << ")` of `MAROON(" << ctx.current_maroon_name << ")`." << std::endl;
+      std::cerr << "`FN(" << name << ")` is defined more than once in `FIBER(" << ctx.current_fiber_name
+                << ")` of `MAROON(" << ctx.current_maroon_name << ")`." << std::endl;
       std::exit(1);
     }
     ctx.current_function_name = name;
@@ -83,9 +81,7 @@ struct RegisterFn final {
     ctx.current_function_stack_ptrs.clear();
   }
 
-  void operator<<(std::function<void()> f) {
-    f();
-  }
+  void operator<<(std::function<void()> f) { f(); }
 };
 
 struct RegisterStmt final {
@@ -93,7 +89,7 @@ struct RegisterStmt final {
 
   RegisterStmt(Ctx& ctx, std::string const& stmt) : ctx(ctx) {
     if (ctx.current_function_stack_ptrs.empty()) {
-      std::cerr << "`STMT()` is only legal inside an `FN()`." << std::endl; 
+      std::cerr << "`STMT()` is only legal inside an `FN()`." << std::endl;
       std::exit(1);
     }
     ctx.current_function_stack_ptrs.back()->push_back(MaroonIRCodeStatement(stmt));
