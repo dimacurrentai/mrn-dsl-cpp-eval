@@ -28,12 +28,12 @@ autogen:
 
 autogen/%.bin: src/%.cc src/*.h
 	@mkdir -p autogen
-	@[ -f src/current/current.h ] || git clone --depth 1 https://github.com/C5T/Current src/current
+	@[ -f current/current.h ] || git clone --depth 1 https://github.com/C5T/Current current
 	g++ -std=c++17 $< -o $@
 
 autogen/%.mrn.json: %.mrn
 	@mkdir -p autogen
-	@[ -f src/current/current.h ] || git clone --depth 1 https://github.com/C5T/Current src/current
+	@[ -f current/current.h ] || git clone --depth 1 https://github.com/C5T/Current current
 	@./mrn2ir.sh $<
 
 autogen/%.mrn.test.h: %.mrn ./autogen/ir2cpp.bin

@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include "current/typesystem/struct.h"
-#include "current/typesystem/variant.h"
+#include "../current/typesystem/struct.h"
+#include "../current/typesystem/variant.h"
 
 // TODO(dkorolev): MOVE TO GENERATOR CODE!
 // #include "current/typesystem/serialization/json.h"

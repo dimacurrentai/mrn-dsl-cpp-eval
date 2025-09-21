@@ -7,7 +7,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "current/bricks/exception.h"
+#include "../current/bricks/exception.h"
 
 // TODO(dkorolev): Populate this. Enumerators? Strings/names?
 struct ImplMaroon {

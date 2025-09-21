@@ -1,6 +1,6 @@
 #include "../src/ir.h"
 
-#include "../src/current/typesystem/serialization/json.h"
+#include "../current/typesystem/serialization/json.h"
 
 struct Ctx final {
   MaroonIRScenarios out;

@@ -4,9 +4,9 @@
 #include <iostream>
 #include <fstream>
 
-#include "current/bricks/dflags/dflags.h"
-#include "current/bricks/file/file.h"
-#include "current/typesystem/serialization/json.h"
+#include "../current/bricks/dflags/dflags.h"
+#include "../current/bricks/file/file.h"
+#include "../current/typesystem/serialization/json.h"
 
 #include "ir.h"
 
