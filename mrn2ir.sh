@@ -9,9 +9,15 @@ if [ "$2" == "--verify" ] ; then
 fi
 
 JQ="cat"
-
 if jq --version >/dev/null 2>&1 ; then
   JQ="jq ."
+fi
+
+CLANG_FORMAT=""
+if clang-format --version >/dev/null 2>&1 ; then
+  CLANG_FORMAT="clang-format"
+elif clang-format-10 --version >/dev/null 2>&1 ; then
+  CLANG_FORMAT="clang-format-10"
 fi
 
 if [ "$1" == "" ] ; then
@@ -37,8 +43,9 @@ cat "$IN.mrn" >>"autogen/$IN.mrn.h"
 g++ -E "autogen/$IN.mrn.h" 2>/dev/null | grep -v '^#' | grep -v '^$' >>autogen/"$IN.mrn.cc"
 echo -e "  ;\n  std::cout << JSON<JSONFormat::Minimalistic>(ctx.out) << std::endl;\n}" >>autogen/"$IN.mrn.cc"
 
-# TODO(dkorolev): I'm using `clang-format` here, need to make sure it exists!
-clang-format -i autogen/"$IN.mrn.cc"
+if [ "$CLANG_FORMAT" != "" ] ; then
+  $CLANG_FORMAT -i autogen/"$IN.mrn.cc"
+fi
 
 # Build and run the source file that was just put together to generate the JSON IR.
 g++ -std=c++17 autogen/"$IN.mrn.cc" -o autogen/"$IN.mrn.bin" && autogen/"$IN.mrn.bin" | $JQ > autogen/"$IN.mrn.json.tmp"
@@ -62,5 +69,3 @@ fi
 
 # Remove the now-unneeded "original header file".
 rm -f "autogen/$IN.mrn.h"
-
-# TODO(dkorolev: Introduce `jq` here same as `clang-format`, in a safe way.
