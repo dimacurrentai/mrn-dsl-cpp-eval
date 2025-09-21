@@ -1,0 +1,27 @@
+{
+  "maroon": {
+    "missing_next": {
+      "fibers": {
+        "global": {
+          "functions": {
+            "main": [
+              {
+                "MaroonIRCodeStatement": {
+                  "code": "{ DEBUG(\"hang on tight ...\"); }"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "tests": [
+    {
+      "MaroonTestCaseShouldThrow": {
+        "maroon": "missing_next",
+        "error": "`AWAIT` or `RETURN` condition missing in an `STMT`."
+      }
+    }
+  ]
+}

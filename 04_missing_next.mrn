@@ -1,0 +1,14 @@
+// NOTE(dkorolev): I am using `AWAIT` or `RETURN` even though it's still `NEXT` and `DONE` in the code.
+// TODO(dkorolev): Clean up the phrasing in this test, it's already clear in my head what it should be.
+
+MAROON(missing_next) {
+  FIBER(global) {
+    FN(main) {
+      STMT({
+        DEBUG("hang on tight ...");
+      });
+    };
+  };
+};
+
+TEST_SHOULD_THROW(missing_next, "`AWAIT` or `RETURN` condition missing in an `STMT`.");

@@ -1,0 +1,15 @@
+// TODO(dkorolev): Clean up the phrasing in this test, it's already clear in my head what it should be.
+
+MAROON(duplicate_next) {
+  FIBER(global) {
+    FN(main) {
+      STMT({
+        DEBUG("hang on tight ...");
+        NEXT();
+        NEXT();
+      });
+    };
+  };
+};
+
+TEST_SHOULD_THROW(duplicate_next, "TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place.");

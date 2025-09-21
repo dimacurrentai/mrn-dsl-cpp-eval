@@ -1,4 +1,4 @@
-name: ./verify.sh
+name: make verify
 
 on:
   push:
@@ -7,15 +7,15 @@ on:
   merge_group:
 
 jobs:
-  verify:
+  make_verify:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: clone
+      - name: git clone
         uses: actions/checkout@v4
 
-      - name: ./verify.sh
-        run: ./verify.sh
+      - name: make verify
+        run: make verify
 

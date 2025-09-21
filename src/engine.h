@@ -19,12 +19,27 @@ struct ImplException : current::Exception {
   using current::Exception::Exception;
 };
 
+enum TmpNextStatus { None = 0, Next, Done };
 struct ImplResultCollector final {
-  // TODO(dkorolev): Throw `ImplException`-s on conflicting (or missing!) commands.
-  bool is_next = false;
-  bool is_done = false;
-  void next() { is_next = true; }
-  void done() { is_done = true; }
+  TmpNextStatus status_ = TmpNextStatus::None;
+  void next() {
+    if (status_ != TmpNextStatus::None) {
+      CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place."));
+    }
+    status_ = TmpNextStatus::Next;
+  }
+  void done() {
+    if (status_ != TmpNextStatus::None) {
+      CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `DONE()` in the wrong place."));
+    }
+    status_ = TmpNextStatus::Done;
+  }
+  TmpNextStatus status() const {
+    if (status_ == TmpNextStatus::None) {
+      CURRENT_THROW(ImplException("`AWAIT` or `RETURN` condition missing in an `STMT`."));
+    }
+    return status_;
+  }
 };
 
 struct ImplEnv final {
@@ -91,7 +106,7 @@ struct MaroonEngine final {
         ImplResultCollector result;
         stmt.stmt_(env, result);
 
-        if (result.is_done) {
+        if (result.status() == TmpNextStatus::Done) {
           break;
         } else {
           ++current_index;
