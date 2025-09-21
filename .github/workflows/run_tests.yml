@@ -1,4 +1,4 @@
-name: ./run_tests.sh
+name: make test
 
 on:
   push:
@@ -7,15 +7,15 @@ on:
   merge_group:
 
 jobs:
-  run_tests:
+  make_test:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: clone
+      - name: git clone
         uses: actions/checkout@v4
 
-      - name: ./run_tests.sh
-        run: ./run_tests.sh
+      - name: make test
+        run: make test
 

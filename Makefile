@@ -1,4 +1,4 @@
-.PHONY: all clean test
+.PHONY: all clean test verify
 
 SRCS := $(wildcard src/*.cc)
 BINS := $(patsubst src/%.cc, autogen/%.bin, $(SRCS))
@@ -9,6 +9,9 @@ TESTS := $(patsubst %.mrn, autogen/%.mrn.test.h, $(INPUT))
 
 test: all
 	./run_tests.sh
+
+verify:
+	./verify.sh
 
 all: $(BINS) $(JSONS) $(TESTS)
 
