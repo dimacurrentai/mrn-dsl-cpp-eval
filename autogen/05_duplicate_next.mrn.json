@@ -1,0 +1,27 @@
+{
+  "maroon": {
+    "duplicate_next": {
+      "fibers": {
+        "global": {
+          "functions": {
+            "main": [
+              {
+                "MaroonIRCodeStatement": {
+                  "code": "{ DEBUG(\"hang on tight ...\"); NEXT(); NEXT(); }"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "tests": [
+    {
+      "MaroonTestCaseShouldThrow": {
+        "maroon": "duplicate_next",
+        "error": "TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place."
+      }
+    }
+  ]
+}
