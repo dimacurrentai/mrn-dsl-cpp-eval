@@ -1,0 +1,21 @@
+name: ./verify.sh
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  merge_group:
+
+jobs:
+  verify:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: clone
+        uses: actions/checkout@v4
+
+      - name: ./verify.sh
+        run: ./verify.sh
+
