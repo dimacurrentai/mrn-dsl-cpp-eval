@@ -67,5 +67,7 @@ else
   mv autogen/"$IN.mrn.json.tmp" autogen/"$IN.mrn.json"
 fi
 
-# Remove the now-unneeded "original header file".
+# Remove the now-unneeded "original" files.
+rm -f "autogen/$IN.mrn.bin"
+rm -f "autogen/$IN.mrn.cc"
 rm -f "autogen/$IN.mrn.h"

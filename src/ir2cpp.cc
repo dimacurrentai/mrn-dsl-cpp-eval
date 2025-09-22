@@ -78,9 +78,9 @@ int main(int argc, char** argv) {
 
   fo << "#pragma once" << std::endl;
   fo << std::endl;
-  fo << "#include \"../src/engine.h\"" << std::endl;
-  fo << std::endl;
   fo << "#define CURRENT_FOR_CPP14" << std::endl;
+  fo << std::endl;
+  fo << "#include \"../src/engine.h\"" << std::endl;
 
   for (auto const& [maroon_name, maroon] : scenarios.maroon) {
     fo << std::endl;
