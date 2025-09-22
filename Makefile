@@ -26,7 +26,7 @@ clean:
 autogen:
 	@mkdir -p autogen
 
-autogen/%.bin: src/%.cc src/*.h
+autogen/%.bin: src/%.cc src/*.h src/boilerplate/*.h
 	@mkdir -p autogen
 	@[ -f current/current.h ] || git clone --depth 1 https://github.com/C5T/Current current
 	g++ -std=c++17 $< -o $@

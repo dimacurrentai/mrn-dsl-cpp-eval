@@ -10,7 +10,7 @@ struct Ctx final {
   std::string current_function_name;
   MaroonIRNamespace* current_maroon_ptr = nullptr;
   MaroonIRFiber* current_fiber_ptr = nullptr;
-  std::vector<MaroonIRFunction*> current_function_stack_ptrs;
+  std::vector<MaroonIRStatement*> current_function_stack_ptrs;
 };
 
 struct RegisterMaroon final {
@@ -71,9 +71,11 @@ struct RegisterFn final {
                 << ")` of `MAROON(" << ctx.current_maroon_name << ")`." << std::endl;
       std::exit(1);
     }
+    MaroonIRFunction& fn = ctx.current_fiber_ptr->functions[name];
+    fn = MaroonIRNop();  // TODO(dkorolev): Figure out how to test for legality of empty functions.
     ctx.current_function_name = name;
     ctx.current_function_stack_ptrs.clear();
-    ctx.current_function_stack_ptrs.push_back(&ctx.current_fiber_ptr->functions[name]);
+    ctx.current_function_stack_ptrs.push_back(&fn);
   }
 
   ~RegisterFn() {
@@ -92,7 +94,23 @@ struct RegisterStmt final {
       std::cerr << "`STMT()` is only legal inside an `FN()`." << std::endl;
       std::exit(1);
     }
-    ctx.current_function_stack_ptrs.back()->push_back(MaroonIRCodeStatement(stmt));
+
+    MaroonIRCode src;
+    src.code = stmt;
+
+    MaroonIRStatement& dst = *ctx.current_function_stack_ptrs.back();
+
+    // If `Nop` replace by code, if `Seq` add to it, otherwise (code or block) turn into a `Seq`.
+    if (Exists<MaroonIRNop>(dst)) {
+      dst = std::move(src);
+    } else if (Exists<MaroonIRSeq>(dst)) {
+      Value<MaroonIRSeq>(dst).seq.push_back(std::move(src));
+    } else {
+      MaroonIRSeq out;
+      out.seq.push_back(std::move(dst));
+      out.seq.push_back(std::move(src));
+      dst = std::move(out);
+    }
   }
 };
 

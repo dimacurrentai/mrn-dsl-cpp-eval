@@ -15,3 +15,14 @@ if ! [ -f "autogen/$IN.mrn.json" ] ; then
 fi
 
 ./autogen/ir2cpp.bin --in "autogen/$IN.mrn.json" --name "$IN" --out "autogen/$IN.mrn.test.h"
+
+CLANG_FORMAT=""
+if clang-format --version >/dev/null 2>&1 ; then
+  CLANG_FORMAT="clang-format"
+elif clang-format-10 --version >/dev/null 2>&1 ; then
+  CLANG_FORMAT="clang-format-10"
+fi
+
+if [ "$CLANG_FORMAT" != "" ] ; then
+  $CLANG_FORMAT -i autogen/"$IN.mrn.test.h"
+fi
