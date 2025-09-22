@@ -9,12 +9,6 @@
 
 #include "../current/bricks/exception.h"
 
-// TODO(dkorolev): Populate this. Enumerators? Strings/names?
-struct ImplMaroon {
- protected:
-  ~ImplMaroon() = default;
-};
-
 struct ImplException : current::Exception {
   using current::Exception::Exception;
 };
@@ -47,44 +41,25 @@ struct ImplEnv final {
 
   explicit ImplEnv(std::ostream& os) : os_(os) {}
 
-  void debug(std::string s) {
+  template <typename T>
+  void debug(T&& v) {
+    std::ostringstream oss;
+    oss << std::forward<T>(v);
+    std::string const s = oss.str();
     std::cerr << "Impl DEBUG: " << s << std::endl;
     // TODO(dkorolev): Tick index / time.
     os_ << s << std::endl;
   }
 };
 
-struct ImplStatement final {
-  using stmt_t = std::function<void(ImplEnv&, ImplResultCollector&)>;
-
-  stmt_t stmt_;
-  ImplStatement(stmt_t stmt) : stmt_(std::move(stmt)) {}
-};
-
-// NOTE(dkorolev): In macros expansion, `clang-format` decouples the `&` from the type. Undesirable.
-// clang-format off
-#define ImplStmt(body) \
-  ImplStatement([](ImplEnv& env, ImplResultCollector& result) body)
-// clang-format on
+using step_function_t = void (*)(ImplEnv& env, ImplResultCollector& result);
 
 // TODO(dkorolev): Add "death" tests that require `.next()`, `.done()`, etc.
 #define DEBUG(s) env.debug(s)
 #define NEXT() result.next()
 #define DONE() result.done()
 
-// TODO(dkorolev): Heap type? Stack types and subtypes? List of functions?
-struct ImplFiber {
- protected:
-  ~ImplFiber() = default;
-};
-
-struct ImplFunction {
-  std::vector<ImplStatement> body_;
-  ImplFunction(std::vector<ImplStatement> body) : body_(std::move(body)) {}
-
- protected:
-  ~ImplFunction() = default;
-};
+enum class MaronStateIndex : uint32_t;
 
 template <class T_MAROON>
 struct MaroonEngine final {
@@ -93,20 +68,22 @@ struct MaroonEngine final {
       std::ostringstream oss;
       ImplEnv env(oss);
 
+      static_assert(T_MAROON::kIsMaroon);
+      using T_FIBER = typename T_MAROON::global;
+
       // NOTE(dkorolev): This will not compile if there's no `main` in the `global` fiber.
-      typename T_MAROON::global::main main;
-      ImplFunction& main_fiber = main;
+      static_assert(T_FIBER::kIsFiber);
 
       // TODO(dkorolev): Proper engine =)
-      size_t current_index = 0u;
+      auto current_index = static_cast<size_t>(T_FIBER::main);
       while (true) {
-        if (current_index >= main_fiber.body_.size()) {
+        if (current_index >= T_FIBER::kStepsCount) {
           CURRENT_THROW(ImplException("NEXT() out of bounds."));
         }
-        ImplStatement& stmt = main_fiber.body_[current_index];
+        step_function_t const& f = T_FIBER::kSteps[current_index];
 
         ImplResultCollector result;
-        stmt.stmt_(env, result);
+        f(env, result);
 
         if (result.status() == TmpNextStatus::Done) {
           break;

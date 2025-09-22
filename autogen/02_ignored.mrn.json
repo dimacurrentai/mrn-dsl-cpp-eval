@@ -4,18 +4,22 @@
       "fibers": {
         "global": {
           "functions": {
-            "main": [
-              {
-                "MaroonIRCodeStatement": {
-                  "code": "{ DEBUG(\"yes\"); DONE(); }"
-                }
-              },
-              {
-                "MaroonIRCodeStatement": {
-                  "code": "{ DEBUG(\"no\"); DONE(); }"
-                }
+            "main": {
+              "MaroonIRSeq": {
+                "seq": [
+                  {
+                    "MaroonIRCode": {
+                      "code": "{ DEBUG(\"yes\"); DONE(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRCode": {
+                      "code": "{ DEBUG(\"no\"); DONE(); }"
+                    }
+                  }
+                ]
               }
-            ]
+            }
           }
         }
       }
