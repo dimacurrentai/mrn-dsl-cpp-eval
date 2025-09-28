@@ -11,4 +11,4 @@ MAROON(missing_next) {
   };
 };
 
-TEST_SHOULD_THROW(missing_next, "`AWAIT` or `RETURN` condition missing in an `STMT`.");
+TEST_FIBER_SHOULD_THROW(missing_next, global, "`AWAIT` or `RETURN` condition missing in an `STMT`.");

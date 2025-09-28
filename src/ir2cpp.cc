@@ -24,19 +24,18 @@ inline void GenerateTestCase(std::ostream& fo, MaroonTestCase const& test, std::
     std::string const& name;
     std::ostream& fo;
     GenerateTestCaseVisitor(std::string const& name, std::ostream& fo) : name(name), fo(fo) {}
-    void operator()(MaroonTestCaseSimple const& test) {
-      fo << "  MaroonEngine<" << test.maroon << "> engine;" << std::endl;
+    void operator()(MaroonTestCaseRunFiber const& test) {
+      fo << "  MaroonEngine<" << test.maroon << ", " << test.maroon << "::" << test.fiber << "> engine;" << std::endl;
       fo << "  auto const [output, error] = engine.run();" << std::endl;
       std::ostringstream oss;
-      for (auto const& e : test.debug_statements) {
-        // TODO(dkorolev): Handle the timestamps too.
-        oss << e.msg << std::endl;
+      for (auto const& e : test.golden_output) {
+        oss << e << std::endl;
       }
       fo << "  EXPECT_EQ(R\"\"\"(" << oss.str() << ")\"\"\", output);" << std::endl;
       fo << "  EXPECT_EQ(\"\", error);" << std::endl;
     }
-    void operator()(MaroonTestCaseShouldThrow const& test) {
-      fo << "  MaroonEngine<" << test.maroon << "> engine;" << std::endl;
+    void operator()(MaroonTestCaseFiberShouldThrow const& test) {
+      fo << "  MaroonEngine<" << test.maroon << ',' << test.maroon << "::" << test.fiber << "> engine;" << std::endl;
       fo << "  auto const [output, error] = engine.run();" << std::endl;
       fo << "  EXPECT_EQ(R\"\"\"(" << test.error << ")\"\"\", error);" << std::endl;
       fo << "  EXPECT_EQ(\"\", output);" << std::endl;

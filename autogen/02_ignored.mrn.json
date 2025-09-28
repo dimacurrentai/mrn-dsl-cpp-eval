@@ -27,13 +27,11 @@
   },
   "tests": [
     {
-      "MaroonTestCaseSimple": {
+      "MaroonTestCaseRunFiber": {
         "maroon": "second_step_ignored",
-        "debug_statements": [
-          {
-            "ts": 0,
-            "msg": "yes"
-          }
+        "fiber": "global",
+        "golden_output": [
+          "yes"
         ]
       }
     }

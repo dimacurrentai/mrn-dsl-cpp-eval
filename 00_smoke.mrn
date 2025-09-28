@@ -13,9 +13,7 @@ MAROON(code) {
   };
 };
 
-TEST_SIMPLE_RUN(
+TEST_FIBER(
   code,
-  {
-    // At timestamp 0 the run should debug-print "hello".
-    {0, "hello"}
-  })
+  global,
+  {"hello"});

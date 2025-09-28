@@ -16,8 +16,9 @@
   },
   "tests": [
     {
-      "MaroonTestCaseShouldThrow": {
+      "MaroonTestCaseFiberShouldThrow": {
         "maroon": "missing_next",
+        "fiber": "global",
         "error": "`AWAIT` or `RETURN` condition missing in an `STMT`."
       }
     }

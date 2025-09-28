@@ -21,27 +21,23 @@
   }
 #define VAR(name, type, init) RegisterVar(ctx, #name, VarTypes::type, #init);
 
-#define TEST_SIMPLE_RUN(maroon_name, ...)           \
-  {                                                 \
-    MaroonTestCaseSimple t;                         \
-    t.maroon = #maroon_name;                        \
-    struct {                                        \
-      uint64_t ts;                                  \
-      std::string msg;                              \
-    } v[] = __VA_ARGS__;                            \
-    for (auto const& [ts, msg] : v) {               \
-      MaroonDebugStatement tmp;                     \
-      tmp.ts = ts;                                  \
-      tmp.msg = msg;                                \
-      t.debug_statements.push_back(std::move(tmp)); \
-    }                                               \
-    ctx.out.tests.push_back(std::move(t));          \
+#define TEST_FIBER(maroon_name, maroon_fiber, ...) \
+  {                                                \
+    MaroonTestCaseRunFiber t;                      \
+    t.maroon = #maroon_name;                       \
+    t.fiber = #maroon_fiber;                       \
+    std::string v[] = __VA_ARGS__;                 \
+    for (auto const& msg : v) {                    \
+      t.golden_output.push_back(msg);              \
+    }                                              \
+    ctx.out.tests.push_back(std::move(t));         \
   }
 
-#define TEST_SHOULD_THROW(maroon_name, err) \
-  {                                         \
-    MaroonTestCaseShouldThrow t;            \
-    t.maroon = #maroon_name;                \
-    t.error = err;                          \
-    ctx.out.tests.push_back(std::move(t));  \
+#define TEST_FIBER_SHOULD_THROW(maroon_name, maroon_fiber, err) \
+  {                                                             \
+    MaroonTestCaseFiberShouldThrow t;                           \
+    t.maroon = #maroon_name;                                    \
+    t.fiber = #maroon_fiber;                                    \
+    t.error = err;                                              \
+    ctx.out.tests.push_back(std::move(t));                      \
   }

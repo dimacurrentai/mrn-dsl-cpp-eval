@@ -60,24 +60,19 @@ CURRENT_STRUCT(MaroonIRNamespace) {
   CURRENT_FIELD(fibers, (std::map<std::string, MaroonIRFiber>));
 };
 
-CURRENT_STRUCT(MaroonDebugStatement) {
-  CURRENT_FIELD(ts, uint64_t);
-  CURRENT_FIELD(msg, std::string);
+CURRENT_STRUCT(MaroonTestCaseRunFiber) {
+  CURRENT_FIELD(maroon, std::string);
+  CURRENT_FIELD(fiber, std::string);
+  CURRENT_FIELD(golden_output, std::vector<std::string>);
 };
 
-CURRENT_STRUCT(MaroonTestCaseSimple) {
-  // TODO(dkorolev): Add logical timestamps here.
+CURRENT_STRUCT(MaroonTestCaseFiberShouldThrow) {
   CURRENT_FIELD(maroon, std::string);
-  CURRENT_FIELD(debug_statements, std::vector<MaroonDebugStatement>);
-};
-
-CURRENT_STRUCT(MaroonTestCaseShouldThrow) {
-  CURRENT_FIELD(maroon, std::string);
+  CURRENT_FIELD(fiber, std::string);
   CURRENT_FIELD(error, std::string);
 };
 
-// TODO(dkorolev): Support more complex testing.
-CURRENT_VARIANT(MaroonTestCase, MaroonTestCaseSimple, MaroonTestCaseShouldThrow);
+CURRENT_VARIANT(MaroonTestCase, MaroonTestCaseRunFiber, MaroonTestCaseFiberShouldThrow);
 
 CURRENT_STRUCT(MaroonIRScenarios) {
   CURRENT_FIELD(maroon, (std::map<std::string, MaroonIRNamespace>));

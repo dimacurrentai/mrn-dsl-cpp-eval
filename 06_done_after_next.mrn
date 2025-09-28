@@ -12,4 +12,4 @@ MAROON(done_after_next) {
   };
 };
 
-TEST_SHOULD_THROW(done_after_next, "TODO(dkorolev): FIXME: Attempted `DONE()` in the wrong place.");
+TEST_FIBER_SHOULD_THROW(done_after_next, global, "TODO(dkorolev): FIXME: Attempted `DONE()` in the wrong place.");

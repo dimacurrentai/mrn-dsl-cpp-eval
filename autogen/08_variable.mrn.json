@@ -38,25 +38,14 @@
   },
   "tests": [
     {
-      "MaroonTestCaseSimple": {
+      "MaroonTestCaseRunFiber": {
         "maroon": "variable",
-        "debug_statements": [
-          {
-            "ts": 0,
-            "msg": "a=100"
-          },
-          {
-            "ts": 0,
-            "msg": "[a:100]"
-          },
-          {
-            "ts": 0,
-            "msg": "[a:101]"
-          },
-          {
-            "ts": 0,
-            "msg": "a=101"
-          }
+        "fiber": "global",
+        "golden_output": [
+          "a=100",
+          "[a:100]",
+          "[a:101]",
+          "a=101"
         ]
       }
     }

@@ -17,11 +17,12 @@ MAROON(variable) {
   };
 };
 
-TEST_SIMPLE_RUN(
+TEST_FIBER(
   variable,
+  global,
   {
-    {0, "a=100"},
-    {0, "[a:100]"},
-    {0, "[a:101]"},
-    {0, "a=101"},
-  })
+    "a=100",
+    "[a:100]",
+    "[a:101]",
+    "a=101",
+  });

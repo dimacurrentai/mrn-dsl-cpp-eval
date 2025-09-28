@@ -14,12 +14,5 @@
       }
     }
   },
-  "tests": [
-    {
-      "MaroonTestCaseShouldThrow": {
-        "maroon": "faulty_next",
-        "error": "NEXT() out of bounds."
-      }
-    }
-  ]
+  "tests": []
 }

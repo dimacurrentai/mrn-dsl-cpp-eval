@@ -16,13 +16,11 @@
   },
   "tests": [
     {
-      "MaroonTestCaseSimple": {
+      "MaroonTestCaseRunFiber": {
         "maroon": "code",
-        "debug_statements": [
-          {
-            "ts": 0,
-            "msg": "hello"
-          }
+        "fiber": "global",
+        "golden_output": [
+          "hello"
         ]
       }
     }

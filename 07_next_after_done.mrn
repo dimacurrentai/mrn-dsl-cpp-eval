@@ -12,4 +12,4 @@ MAROON(next_after_done) {
   };
 };
 
-TEST_SHOULD_THROW(next_after_done, "TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place.");
+TEST_FIBER_SHOULD_THROW(next_after_done, global, "TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place.");

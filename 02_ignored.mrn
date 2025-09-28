@@ -17,8 +17,7 @@ MAROON(second_step_ignored) {
   };
 };
 
-TEST_SIMPLE_RUN(
+TEST_FIBER(
   second_step_ignored,
-  {
-    {0, "yes"}
-  })
+  global,
+  {"yes"});

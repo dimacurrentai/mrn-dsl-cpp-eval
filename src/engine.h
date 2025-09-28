@@ -131,7 +131,7 @@ struct MaroonStep final {
 
 enum class MaronStateIndex : uint32_t;
 
-template <class T_MAROON>
+template <class T_MAROON, class T_FIBER>
 struct MaroonEngine final {
   std::pair<std::string, std::string> run() {
     try {
@@ -139,7 +139,7 @@ struct MaroonEngine final {
       ImplEnv env(oss);
 
       static_assert(T_MAROON::kIsMaroon);
-      using T_FIBER = typename T_MAROON::global;
+      // TODO(dkorolev): Perhaps add a `static_assert` that this `T_FIBER` is from the right `T_MAROON`.
 
       // NOTE(dkorolev): This will not compile if there's no `main` in the `global` fiber.
       static_assert(T_FIBER::kIsFiber);

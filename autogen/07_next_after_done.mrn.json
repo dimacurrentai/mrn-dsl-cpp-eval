@@ -16,8 +16,9 @@
   },
   "tests": [
     {
-      "MaroonTestCaseShouldThrow": {
+      "MaroonTestCaseFiberShouldThrow": {
         "maroon": "next_after_done",
+        "fiber": "global",
         "error": "TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place."
       }
     }
