@@ -12,6 +12,10 @@ TODO BEFORE CHECKING IN
 - protect the branch
 - alter the `.clang-format` and `indent.sh` from `C5T/Current`.
 
+NOTE TO SELF
+
+I tried to add `__LINE__` to reference the source `.mrn` file, but things got ugly with Github actions and its preprocessor — spent some time and decided to drop this idea.
+
 ADD THE NOTE THAT:
 
 - obviously the `.mrn` files should be renamed to some `.mrn.h`, since they will eventually be replaced.
