@@ -1,6 +1,8 @@
-// Confirm that `NEXT()` without the next step is a runtime error.
+// NOTE(dkorolev): I am using `AWAIT` or `RETURN` even though it's still `NEXT` and `DONE` in the code.
+// TODO(dkorolev): Clean up the phrasing in this test, it's already clear in my head what it should be.
 
 MAROON(faulty_next) {
+  // Confirm that `NEXT()` without the next step is a runtime error.
   FIBER(global) {
     FN(main) {
       STMT({
@@ -11,4 +13,54 @@ MAROON(faulty_next) {
   };
 };
 
+MAROON(missing_next) {
+  FIBER(global) {
+    FN(main) {
+      STMT({
+        DEBUG("hang on tight ...");
+      });
+    };
+  };
+};
+
+MAROON(done_after_next) {
+  FIBER(global) {
+    FN(main) {
+      STMT({
+        DEBUG("hang on tight ...");
+        NEXT();
+        DONE();
+      });
+    };
+  };
+};
+
+MAROON(next_after_done) {
+  FIBER(global) {
+    FN(main) {
+      STMT({
+        DEBUG("hang on tight ...");
+        DONE();
+        NEXT();
+      });
+    };
+  };
+};
+
+MAROON(duplicate_next) {
+  FIBER(global) {
+    FN(main) {
+      STMT({
+        DEBUG("hang on tight ...");
+        NEXT();
+        NEXT();
+      });
+    };
+  };
+};
+
 TEST_FIBER_SHOULD_THROW(faulty_next, global, "NEXT() out of bounds.");
+TEST_FIBER_SHOULD_THROW(missing_next, global, "`AWAIT` or `RETURN` condition missing in an `STMT`.");
+TEST_FIBER_SHOULD_THROW(done_after_next, global, "TODO(dkorolev): FIXME: Attempted `DONE()` in the wrong place.");
+TEST_FIBER_SHOULD_THROW(next_after_done, global, "TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place.");
+TEST_FIBER_SHOULD_THROW(duplicate_next, global, "TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place.");

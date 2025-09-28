@@ -1,5 +1,45 @@
 {
   "maroon": {
+    "done_after_next": {
+      "fibers": {
+        "global": {
+          "functions": {
+            "main": {
+              "body": {
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "stmt": "{ DEBUG(\"hang on tight ...\"); NEXT(); DONE(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "duplicate_next": {
+      "fibers": {
+        "global": {
+          "functions": {
+            "main": {
+              "body": {
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "stmt": "{ DEBUG(\"hang on tight ...\"); NEXT(); NEXT(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
     "faulty_next": {
       "fibers": {
         "global": {
@@ -19,6 +59,46 @@
           }
         }
       }
+    },
+    "missing_next": {
+      "fibers": {
+        "global": {
+          "functions": {
+            "main": {
+              "body": {
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "stmt": "{ DEBUG(\"hang on tight ...\"); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "next_after_done": {
+      "fibers": {
+        "global": {
+          "functions": {
+            "main": {
+              "body": {
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "stmt": "{ DEBUG(\"hang on tight ...\"); DONE(); NEXT(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
     }
   },
   "tests": [
@@ -27,6 +107,34 @@
         "maroon": "faulty_next",
         "fiber": "global",
         "error": "NEXT() out of bounds."
+      }
+    },
+    {
+      "MaroonTestCaseFiberShouldThrow": {
+        "maroon": "missing_next",
+        "fiber": "global",
+        "error": "`AWAIT` or `RETURN` condition missing in an `STMT`."
+      }
+    },
+    {
+      "MaroonTestCaseFiberShouldThrow": {
+        "maroon": "done_after_next",
+        "fiber": "global",
+        "error": "TODO(dkorolev): FIXME: Attempted `DONE()` in the wrong place."
+      }
+    },
+    {
+      "MaroonTestCaseFiberShouldThrow": {
+        "maroon": "next_after_done",
+        "fiber": "global",
+        "error": "TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place."
+      }
+    },
+    {
+      "MaroonTestCaseFiberShouldThrow": {
+        "maroon": "duplicate_next",
+        "fiber": "global",
+        "error": "TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place."
       }
     }
   ]
