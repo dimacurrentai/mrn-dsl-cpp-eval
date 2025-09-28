@@ -13,6 +13,8 @@
 DEFINE_string(a, "", "One IR file as JSON.");
 DEFINE_string(b, "", "Another IR file as JSON.");
 
+void ZeroLineNumbers(MaroonIRScenarios& m);
+
 int main(int argc, char** argv) {
   ParseDFlags(&argc, &argv);
 
@@ -39,9 +41,63 @@ int main(int argc, char** argv) {
     std::exit(1);
   }
 
+  // NOTE(dkorolev): The `__LINE__` token prints different lines for multiline parameters.
+  ZeroLineNumbers(a);
+  ZeroLineNumbers(b);
+
   // Poor man's comparison.
   if (JSON(a) != JSON(b)) {
     std::cout << "The IR JSONs are not identical." << std::endl;
     std::exit(1);
   }
+}
+
+inline void ZeroLineNumbers(MaroonIRScenarios& m) {
+  struct Visitor final {
+    void operator()(MaroonIRScenarios& m) {
+      for (auto& [_, v] : m.maroon) {
+        (*this)(v);
+      }
+      for (auto& v : m.tests) {
+        v.Call(*this);
+      }
+    }
+
+    void operator()(MaroonIRNamespace& m) {
+      m.line = 0;
+      for (auto& [_, v] : m.fibers) {
+        (*this)(v);
+      }
+    }
+
+    void operator()(MaroonIRFiber& m) {
+      m.line = 0;
+      for (auto& [_, v] : m.functions) {
+        (*this)(v);
+      }
+    }
+
+    void operator()(MaroonIRFunction& m) {
+      m.line = 0;
+      (*this)(m.body);
+    }
+
+    void operator()(MaroonIRBlock& m) {
+      m.line = 0;
+      for (auto& v : m.code) {
+        (*this)(v);
+      }
+    }
+
+    void operator()(MaroonIRStmtOrBlock& m) { m.Call(*this); }
+
+    void operator()(MaroonIRStmt& m) { m.line = 0; }
+
+    void operator()(MaroonIRIf& m) { m.line = 0; }
+
+    void operator()(MaroonTestCaseRunFiber& m) { m.line = 0; }
+    void operator()(MaroonTestCaseFiberShouldThrow& m) { m.line = 0; }
+  };
+
+  Visitor()(m);
 }
