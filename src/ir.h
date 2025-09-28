@@ -23,33 +23,29 @@ CURRENT_STRUCT(MaroonIRVar) {
   CURRENT_FIELD(init, std::string);  // NOTE(dkorolev): Not sure I like this as `string`, but works for now.
 };
 
-CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRNop);
-CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRCode);
+CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRStmt);
 CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRBlock);
-CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRSeq);
-CURRENT_VARIANT(MaroonIRStatement, MaroonIRNop, MaroonIRCode, MaroonIRBlock, MaroonIRSeq);
-
-// An "empty body of code", mostly to make the generating code simpler.
-CURRENT_STRUCT(MaroonIRNop){};
+CURRENT_VARIANT(MaroonIRStmtOrBlock, MaroonIRStmt, MaroonIRBlock);
 
 // A piece of "O(1)" code to execute.
-// TODO(dkorolev): Perhaps handle the `AWAIT`-condition separately here.
-CURRENT_STRUCT(MaroonIRCode) { CURRENT_FIELD(code, std::string); };
+// TODO(dkorolev): Handle the `AWAIT`-condition separately here, on the type system level.
+// TODO(dkorolev): As in, add fields for `await`, a variant of `await / next / done`.
+CURRENT_STRUCT(MaroonIRStmt) { CURRENT_FIELD(stmt, std::string); };
 
-// A code statement with variables declared within it.
+// A set of variables plus the sequence of statements, possibly nested.
+// TODO(dkorolev): We now have hoisting, like in the 1st version of JavaScript, lolwut! Fix this.
 CURRENT_STRUCT(MaroonIRBlock) {
   CURRENT_FIELD(vars, std::vector<MaroonIRVar>);
-  CURRENT_FIELD(stmt, MaroonIRStatement);
+  CURRENT_FIELD(code, std::vector<MaroonIRStmtOrBlock>);
 };
 
-// A sequence of statements.
-CURRENT_STRUCT(MaroonIRSeq) { CURRENT_FIELD(seq, std::vector<MaroonIRStatement>); };
-
-// TODO(dkorolev): Wrap this into a `CURRENT_STRUCT`, it has arguments!
-using MaroonIRFunction = MaroonIRStatement;
+CURRENT_STRUCT(MaroonIRFunction) {
+  // TODO(dkorolev): Parameters, as extra "vars".
+  CURRENT_FIELD(body, MaroonIRBlock);
+};
 
 CURRENT_STRUCT(MaroonIRFiber) {
-  // TODO(dkorolev): Heap.
+  // TODO(dkorolev): Heap type.
   CURRENT_FIELD(functions, (std::map<std::string, MaroonIRFunction>));
 };
 

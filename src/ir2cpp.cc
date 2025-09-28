@@ -85,10 +85,9 @@ int main(int argc, char** argv) {
       fo << "    constexpr static char const* const kFiberName = \"" << fiber_name << "\";" << std::endl;
       struct StatementsRecursiveVisitor final {
         std::ostream& fo;
-        std::vector<std::pair<size_t, size_t>>
-            num_vars_per_step;  // { upon entering, to be added before the block starts executing }
+        std::vector<std::pair<size_t, size_t>> nvars;  // { # upon entering, # to be added on block entry }
         std::string fn_name = "\n#error \"`fn_name` unset.\"\n";
-        std::vector<std::string> local_vars;
+        std::vector<MaroonIRVar> local_vars;
         std::vector<MaroonIRVar> next_step_init_vars;
 
         StatementsRecursiveVisitor(std::ostream& fo) : fo(fo) {}
@@ -100,86 +99,75 @@ int main(int argc, char** argv) {
           }
         }
 
-        void PrintHeader() {
-          size_t const idx = num_vars_per_step.size();
-          size_t const save_init_vars_count = next_step_init_vars.size();
-          if (local_vars.size() < save_init_vars_count) {
-            // TODO(dkorolev): Add a test when blocks are nested and new vars are added between nests in the 1st block.
-            std::cerr << "Internal invariant failed: too few local vars." << std::endl;
-            std::exit(1);
-          }
-          fo << "    static void VARS_" << idx << kVarsFunctionSignature << "{ // " << fn_name << std::endl;
+        void operator()(MaroonIRStmt const& code) {
+          size_t const entry_vars = local_vars.size();
+          size_t const declared_vars = next_step_init_vars.size();
+
+          size_t const step_idx = nvars.size();
+          nvars.push_back({entry_vars, declared_vars});
+
+          // Declare the vars.
+          fo << "    static void VARS_" << step_idx << kVarsFunctionSignature << "{ // " << fn_name << std::endl;
           fo << "      static_cast<void>(env);" << std::endl;
-          size_t tmp_idx = local_vars.size() - save_init_vars_count;
           for (auto const& var : next_step_init_vars) {
-            fo << "      env.DeclareVar(" << tmp_idx++ << ",\"" << var.name << "\"," << var.init << ");" << std::endl;
+            fo << "      env.DeclareVar(" << local_vars.size() << ",\"" << var.name << "\"," << var.init << ");"
+               << std::endl;
+            local_vars.push_back(var);
           }
           next_step_init_vars.clear();
           fo << "    }" << std::endl;
-          fo << "    static void IMPL_" << idx << kStepFunctionSignature << " {  // " << fn_name << std::endl;
-          num_vars_per_step.push_back({local_vars.size() - save_init_vars_count, save_init_vars_count});
-          tmp_idx = 0;
+
+          fo << "    static void IMPL_" << step_idx << kStepFunctionSignature << " {  // " << fn_name << std::endl;
+          size_t tmp_idx = 0;
           // TODO(dkorolev): Different var types, not just names here.
           for (auto const& var : local_vars) {
-            fo << "      auto& " << var << " = env.AccessVar(" << tmp_idx++ << ",\"" << var << "\");" << std::endl;
-            // fo << "  // LOCAL VAR AVAILABLE: " << var << std::endl;
+            fo << "      auto& " << var.name << " = env.AccessVar(" << tmp_idx++ << ",\"" << var.name << "\");"
+               << std::endl;
           }
           for (auto const& var : local_vars) {
-            fo << "      static_cast<void>(" << var << ");" << std::endl;
+            fo << "      static_cast<void>(" << var.name << ");" << std::endl;
           }
+
+          fo << "      " << code.stmt << std::endl << "}" << std::endl;
         }
 
-        void operator()(MaroonIRNop const&) {
-          fo << "#error \"NOP, a.k.a. PASS, this step is empty, which is illegal, need `RETURN()`.\"" << std::endl;
-        }
-        void operator()(MaroonIRCode const& code) {
-          PrintHeader();
-          fo << code.code << std::endl << "}" << std::endl;
-        }
         void operator()(MaroonIRBlock const& blk) {
           size_t const save_local_vars_size = local_vars.size();
 
           for (auto const& var : blk.vars) {
-            local_vars.push_back(var.name);
-            // fo << "  // WILL DECLARE LOCAL VAR " << var.name << std::endl;
-          }
-          for (auto const& var : blk.vars) {
             next_step_init_vars.push_back(var);
           }
 
-          blk.stmt.Call(*this);
+          for (auto const& c : blk.code) {
+            c.Call(*this);
+          }
 
-          // TODO(dkorolev): Destruction, eventually, of those vars, as they leave the block (or the function).
+          // TODO(dkorolev): Destruction, eventually, of those vars, as they leave the last step of the block.
           if (save_local_vars_size + blk.vars.size() != local_vars.size()) {
             std::cerr << "Internal invariant failed: wrong number of local variables at this point." << std::endl;
             std::exit(1);
           }
           local_vars.resize(local_vars.size() - blk.vars.size());
         }
-        void operator()(MaroonIRSeq const& seq) {
-          for (auto const& e : seq.seq) {
-            e.Call(*this);
-          }
-        }
       };
+
       StatementsRecursiveVisitor visitor(fo);
       for (auto const& [fn_name, fn] : fiber.functions) {
         visitor.EnsureNoLocalVars();
         fo << "    inline constexpr static MaronStateIndex " << fn_name << " = static_cast<MaronStateIndex>("
-           << visitor.num_vars_per_step.size() << ");" << std::endl;
+           << visitor.nvars.size() << ");" << std::endl;
         ;
         visitor.fn_name = fn_name;
-        fn.Call(visitor);
+        visitor(fn.body);
       }
-      fo << "    inline constexpr static uint32_t kStepsCount = " << visitor.num_vars_per_step.size() << ";"
-         << std::endl;
+      fo << "    inline constexpr static uint32_t kStepsCount = " << visitor.nvars.size() << ";" << std::endl;
       fo << "    inline constexpr static std::array<MaroonStep, kStepsCount> kSteps{";
-      for (uint32_t i = 0; i < visitor.num_vars_per_step.size(); ++i) {
+      for (uint32_t i = 0; i < visitor.nvars.size(); ++i) {
         if (i) {
           fo << ",";
         }
-        fo << "MaroonStep{IMPL_" << i << ',' << visitor.num_vars_per_step[i].first << ','
-           << visitor.num_vars_per_step[i].second << ",VARS_" << i << '}';
+        fo << "MaroonStep{IMPL_" << i << ',' << visitor.nvars[i].first << ',' << visitor.nvars[i].second << ",VARS_"
+           << i << '}';
       }
       fo << "};" << std::endl;
       fo << "  };  // fiber `" << fiber_name << '`' << std::endl;

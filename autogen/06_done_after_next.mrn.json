@@ -5,8 +5,15 @@
         "global": {
           "functions": {
             "main": {
-              "MaroonIRCode": {
-                "code": "{ DEBUG(\"hang on tight ...\"); NEXT(); DONE(); }"
+              "body": {
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "stmt": "{ DEBUG(\"hang on tight ...\"); NEXT(); DONE(); }"
+                    }
+                  }
+                ]
               }
             }
           }

@@ -5,16 +5,17 @@
         "global": {
           "functions": {
             "main": {
-              "MaroonIRSeq": {
-                "seq": [
+              "body": {
+                "vars": [],
+                "code": [
                   {
-                    "MaroonIRCode": {
-                      "code": "{ DEBUG(\"yes\"); DONE(); }"
+                    "MaroonIRStmt": {
+                      "stmt": "{ DEBUG(\"yes\"); DONE(); }"
                     }
                   },
                   {
-                    "MaroonIRCode": {
-                      "code": "{ DEBUG(\"no\"); DONE(); }"
+                    "MaroonIRStmt": {
+                      "stmt": "{ DEBUG(\"no\"); DONE(); }"
                     }
                   }
                 ]

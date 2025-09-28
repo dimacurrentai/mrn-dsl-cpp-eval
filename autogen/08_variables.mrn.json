@@ -2,10 +2,106 @@
   "maroon": {
     "variable": {
       "fibers": {
-        "global": {
+        "_00_main_empty": {
           "functions": {
             "main": {
-              "MaroonIRBlock": {
+              "body": {
+                "vars": [],
+                "code": []
+              }
+            }
+          }
+        },
+        "_01_main_with_empty_block": {
+          "functions": {
+            "main": {
+              "body": {
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRBlock": {
+                      "vars": [],
+                      "code": []
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "_02_main_with_two_empty_blocks": {
+          "functions": {
+            "main": {
+              "body": {
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRBlock": {
+                      "vars": [],
+                      "code": [
+                        {
+                          "MaroonIRBlock": {
+                            "vars": [],
+                            "code": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "_03_nested_blocks": {
+          "functions": {
+            "name": {
+              "body": {
+                "vars": [
+                  {
+                    "name": "a",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "1"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "stmt": "{ DEBUG_DUMP_VARS(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRBlock": {
+                      "vars": [
+                        {
+                          "name": "b",
+                          "type": "TODO(dkorolev): Implement this.",
+                          "init": "2"
+                        }
+                      ],
+                      "code": [
+                        {
+                          "MaroonIRStmt": {
+                            "stmt": "{ DEBUG_DUMP_VARS(); }"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "stmt": "{ DEBUG_DUMP_VARS(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "test1": {
+          "functions": {
+            "main": {
+              "body": {
                 "vars": [
                   {
                     "name": "a",
@@ -13,22 +109,99 @@
                     "init": "100"
                   }
                 ],
-                "stmt": {
-                  "MaroonIRSeq": {
-                    "seq": [
-                      {
-                        "MaroonIRCode": {
-                          "code": "{ DEBUG_EXPR(a); DEBUG_DUMP_VARS(); a = a+1; DEBUG_DUMP_VARS(); NEXT(); }"
-                        }
-                      },
-                      {
-                        "MaroonIRCode": {
-                          "code": "{ DEBUG_EXPR(a); DONE(); }"
-                        }
-                      }
-                    ]
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "stmt": "{ DEBUG_EXPR(a); DEBUG_DUMP_VARS(); a = a+1; DEBUG_DUMP_VARS(); NEXT(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "stmt": "{ DEBUG_EXPR(a); DONE(); }"
+                    }
                   }
-                }
+                ]
+              }
+            }
+          }
+        },
+        "test2": {
+          "functions": {
+            "main": {
+              "body": {
+                "vars": [
+                  {
+                    "name": "x",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "1"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "stmt": "{ x *= 10; DEBUG_DUMP_VARS(); NEXT(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRBlock": {
+                      "vars": [
+                        {
+                          "name": "y",
+                          "type": "TODO(dkorolev): Implement this.",
+                          "init": "2"
+                        }
+                      ],
+                      "code": [
+                        {
+                          "MaroonIRStmt": {
+                            "stmt": "{ x *= 10; y *= 10; DEBUG_DUMP_VARS(); NEXT(); }"
+                          }
+                        },
+                        {
+                          "MaroonIRBlock": {
+                            "vars": [
+                              {
+                                "name": "z",
+                                "type": "TODO(dkorolev): Implement this.",
+                                "init": "3"
+                              }
+                            ],
+                            "code": [
+                              {
+                                "MaroonIRStmt": {
+                                  "stmt": "{ x *= 10; y *= 10; z *= 10; DEBUG_DUMP_VARS(); NEXT(); }"
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "MaroonIRBlock": {
+                            "vars": [
+                              {
+                                "name": "t",
+                                "type": "TODO(dkorolev): Implement this.",
+                                "init": "4"
+                              }
+                            ],
+                            "code": [
+                              {
+                                "MaroonIRStmt": {
+                                  "stmt": "{ x *= 10; y *= 10; t *= 10; DEBUG_DUMP_VARS(); NEXT(); }"
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "MaroonIRStmt": {
+                            "stmt": "{ DONE(); }"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
               }
             }
           }
@@ -40,12 +213,24 @@
     {
       "MaroonTestCaseRunFiber": {
         "maroon": "variable",
-        "fiber": "global",
+        "fiber": "test1",
         "golden_output": [
           "a=100",
           "[a:100]",
           "[a:101]",
           "a=101"
+        ]
+      }
+    },
+    {
+      "MaroonTestCaseRunFiber": {
+        "maroon": "variable",
+        "fiber": "test2",
+        "golden_output": [
+          "[x:10]",
+          "[x:100,y:20]",
+          "[x:1000,y:200,z:30]",
+          "[x:10000,y:2000,t:40]"
         ]
       }
     }
