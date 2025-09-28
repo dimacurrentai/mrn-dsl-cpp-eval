@@ -13,14 +13,22 @@ struct ImplException : current::Exception {
   using current::Exception::Exception;
 };
 
-enum TmpNextStatus { None = 0, Next, Done };
+enum TmpNextStatus { None = 0, Next, Branch, Done };
 struct ImplResultCollector final {
   TmpNextStatus status_ = TmpNextStatus::None;
+  uint32_t idx_;
   void next() {
     if (status_ != TmpNextStatus::None) {
       CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place."));
     }
     status_ = TmpNextStatus::Next;
+  }
+  void branch(uint32_t idx) {
+    if (status_ != TmpNextStatus::None) {
+      CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted to `IF()` in the wrong place."));
+    }
+    status_ = TmpNextStatus::Branch;
+    idx_ = idx;
   }
   void done() {
     if (status_ != TmpNextStatus::None) {
@@ -176,10 +184,14 @@ struct MaroonEngine final {
           break;
         } else if (result.status() == TmpNextStatus::Next) {
           ++current_index;
+        } else if (result.status() == TmpNextStatus::Branch) {
+          current_index = result.idx_;
         } else {
           std::cerr << "Internal error: this should never happen." << std::endl;
           std::exit(1);
         }
+
+        // TODO(dkorolev): Clean up the vars here, not up there.
       }
 
       return {oss.str(), ""};

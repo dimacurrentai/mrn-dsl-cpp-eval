@@ -104,6 +104,28 @@ struct RegisterStmt final {
   }
 };
 
+struct RegisterIf final {
+  Ctx& ctx;
+
+  RegisterIf(Ctx& ctx, std::string condition, std::function<void()> yes, std::function<void()> no) : ctx(ctx) {
+    if (ctx.current_fn_blocks_stack.empty()) {
+      std::cerr << "`IF()` is only legal inside an `FN()`." << std::endl;
+      std::exit(1);
+    }
+
+    // NOTE(dkorolev): Trivially construct two blocks and then extract them.
+    yes();
+    no();
+    MaroonIRIf cond;
+    cond.cond = condition;
+    cond.no = std::move(ctx.current_fn_blocks_stack.back()->code.back());
+    ctx.current_fn_blocks_stack.back()->code.pop_back();
+    cond.yes = std::move(ctx.current_fn_blocks_stack.back()->code.back());
+    ctx.current_fn_blocks_stack.back()->code.pop_back();
+    ctx.current_fn_blocks_stack.back()->code.push_back(std::move(cond));
+  }
+};
+
 struct RegisterBlock final {
   Ctx& ctx;
   size_t save_stack_depth;

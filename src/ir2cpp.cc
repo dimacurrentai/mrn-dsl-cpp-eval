@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
           }
         }
 
-        void operator()(MaroonIRStmt const& code) {
+        void PrintHeader() {
           size_t const entry_vars = local_vars.size();
           size_t const declared_vars = next_step_init_vars.size();
 
@@ -127,8 +127,38 @@ int main(int argc, char** argv) {
           for (auto const& var : local_vars) {
             fo << "      static_cast<void>(" << var.name << ");" << std::endl;
           }
+          fo << "      ";
+        }
 
-          fo << "      " << code.stmt << std::endl << "}" << std::endl;
+        void PrintFooter() { fo << "  }" << std::endl; }
+
+        void operator()(MaroonIRStmt const& code) {
+          PrintHeader();
+          fo << code.stmt << std::endl;
+          PrintFooter();
+        }
+
+        void operator()(MaroonIRIf const& cond) {
+          size_t const step_idx = nvars.size();
+          PrintHeader();
+          fo << "      if (" << cond.cond << ") {" << std::endl;
+          fo << "        result.branch(IF_YES_" << step_idx << "());" << std::endl;
+          fo << "      } else {" << std::endl;
+          fo << "        result.branch(IF_NO_" << step_idx << "());" << std::endl;
+          fo << "      }" << std::endl;
+          PrintFooter();
+          // NOTE(dkorolev): On `yes` it will always be the next step index, but that's details.
+          fo << "  constexpr static size_t IF_YES_" << step_idx << "() { return " << nvars.size() << "; }" << std::endl;
+          cond.yes.Call(*this);
+
+          PrintHeader();
+          fo << "      result.branch(IF_DONE_" << step_idx << "());";
+          PrintFooter();
+
+          fo << "  constexpr static size_t IF_NO_" << step_idx << "() { return " << nvars.size() << "; }" << std::endl;
+          cond.no.Call(*this);
+          fo << "  constexpr static size_t IF_DONE_" << step_idx << "() { return " << nvars.size() << "; }"
+             << std::endl;
         }
 
         void operator()(MaroonIRBlock const& blk) {

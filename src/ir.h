@@ -24,13 +24,20 @@ CURRENT_STRUCT(MaroonIRVar) {
 };
 
 CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRStmt);
+CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRIf);
 CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRBlock);
-CURRENT_VARIANT(MaroonIRStmtOrBlock, MaroonIRStmt, MaroonIRBlock);
+CURRENT_VARIANT(MaroonIRStmtOrBlock, MaroonIRStmt, MaroonIRIf, MaroonIRBlock);
 
 // A piece of "O(1)" code to execute.
 // TODO(dkorolev): Handle the `AWAIT`-condition separately here, on the type system level.
 // TODO(dkorolev): As in, add fields for `await`, a variant of `await / next / done`.
 CURRENT_STRUCT(MaroonIRStmt) { CURRENT_FIELD(stmt, std::string); };
+
+CURRENT_STRUCT(MaroonIRIf) {
+  CURRENT_FIELD(cond, std::string);
+  CURRENT_FIELD(yes, MaroonIRStmtOrBlock);
+  CURRENT_FIELD(no, MaroonIRStmtOrBlock);
+};
 
 // A set of variables plus the sequence of statements, possibly nested.
 // TODO(dkorolev): We now have hoisting, like in the 1st version of JavaScript, lolwut! Fix this.

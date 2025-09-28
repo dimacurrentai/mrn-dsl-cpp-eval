@@ -1,0 +1,103 @@
+{
+  "maroon": {
+    "if_condition": {
+      "fibers": {
+        "t1": {
+          "functions": {
+            "main": {
+              "body": {
+                "vars": [
+                  {
+                    "name": "a",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "7"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRIf": {
+                      "cond": "(a < 10)",
+                      "yes": {
+                        "MaroonIRStmt": {
+                          "stmt": "{ DEBUG(\"A<10\"); NEXT(); }"
+                        }
+                      },
+                      "no": {
+                        "MaroonIRStmt": {
+                          "stmt": "{ DEBUG(\"A>=10\"); DONE(); }"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "stmt": "{ DEBUG(\"OK\"); DONE(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "t2": {
+          "functions": {
+            "main": {
+              "body": {
+                "vars": [
+                  {
+                    "name": "a",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "17"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRIf": {
+                      "cond": "(a < 10)",
+                      "yes": {
+                        "MaroonIRStmt": {
+                          "stmt": "{ DEBUG(\"A<10\"); NEXT(); }"
+                        }
+                      },
+                      "no": {
+                        "MaroonIRStmt": {
+                          "stmt": "{ DEBUG(\"A>=10\"); DONE(); }"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "stmt": "{ DEBUG(\"OK\"); DONE(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tests": [
+    {
+      "MaroonTestCaseRunFiber": {
+        "maroon": "if_condition",
+        "fiber": "t1",
+        "golden_output": [
+          "A<10",
+          "OK"
+        ]
+      }
+    },
+    {
+      "MaroonTestCaseRunFiber": {
+        "maroon": "if_condition",
+        "fiber": "t2",
+        "golden_output": [
+          "A>=10"
+        ]
+      }
+    }
+  ]
+}

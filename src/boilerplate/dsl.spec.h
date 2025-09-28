@@ -10,11 +10,20 @@
 
 #pragma once
 
+#define HLP_EMPTY_HLP_CF_TYPE_EXTRACT
+#define HLP_CF_TYPE_PASTE(x, ...) x##__VA_ARGS__
+#define HLP_CF_TYPE_PASTE2(x, ...) HLP_CF_TYPE_PASTE(x, __VA_ARGS__)
+#define HLP_CF_TYPE_EXTRACT(...) HLP_CF_TYPE_EXTRACT __VA_ARGS__
+#define NOPARENS(...) HLP_CF_TYPE_PASTE2(HLP_EMPTY_, HLP_CF_TYPE_EXTRACT __VA_ARGS__)
+
 #define MAROON(name) RegisterMaroon(ctx, #name) << [&]()
 #define FIBER(name) RegisterFiber(ctx, #name) << [&]()
 #define FN(name) RegisterFn(ctx, #name) << [&]()
 #define STMT(stmt) RegisterStmt(ctx, #stmt);
 #define BLOCK RegisterBlock(ctx) << [&]()
+
+// NOTE(dkorolev): Requires extra parentheses around (yes) and (no) in user code. Sigh.
+#define IF(cond, yes, no) RegisterIf(ctx, #cond, [&]() { NOPARENS(yes) }, [&]() { NOPARENS(no) })
 
 #define VAR(name, type, init) RegisterVar(ctx, #name, VarTypes::type, #init);
 
