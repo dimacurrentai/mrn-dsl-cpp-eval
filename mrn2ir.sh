@@ -49,8 +49,10 @@ if [ $VERIFY -eq 1 ] ; then
     cat autogen/"$IN.mrn.json.tmp"
     echo
     echo "=== ACTUAL ==="
-    echo
     cat autogen/"$IN.mrn.json"
+    echo
+    echo "=== INTERMEDIATE ==="
+    cat autogen/"$IN.mrn.h"
     echo
     exit 1
   fi
