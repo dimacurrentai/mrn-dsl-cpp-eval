@@ -23,7 +23,7 @@ MAROON(variable) {
         DEBUG_DUMP_VARS();
         NEXT();
       });
-      BLOCK({
+      BLOCK {
         VAR(y, U64, 2);
         STMT({
           x *= 10;
@@ -31,7 +31,7 @@ MAROON(variable) {
           DEBUG_DUMP_VARS();
           NEXT();
         });
-        BLOCK({
+        BLOCK {
           VAR(z, U64, 3);
           STMT({
             x *= 10;
@@ -40,8 +40,8 @@ MAROON(variable) {
             DEBUG_DUMP_VARS();
             NEXT();
           });
-        });
-        BLOCK({
+        };
+        BLOCK {
           VAR(t, U64, 4);
           STMT({
             x *= 10;
@@ -51,11 +51,11 @@ MAROON(variable) {
             DEBUG_DUMP_VARS();
             NEXT();
           });
-        });
+        };
         STMT({
           DONE();
         });
-      });
+      };
     };
   };
   // NOTE(dkorolev): These `_` tests are not run, so no need for `NEXT()`/`DONE()`, they are just to look at the JSON.
@@ -65,14 +65,14 @@ MAROON(variable) {
   };
   FIBER(_01_main_with_empty_block) {
     FN(main) {
-      BLOCK({});
+      BLOCK {};
     };
   };
   FIBER(_02_main_with_two_empty_blocks) {
     FN(main) {
-      BLOCK({
-        BLOCK({});
-      });
+      BLOCK {
+        BLOCK {};
+      };
     };
   };
   FIBER(_03_nested_blocks) {
@@ -81,12 +81,12 @@ MAROON(variable) {
       STMT({
         DEBUG_DUMP_VARS();
       });
-      BLOCK({
+      BLOCK {
         VAR(b, U64, 2);
         STMT({
           DEBUG_DUMP_VARS();
         });
-      });
+      };
       STMT({
         DEBUG_DUMP_VARS();
       });

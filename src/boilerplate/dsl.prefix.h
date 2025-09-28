@@ -126,6 +126,8 @@ struct RegisterBlock final {
     }
     ctx.current_fn_blocks_stack.pop_back();
   }
+
+  void operator<<(std::function<void()> f) { f(); }
 };
 
 enum class VarTypes {

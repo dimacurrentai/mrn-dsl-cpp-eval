@@ -14,11 +14,8 @@
 #define FIBER(name) RegisterFiber(ctx, #name) << [&]()
 #define FN(name) RegisterFn(ctx, #name) << [&]()
 #define STMT(stmt) RegisterStmt(ctx, #stmt);
-#define BLOCK(blk)                        \
-  {                                       \
-    RegisterBlock const block_scope(ctx); \
-    blk;                                  \
-  }
+#define BLOCK RegisterBlock(ctx) << [&]()
+
 #define VAR(name, type, init) RegisterVar(ctx, #name, VarTypes::type, #init);
 
 #define TEST_FIBER(maroon_name, maroon_fiber, ...) \
