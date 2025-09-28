@@ -17,16 +17,16 @@
 #define NOPARENS(...) HLP_CF_TYPE_PASTE2(HLP_EMPTY_, HLP_CF_TYPE_EXTRACT __VA_ARGS__)
 
 #define MAROON_SOURCE(s) ctx.out.src = s;
-#define MAROON(name) RegisterMaroon(ctx, #name) << [&]()
-#define FIBER(name) RegisterFiber(ctx, #name) << [&]()
-#define FN(name) RegisterFn(ctx, #name) << [&]()
-#define STMT(stmt) RegisterStmt(ctx, #stmt);
-#define BLOCK RegisterBlock(ctx) << [&]()
+#define MAROON(name) RegisterMaroon(ctx, #name, __LINE__) << [&]()
+#define FIBER(name) RegisterFiber(ctx, #name, __LINE__) << [&]()
+#define FN(name) RegisterFn(ctx, #name, __LINE__) << [&]()
+#define STMT(stmt) RegisterStmt(ctx, #stmt, __LINE__);
+#define BLOCK RegisterBlock(ctx, __LINE__) << [&]()
 
 // NOTE(dkorolev): Requires extra parentheses around (yes) and (no) in user code. Sigh.
-#define IF(cond, yes, no) RegisterIf(ctx, #cond, [&]() { NOPARENS(yes) }, [&]() { NOPARENS(no) })
+#define IF(cond, yes, no) RegisterIf(ctx, #cond, [&]() { NOPARENS(yes) }, [&]() { NOPARENS(no) }, __LINE__)
 
-#define VAR(name, type, init) RegisterVar(ctx, #name, VarTypes::type, #init);
+#define VAR(name, type, init) RegisterVar(ctx, #name, VarTypes::type, #init, __LINE__);
 
 #define TEST_FIBER(maroon_name, maroon_fiber, ...) \
   {                                                \

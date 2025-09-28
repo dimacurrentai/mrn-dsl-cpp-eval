@@ -16,7 +16,7 @@ struct Ctx final {
 struct RegisterMaroon final {
   Ctx& ctx;
 
-  RegisterMaroon(Ctx& ctx, std::string const& name) : ctx(ctx) {
+  RegisterMaroon(Ctx& ctx, std::string const& name, uint32_t line) : ctx(ctx) {
     if (ctx.out.maroon.count(name)) {
       std::cerr << "`MAROON(" << name << ")` is defined more than once." << std::endl;
       std::exit(1);
@@ -36,7 +36,7 @@ struct RegisterMaroon final {
 struct RegisterFiber final {
   Ctx& ctx;
 
-  RegisterFiber(Ctx& ctx, std::string const& name) : ctx(ctx) {
+  RegisterFiber(Ctx& ctx, std::string const& name, uint32_t line) : ctx(ctx) {
     if (!ctx.current_maroon_ptr) {
       std::cerr << "`FIBER(" << name << ")` should be defined within some `MAROON()`." << std::endl;
       std::exit(1);
@@ -61,7 +61,7 @@ struct RegisterFiber final {
 struct RegisterFn final {
   Ctx& ctx;
 
-  RegisterFn(Ctx& ctx, std::string const& name) : ctx(ctx) {
+  RegisterFn(Ctx& ctx, std::string const& name, uint32_t line) : ctx(ctx) {
     if (ctx.current_fiber_name.empty()) {
       std::cerr << "`FN(" << name << ")` should be defined within some `FIBER()`." << std::endl;
       std::exit(1);
@@ -91,7 +91,7 @@ struct RegisterFn final {
 struct RegisterStmt final {
   Ctx& ctx;
 
-  RegisterStmt(Ctx& ctx, std::string const& stmt) : ctx(ctx) {
+  RegisterStmt(Ctx& ctx, std::string const& stmt, uint32_t line) : ctx(ctx) {
     if (ctx.current_fn_blocks_stack.empty()) {
       std::cerr << "`STMT()` is only legal inside an `FN()`." << std::endl;
       std::exit(1);
@@ -107,7 +107,8 @@ struct RegisterStmt final {
 struct RegisterIf final {
   Ctx& ctx;
 
-  RegisterIf(Ctx& ctx, std::string condition, std::function<void()> yes, std::function<void()> no) : ctx(ctx) {
+  RegisterIf(Ctx& ctx, std::string condition, std::function<void()> yes, std::function<void()> no, uint32_t line)
+      : ctx(ctx) {
     if (ctx.current_fn_blocks_stack.empty()) {
       std::cerr << "`IF()` is only legal inside an `FN()`." << std::endl;
       std::exit(1);
@@ -130,7 +131,7 @@ struct RegisterBlock final {
   Ctx& ctx;
   size_t save_stack_depth;
 
-  RegisterBlock(Ctx& ctx) : ctx(ctx) {
+  RegisterBlock(Ctx& ctx, uint32_t line) : ctx(ctx) {
     if (ctx.current_fn_blocks_stack.empty()) {
       std::cerr << "`BLOCK()` is only legal inside an `FN()`." << std::endl;
       std::exit(1);
@@ -156,7 +157,8 @@ enum class VarTypes {
   U64,
 };
 
-inline void RegisterVar(Ctx& ctx, std::string const& name, VarTypes type, std::string const& init_as_string) {
+inline void RegisterVar(
+    Ctx& ctx, std::string const& name, VarTypes type, std::string const& init_as_string, uint32_t line) {
   if (ctx.current_fn_blocks_stack.empty()) {
     std::cerr << "`VAR()` is only legal inside an `FN()`." << std::endl;
     std::exit(1);
