@@ -15,25 +15,38 @@
 #include "../current/typesystem/struct.h"
 #include "../current/typesystem/variant.h"
 
-// TODO(dkorolev): MOVE TO GENERATOR CODE!
-// #include "current/typesystem/serialization/json.h"
-
 // TODO(dkorolev): Add a `make` target to generate the `.md` describing this schema.
-// TODO(dkorolev): Add git hooks and a GitHub action to validate that everything is autogen'd properly.
 
-CURRENT_STRUCT(MaroonIRCodeStatement) {
-  // NOTE(dkorolev): This `code` is the "compilable" code that we do not validate yet.
-  // NOTE(dkorolev): It mirrors and extends the `RustBlock` by @akantsevoi.
-  CURRENT_FIELD(code, std::string);
-
-  CURRENT_CONSTRUCTOR(MaroonIRCodeStatement)(std::string code = "") : code(std::move(code)) {}
+CURRENT_STRUCT(MaroonIRVar) {
+  CURRENT_FIELD(name, std::string);
+  CURRENT_FIELD(type, std::string);  // NOTE(dkorolev): Would love to `enum` this somehow.
+  CURRENT_FIELD(init, std::string);  // NOTE(dkorolev): Not sure I like this as `string`, but works for now.
 };
 
-// TODO(dkorolev): Add more statement types.
-CURRENT_VARIANT(MaroonIRStatement, MaroonIRCodeStatement);
+CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRNop);
+CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRCode);
+CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRBlock);
+CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRSeq);
+CURRENT_VARIANT(MaroonIRStatement, MaroonIRNop, MaroonIRCode, MaroonIRBlock, MaroonIRSeq);
+
+// An "empty body of code", mostly to make the generating code simpler.
+CURRENT_STRUCT(MaroonIRNop){};
+
+// A piece of "O(1)" code to execute.
+// TODO(dkorolev): Perhaps handle the `AWAIT`-condition separately here.
+CURRENT_STRUCT(MaroonIRCode) { CURRENT_FIELD(code, std::string); };
+
+// A code statement with variables declared within it.
+CURRENT_STRUCT(MaroonIRBlock) {
+  CURRENT_FIELD(vars, std::vector<MaroonIRVar>);
+  CURRENT_FIELD(stmt, MaroonIRStatement);
+};
+
+// A sequence of statements.
+CURRENT_STRUCT(MaroonIRSeq) { CURRENT_FIELD(seq, std::vector<MaroonIRStatement>); };
 
 // TODO(dkorolev): Wrap this into a `CURRENT_STRUCT`, it has arguments!
-using MaroonIRFunction = std::vector<MaroonIRStatement>;
+using MaroonIRFunction = MaroonIRStatement;
 
 CURRENT_STRUCT(MaroonIRFiber) {
   // TODO(dkorolev): Heap.

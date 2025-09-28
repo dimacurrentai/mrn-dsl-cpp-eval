@@ -9,12 +9,6 @@
 
 #include "../current/bricks/exception.h"
 
-// TODO(dkorolev): Populate this. Enumerators? Strings/names?
-struct ImplMaroon {
- protected:
-  ~ImplMaroon() = default;
-};
-
 struct ImplException : current::Exception {
   using current::Exception::Exception;
 };
@@ -42,49 +36,100 @@ struct ImplResultCollector final {
   }
 };
 
+// TODO(dkorolev): Support different variable types =) and overall the Maroon stack here.
+struct ImplVar final {
+  std::string name;
+  uint64_t value;
+};
+
 struct ImplEnv final {
   std::ostream& os_;
+  std::vector<ImplVar> vars_;
 
   explicit ImplEnv(std::ostream& os) : os_(os) {}
 
-  void debug(std::string s) {
-    std::cerr << "Impl DEBUG: " << s << std::endl;
+  template <typename T>
+  void debug(T&& v, char const* const file, int line) {
+    std::ostringstream oss;
+    oss << std::forward<T>(v);
+    std::string const s = oss.str();
+    std::cerr << "Impl DEBUG: " << s << " @ " << file << ':' << line << std::endl;
     // TODO(dkorolev): Tick index / time.
     os_ << s << std::endl;
   }
+
+  template <typename T>
+  void debug_expr(char const* const expr, T&& v, char const* const file, int line) {
+    std::ostringstream oss;
+    oss << expr << '=' << std::forward<T>(v);
+    std::string const s = oss.str();
+    std::cerr << "Impl DEBUG: " << s << " @ " << file << ':' << line << std::endl;
+    // TODO(dkorolev): Tick index / time.
+    os_ << s << std::endl;
+  }
+
+  void debug_dump_vars(char const* const file, int line) {
+    std::ostringstream oss;
+    oss << '[';
+    bool first = true;
+    for (auto const& v : vars_) {
+      if (first) {
+        first = false;
+      } else {
+        oss << ',';
+      }
+      oss << v.name << ':' << v.value;
+    }
+    oss << ']';
+    std::string const s = oss.str();
+    std::cerr << "Impl VARS: " << s << " @ " << file << ':' << line << std::endl;
+    // TODO(dkorolev): Tick index / time.
+    os_ << s << std::endl;
+  }
+
+  // TODO(dkorolev): Templated types for vars!
+  void DeclareVar(size_t idx, std::string name, uint64_t init) {
+    if (idx != vars_.size()) {
+      std::cerr << "Internal invariant error: corrupted stack." << std::endl;
+      std::exit(1);
+    }
+    ImplVar var;
+    var.name = std::move(name);
+    var.value = init;
+    vars_.push_back(std::move(var));
+  }
+
+  uint64_t& AccessVar(size_t idx, char const* const name) {
+    if (idx >= vars_.size()) {
+      std::cerr << "Internal invariant error: var out of stack." << std::endl;
+      std::exit(1);
+    }
+    if (vars_[idx].name != name) {
+      std::cerr << "Internal invariant error: corrupted stack, at index " << idx << " expecting var " << name
+                << ", have var " << vars_[idx].name << std::endl;
+      std::exit(1);
+    }
+    return vars_[idx].value;
+  }
 };
 
-struct ImplStatement final {
-  using stmt_t = std::function<void(ImplEnv&, ImplResultCollector&)>;
+using step_function_t = void (*)(ImplEnv& env, ImplResultCollector& result);
+using vars_function_t = void (*)(ImplEnv& env);
 
-  stmt_t stmt_;
-  ImplStatement(stmt_t stmt) : stmt_(std::move(stmt)) {}
+struct MaroonStep final {
+  step_function_t code;
+  size_t num_vars_available_before_step;
+  size_t num_vars_declared_for_step;
+  vars_function_t new_vars;
 };
 
-// NOTE(dkorolev): In macros expansion, `clang-format` decouples the `&` from the type. Undesirable.
-// clang-format off
-#define ImplStmt(body) \
-  ImplStatement([](ImplEnv& env, ImplResultCollector& result) body)
-// clang-format on
-
-// TODO(dkorolev): Add "death" tests that require `.next()`, `.done()`, etc.
-#define DEBUG(s) env.debug(s)
+#define DEBUG(s) env.debug(s, __FILE__, __LINE__)
+#define DEBUG_EXPR(s) env.debug_expr(#s, s, __FILE__, __LINE__)
+#define DEBUG_DUMP_VARS() env.debug_dump_vars(__FILE__, __LINE__)
 #define NEXT() result.next()
 #define DONE() result.done()
 
-// TODO(dkorolev): Heap type? Stack types and subtypes? List of functions?
-struct ImplFiber {
- protected:
-  ~ImplFiber() = default;
-};
-
-struct ImplFunction {
-  std::vector<ImplStatement> body_;
-  ImplFunction(std::vector<ImplStatement> body) : body_(std::move(body)) {}
-
- protected:
-  ~ImplFunction() = default;
-};
+enum class MaronStateIndex : uint32_t;
 
 template <class T_MAROON>
 struct MaroonEngine final {
@@ -93,25 +138,47 @@ struct MaroonEngine final {
       std::ostringstream oss;
       ImplEnv env(oss);
 
+      static_assert(T_MAROON::kIsMaroon);
+      using T_FIBER = typename T_MAROON::global;
+
       // NOTE(dkorolev): This will not compile if there's no `main` in the `global` fiber.
-      typename T_MAROON::global::main main;
-      ImplFunction& main_fiber = main;
+      static_assert(T_FIBER::kIsFiber);
 
       // TODO(dkorolev): Proper engine =)
-      size_t current_index = 0u;
+      auto current_index = static_cast<size_t>(T_FIBER::main);
       while (true) {
-        if (current_index >= main_fiber.body_.size()) {
+        if (current_index >= T_FIBER::kStepsCount) {
           CURRENT_THROW(ImplException("NEXT() out of bounds."));
         }
-        ImplStatement& stmt = main_fiber.body_[current_index];
+        MaroonStep const& step = T_FIBER::kSteps[current_index];
+
+        if (env.vars_.size() < step.num_vars_available_before_step) {
+          std::cerr << "Internal invariant failed: pre-step vars count mismatch." << std::endl;
+          std::exit(1);
+        }
+
+        if (env.vars_.size() > step.num_vars_available_before_step) {
+          // Destruct what is no longer needed.
+          env.vars_.resize(step.num_vars_available_before_step);
+        }
+
+        step.new_vars(env);
+
+        if (env.vars_.size() != step.num_vars_available_before_step + step.num_vars_declared_for_step) {
+          std::cerr << "Internal invariant failed: intra-step vars count mismatch." << std::endl;
+          std::exit(1);
+        }
 
         ImplResultCollector result;
-        stmt.stmt_(env, result);
+        step.code(env, result);
 
         if (result.status() == TmpNextStatus::Done) {
           break;
-        } else {
+        } else if (result.status() == TmpNextStatus::Next) {
           ++current_index;
+        } else {
+          std::cerr << "Internal error: this should never happen." << std::endl;
+          std::exit(1);
         }
       }
 

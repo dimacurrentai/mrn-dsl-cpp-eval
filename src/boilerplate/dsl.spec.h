@@ -14,6 +14,12 @@
 #define FIBER(name) RegisterFiber(ctx, #name) << [&]()
 #define FN(name) RegisterFn(ctx, #name) << [&]()
 #define STMT(stmt) RegisterStmt(ctx, #stmt);
+#define BLOCK(blk)                        \
+  {                                       \
+    RegisterBlock const block_scope(ctx); \
+    blk;                                  \
+  }
+#define VAR(name, type, init) RegisterVar(ctx, #name, VarTypes::type, #init);
 
 #define TEST_SIMPLE_RUN(maroon_name, ...)           \
   {                                                 \

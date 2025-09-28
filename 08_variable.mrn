@@ -1,0 +1,27 @@
+MAROON(variable) {
+  FIBER(global) {
+    FN(main) {
+      VAR(a, U64, 100);
+      STMT({
+        DEBUG_EXPR(a);
+        DEBUG_DUMP_VARS();
+        a = a+1;
+        DEBUG_DUMP_VARS();
+        NEXT();
+      });
+      STMT({
+        DEBUG_EXPR(a);
+        DONE();
+      });
+    };
+  };
+};
+
+TEST_SIMPLE_RUN(
+  variable,
+  {
+    {0, "a=100"},
+    {0, "[a:100]"},
+    {0, "[a:101]"},
+    {0, "a=101"},
+  })

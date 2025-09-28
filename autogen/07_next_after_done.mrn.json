@@ -4,13 +4,11 @@
       "fibers": {
         "global": {
           "functions": {
-            "main": [
-              {
-                "MaroonIRCodeStatement": {
-                  "code": "{ DEBUG(\"hang on tight ...\"); DONE(); NEXT(); }"
-                }
+            "main": {
+              "MaroonIRCode": {
+                "code": "{ DEBUG(\"hang on tight ...\"); DONE(); NEXT(); }"
               }
-            ]
+            }
           }
         }
       }

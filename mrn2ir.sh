@@ -69,5 +69,8 @@ fi
 
 # Remove the now-unneeded "original" files.
 rm -f "autogen/$IN.mrn.bin"
-rm -f "autogen/$IN.mrn.cc"
-rm -f "autogen/$IN.mrn.h"
+
+# NOTE(dkorolev): Examinine these now.
+# TODO(dkorolev): Remove them later.
+# rm -f "autogen/$IN.mrn.gen.cc"
+# rm -f "autogen/$IN.mrn.gen.h"
