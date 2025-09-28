@@ -39,6 +39,7 @@ cp src/boilerplate/dsl.prefix.h autogen/"$IN.mrn.cc"
 
 # Run the preprocessor on this IR-generating code to turn it into what will build to ultimately produce the JSON IR.
 echo '#include "../src/boilerplate/dsl.spec.h"' >"autogen/$IN.mrn.h"
+echo 'MAROON_SOURCE("'$IN.mrn'");' >>"autogen/$IN.mrn.h"
 cat "$IN.mrn" >>"autogen/$IN.mrn.h"
 g++ -E "autogen/$IN.mrn.h" 2>/dev/null | grep -v '^#' | grep -v '^$' >>autogen/"$IN.mrn.cc"
 echo -e "  ;\n  std::cout << JSON<JSONFormat::Minimalistic>(ctx.out) << std::endl;\n}" >>autogen/"$IN.mrn.cc"

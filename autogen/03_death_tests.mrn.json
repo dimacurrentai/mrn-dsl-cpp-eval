@@ -1,4 +1,5 @@
 {
+  "src": "03_death_tests.mrn",
   "maroon": {
     "done_after_next": {
       "fibers": {

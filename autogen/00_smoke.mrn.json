@@ -1,4 +1,5 @@
 {
+  "src": "00_smoke.mrn",
   "maroon": {
     "code": {
       "fibers": {

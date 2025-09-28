@@ -16,6 +16,7 @@
 #define HLP_CF_TYPE_EXTRACT(...) HLP_CF_TYPE_EXTRACT __VA_ARGS__
 #define NOPARENS(...) HLP_CF_TYPE_PASTE2(HLP_EMPTY_, HLP_CF_TYPE_EXTRACT __VA_ARGS__)
 
+#define MAROON_SOURCE(s) ctx.out.src = s;
 #define MAROON(name) RegisterMaroon(ctx, #name) << [&]()
 #define FIBER(name) RegisterFiber(ctx, #name) << [&]()
 #define FN(name) RegisterFn(ctx, #name) << [&]()

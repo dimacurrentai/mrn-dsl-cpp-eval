@@ -78,6 +78,7 @@ CURRENT_STRUCT(MaroonTestCaseFiberShouldThrow) {
 CURRENT_VARIANT(MaroonTestCase, MaroonTestCaseRunFiber, MaroonTestCaseFiberShouldThrow);
 
 CURRENT_STRUCT(MaroonIRScenarios) {
+  CURRENT_FIELD(src, std::string);
   CURRENT_FIELD(maroon, (std::map<std::string, MaroonIRNamespace>));
   CURRENT_FIELD(tests, std::vector<MaroonTestCase>);
 };
