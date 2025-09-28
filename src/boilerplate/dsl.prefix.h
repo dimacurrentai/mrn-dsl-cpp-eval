@@ -95,7 +95,7 @@ struct RegisterFn final {
 struct RegisterStmt final {
   Ctx& ctx;
 
-  RegisterStmt(Ctx& ctx, std::string const& stmt, uint32_t line) : ctx(ctx) {
+  RegisterStmt(Ctx& ctx, uint32_t line, std::string const& stmt) : ctx(ctx) {
     if (ctx.current_fn_blocks_stack.empty()) {
       std::cerr << "`STMT()` is only legal inside an `FN()`." << std::endl;
       std::exit(1);

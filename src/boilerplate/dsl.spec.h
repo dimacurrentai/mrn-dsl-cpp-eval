@@ -20,7 +20,7 @@
 #define MAROON(name) RegisterMaroon(ctx, #name, __LINE__) << [&]()
 #define FIBER(name) RegisterFiber(ctx, #name, __LINE__) << [&]()
 #define FN(name) RegisterFn(ctx, #name, __LINE__) << [&]()
-#define STMT(stmt) RegisterStmt(ctx, #stmt, __LINE__);
+#define STMT(stmt) RegisterStmt(ctx, __LINE__, #stmt);
 #define BLOCK RegisterBlock(ctx, __LINE__) << [&]()
 
 // NOTE(dkorolev): Requires extra parentheses around (yes) and (no) in user code. Sigh.
