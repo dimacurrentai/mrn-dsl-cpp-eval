@@ -11,4 +11,4 @@ MAROON(faulty_next) {
   };
 };
 
-TEST_FIBER_SHOULD_THROW(faulty_next, global, NEXT() out of bounds.");
+TEST_FIBER_SHOULD_THROW(faulty_next, global, "NEXT() out of bounds.");

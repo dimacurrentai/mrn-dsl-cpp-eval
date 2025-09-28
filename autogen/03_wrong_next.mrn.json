@@ -21,5 +21,13 @@
       }
     }
   },
-  "tests": []
+  "tests": [
+    {
+      "MaroonTestCaseFiberShouldThrow": {
+        "maroon": "faulty_next",
+        "fiber": "global",
+        "error": "NEXT() out of bounds."
+      }
+    }
+  ]
 }
