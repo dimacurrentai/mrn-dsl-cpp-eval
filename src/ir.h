@@ -18,6 +18,7 @@
 // TODO(dkorolev): Add a `make` target to generate the `.md` describing this schema.
 
 CURRENT_STRUCT(MaroonIRVar) {
+  CURRENT_FIELD(line, uint32_t);
   CURRENT_FIELD(name, std::string);
   CURRENT_FIELD(type, std::string);  // NOTE(dkorolev): Would love to `enum` this somehow.
   CURRENT_FIELD(init, std::string);  // NOTE(dkorolev): Not sure I like this as `string`, but works for now.
@@ -31,9 +32,13 @@ CURRENT_VARIANT(MaroonIRStmtOrBlock, MaroonIRStmt, MaroonIRIf, MaroonIRBlock);
 // A piece of "O(1)" code to execute.
 // TODO(dkorolev): Handle the `AWAIT`-condition separately here, on the type system level.
 // TODO(dkorolev): As in, add fields for `await`, a variant of `await / next / done`.
-CURRENT_STRUCT(MaroonIRStmt) { CURRENT_FIELD(stmt, std::string); };
+CURRENT_STRUCT(MaroonIRStmt) {
+  CURRENT_FIELD(line, uint32_t);
+  CURRENT_FIELD(stmt, std::string);
+};
 
 CURRENT_STRUCT(MaroonIRIf) {
+  CURRENT_FIELD(line, uint32_t);
   CURRENT_FIELD(cond, std::string);
   CURRENT_FIELD(yes, MaroonIRStmtOrBlock);
   CURRENT_FIELD(no, MaroonIRStmtOrBlock);
@@ -42,21 +47,25 @@ CURRENT_STRUCT(MaroonIRIf) {
 // A set of variables plus the sequence of statements, possibly nested.
 // TODO(dkorolev): We now have hoisting, like in the 1st version of JavaScript, lolwut! Fix this.
 CURRENT_STRUCT(MaroonIRBlock) {
+  CURRENT_FIELD(line, uint32_t);
   CURRENT_FIELD(vars, std::vector<MaroonIRVar>);
   CURRENT_FIELD(code, std::vector<MaroonIRStmtOrBlock>);
 };
 
 CURRENT_STRUCT(MaroonIRFunction) {
+  CURRENT_FIELD(line, uint32_t);
   // TODO(dkorolev): Parameters, as extra "vars".
   CURRENT_FIELD(body, MaroonIRBlock);
 };
 
 CURRENT_STRUCT(MaroonIRFiber) {
+  CURRENT_FIELD(line, uint32_t);
   // TODO(dkorolev): Heap type.
   CURRENT_FIELD(functions, (std::map<std::string, MaroonIRFunction>));
 };
 
 CURRENT_STRUCT(MaroonIRNamespace) {
+  CURRENT_FIELD(line, uint32_t);
   // TODO(dkorolev): Support types, heaps, etc.
   // CURRENT_FIELD(types, ...);
   // NOTE(dkorolev): The `global` fiber should absolutely exist, others optional.
@@ -64,12 +73,14 @@ CURRENT_STRUCT(MaroonIRNamespace) {
 };
 
 CURRENT_STRUCT(MaroonTestCaseRunFiber) {
+  CURRENT_FIELD(line, uint32_t);
   CURRENT_FIELD(maroon, std::string);
   CURRENT_FIELD(fiber, std::string);
   CURRENT_FIELD(golden_output, std::vector<std::string>);
 };
 
 CURRENT_STRUCT(MaroonTestCaseFiberShouldThrow) {
+  CURRENT_FIELD(line, uint32_t);
   CURRENT_FIELD(maroon, std::string);
   CURRENT_FIELD(fiber, std::string);
   CURRENT_FIELD(error, std::string);

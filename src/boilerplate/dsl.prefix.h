@@ -23,6 +23,7 @@ struct RegisterMaroon final {
     }
     ctx.current_maroon_ptr = &ctx.out.maroon[name];
     ctx.current_maroon_name = name;
+    ctx.current_maroon_ptr->line = line;
   }
 
   ~RegisterMaroon() {
@@ -48,6 +49,7 @@ struct RegisterFiber final {
     }
     ctx.current_fiber_ptr = &ctx.current_maroon_ptr->fibers[name];
     ctx.current_fiber_name = name;
+    ctx.current_fiber_ptr->line = line;
   }
 
   ~RegisterFiber() {
@@ -73,6 +75,8 @@ struct RegisterFn final {
     }
     MaroonIRFunction& fn = ctx.current_fiber_ptr->functions[name];
     ctx.current_function_name = name;
+    fn.line = line;
+    fn.body.line = line;
     ctx.current_fn_blocks_stack.clear();
     ctx.current_fn_blocks_stack.push_back(&fn.body);
   }
@@ -98,6 +102,7 @@ struct RegisterStmt final {
     }
 
     MaroonIRStmt obj;
+    obj.line = line;
     obj.stmt = stmt;
 
     ctx.current_fn_blocks_stack.back()->code.push_back(std::move(obj));
@@ -118,6 +123,7 @@ struct RegisterIf final {
     yes();
     no();
     MaroonIRIf cond;
+    cond.line = line;
     cond.cond = condition;
     cond.no = std::move(ctx.current_fn_blocks_stack.back()->code.back());
     ctx.current_fn_blocks_stack.back()->code.pop_back();
@@ -137,7 +143,9 @@ struct RegisterBlock final {
       std::exit(1);
     }
 
-    ctx.current_fn_blocks_stack.back()->code.push_back(MaroonIRBlock());
+    MaroonIRBlock blk;
+    blk.line = line;
+    ctx.current_fn_blocks_stack.back()->code.push_back(std::move(blk));
     ctx.current_fn_blocks_stack.push_back(&Value<MaroonIRBlock>(ctx.current_fn_blocks_stack.back()->code.back()));
     save_stack_depth = ctx.current_fn_blocks_stack.size();
   }
@@ -165,6 +173,7 @@ inline void RegisterVar(
   }
 
   MaroonIRVar var;
+  var.line = line;
   var.name = name;
   var.type = "TODO(dkorolev): Implement this.";
   var.init = init_as_string;

@@ -2,15 +2,20 @@
   "src": "00_smoke.mrn",
   "maroon": {
     "code": {
+      "line": 3,
       "fibers": {
         "global": {
+          "line": 4,
           "functions": {
             "main": {
+              "line": 5,
               "body": {
+                "line": 5,
                 "vars": [],
                 "code": [
                   {
                     "MaroonIRStmt": {
+                      "line": 11,
                       "stmt": "{ DEBUG(\"hello\"); DONE(); }"
                     }
                   }
@@ -25,6 +30,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
+        "line": 19,
         "maroon": "code",
         "fiber": "global",
         "golden_output": [
