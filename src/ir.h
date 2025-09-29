@@ -15,58 +15,85 @@
 #include "../current/typesystem/struct.h"
 #include "../current/typesystem/variant.h"
 
-// TODO(dkorolev): MOVE TO GENERATOR CODE!
-// #include "current/typesystem/serialization/json.h"
-
 // TODO(dkorolev): Add a `make` target to generate the `.md` describing this schema.
-// TODO(dkorolev): Add git hooks and a GitHub action to validate that everything is autogen'd properly.
 
-CURRENT_STRUCT(MaroonIRCodeStatement) {
-  // NOTE(dkorolev): This `code` is the "compilable" code that we do not validate yet.
-  // NOTE(dkorolev): It mirrors and extends the `RustBlock` by @akantsevoi.
-  CURRENT_FIELD(code, std::string);
-
-  CURRENT_CONSTRUCTOR(MaroonIRCodeStatement)(std::string code = "") : code(std::move(code)) {}
+CURRENT_STRUCT(MaroonIRVar) {
+  CURRENT_FIELD(line, uint32_t);
+  CURRENT_FIELD(name, std::string);
+  CURRENT_FIELD(type, std::string);  // NOTE(dkorolev): Would love to `enum` this somehow.
+  CURRENT_FIELD(init, std::string);  // NOTE(dkorolev): Not sure I like this as `string`, but works for now.
 };
 
-// TODO(dkorolev): Add more statement types.
-CURRENT_VARIANT(MaroonIRStatement, MaroonIRCodeStatement);
+CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRStmt);
+CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRIf);
+CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRBlock);
+CURRENT_STRUCT(MaroonIRBlockPlaceholder) {  // NOTE(dkorolev): To avoid pointers.
+  CURRENT_FIELD(line, uint32_t);
+  CURRENT_FIELD(_idx, uint32_t);
+};
+CURRENT_VARIANT(MaroonIRStmtOrBlock, MaroonIRStmt, MaroonIRIf, MaroonIRBlock, MaroonIRBlockPlaceholder);
 
-// TODO(dkorolev): Wrap this into a `CURRENT_STRUCT`, it has arguments!
-using MaroonIRFunction = std::vector<MaroonIRStatement>;
+// A piece of "O(1)" code to execute.
+// TODO(dkorolev): Handle the `AWAIT`-condition separately here, on the type system level.
+// TODO(dkorolev): As in, add fields for `await`, a variant of `await / next / done`.
+CURRENT_STRUCT(MaroonIRStmt) {
+  CURRENT_FIELD(line, uint32_t);
+  CURRENT_FIELD(stmt, std::string);
+};
+
+CURRENT_STRUCT(MaroonIRIf) {
+  CURRENT_FIELD(line, uint32_t);
+  CURRENT_FIELD(cond, std::string);
+  CURRENT_FIELD(yes, MaroonIRStmtOrBlock);
+  CURRENT_FIELD(no, MaroonIRStmtOrBlock);
+};
+
+// A set of variables plus the sequence of statements, possibly nested.
+// TODO(dkorolev): We now have hoisting, like in the 1st version of JavaScript, lolwut! Fix this.
+CURRENT_STRUCT(MaroonIRBlock) {
+  CURRENT_FIELD(line, uint32_t);
+  CURRENT_FIELD(vars, std::vector<MaroonIRVar>);
+  CURRENT_FIELD(code, std::vector<MaroonIRStmtOrBlock>);
+};
+
+CURRENT_STRUCT(MaroonIRFunction) {
+  CURRENT_FIELD(line, uint32_t);
+  // TODO(dkorolev): Parameters, as extra "vars".
+  CURRENT_FIELD(body, MaroonIRBlock);
+};
 
 CURRENT_STRUCT(MaroonIRFiber) {
-  // TODO(dkorolev): Heap.
+  CURRENT_FIELD(line, uint32_t);
+  // TODO(dkorolev): Heap type.
   CURRENT_FIELD(functions, (std::map<std::string, MaroonIRFunction>));
 };
 
 CURRENT_STRUCT(MaroonIRNamespace) {
+  CURRENT_FIELD(line, uint32_t);
   // TODO(dkorolev): Support types, heaps, etc.
   // CURRENT_FIELD(types, ...);
   // NOTE(dkorolev): The `global` fiber should absolutely exist, others optional.
   CURRENT_FIELD(fibers, (std::map<std::string, MaroonIRFiber>));
 };
 
-CURRENT_STRUCT(MaroonDebugStatement) {
-  CURRENT_FIELD(ts, uint64_t);
-  CURRENT_FIELD(msg, std::string);
+CURRENT_STRUCT(MaroonTestCaseRunFiber) {
+  CURRENT_FIELD(line, uint32_t);
+  CURRENT_FIELD(maroon, std::string);
+  CURRENT_FIELD(fiber, std::string);
+  CURRENT_FIELD(golden_output, std::vector<std::string>);
 };
 
-CURRENT_STRUCT(MaroonTestCaseSimple) {
-  // TODO(dkorolev): Add logical timestamps here.
+CURRENT_STRUCT(MaroonTestCaseFiberShouldThrow) {
+  CURRENT_FIELD(line, uint32_t);
   CURRENT_FIELD(maroon, std::string);
-  CURRENT_FIELD(debug_statements, std::vector<MaroonDebugStatement>);
-};
-
-CURRENT_STRUCT(MaroonTestCaseShouldThrow) {
-  CURRENT_FIELD(maroon, std::string);
+  CURRENT_FIELD(fiber, std::string);
   CURRENT_FIELD(error, std::string);
 };
 
-// TODO(dkorolev): Support more complex testing.
-CURRENT_VARIANT(MaroonTestCase, MaroonTestCaseSimple, MaroonTestCaseShouldThrow);
+CURRENT_VARIANT(MaroonTestCase, MaroonTestCaseRunFiber, MaroonTestCaseFiberShouldThrow);
 
 CURRENT_STRUCT(MaroonIRScenarios) {
+  CURRENT_FIELD(src, std::string);
   CURRENT_FIELD(maroon, (std::map<std::string, MaroonIRNamespace>));
   CURRENT_FIELD(tests, std::vector<MaroonTestCase>);
 };

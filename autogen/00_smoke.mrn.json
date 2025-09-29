@@ -1,16 +1,27 @@
 {
+  "src": "00_smoke.mrn",
   "maroon": {
     "code": {
+      "line": 3,
       "fibers": {
         "global": {
+          "line": 4,
           "functions": {
-            "main": [
-              {
-                "MaroonIRCodeStatement": {
-                  "code": "{ DEBUG(\"hello\"); DONE(); }"
-                }
+            "main": {
+              "line": 5,
+              "body": {
+                "line": 5,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 11,
+                      "stmt": "{ DEBUG(\"hello\"); DONE(); }"
+                    }
+                  }
+                ]
               }
-            ]
+            }
           }
         }
       }
@@ -18,13 +29,12 @@
   },
   "tests": [
     {
-      "MaroonTestCaseSimple": {
+      "MaroonTestCaseRunFiber": {
+        "line": 19,
         "maroon": "code",
-        "debug_statements": [
-          {
-            "ts": 0,
-            "msg": "hello"
-          }
+        "fiber": "global",
+        "golden_output": [
+          "hello"
         ]
       }
     }

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -e -o pipefail
 
 VERIFY=0
 if [ "$2" == "--verify" ] ; then
@@ -11,13 +11,6 @@ fi
 JQ="cat"
 if jq --version >/dev/null 2>&1 ; then
   JQ="jq ."
-fi
-
-CLANG_FORMAT=""
-if clang-format --version >/dev/null 2>&1 ; then
-  CLANG_FORMAT="clang-format"
-elif clang-format-10 --version >/dev/null 2>&1 ; then
-  CLANG_FORMAT="clang-format-10"
 fi
 
 if [ "$1" == "" ] ; then
@@ -39,27 +32,66 @@ cp src/boilerplate/dsl.prefix.h autogen/"$IN.mrn.cc"
 
 # Run the preprocessor on this IR-generating code to turn it into what will build to ultimately produce the JSON IR.
 echo '#include "../src/boilerplate/dsl.spec.h"' >"autogen/$IN.mrn.h"
+echo 'MAROON_SOURCE("'$IN.mrn'");' >>"autogen/$IN.mrn.h"
+echo '#line 1' >>"autogen/$IN.mrn.h"
 cat "$IN.mrn" >>"autogen/$IN.mrn.h"
 g++ -E "autogen/$IN.mrn.h" 2>/dev/null | grep -v '^#' | grep -v '^$' >>autogen/"$IN.mrn.cc"
 echo -e "  ;\n  std::cout << JSON<JSONFormat::Minimalistic>(ctx.out) << std::endl;\n}" >>autogen/"$IN.mrn.cc"
 
-if [ "$CLANG_FORMAT" != "" ] ; then
-  $CLANG_FORMAT -i autogen/"$IN.mrn.cc"
+# Build and run the source file that was just put together to generate the JSON IR.
+if ! g++ -std=c++17 autogen/"$IN.mrn.cc" -o autogen/"$IN.mrn.bin" ; then
+  echo "Failed to build."
+  exit 1
 fi
 
-# Build and run the source file that was just put together to generate the JSON IR.
-g++ -std=c++17 autogen/"$IN.mrn.cc" -o autogen/"$IN.mrn.bin" && autogen/"$IN.mrn.bin" | $JQ > autogen/"$IN.mrn.json.tmp"
+autogen/"$IN.mrn.bin" | $JQ > autogen/"$IN.mrn.json.tmp"
 
 if [ $VERIFY -eq 1 ] ; then
   if ! autogen/diff_ir.bin --a autogen/"$IN.mrn.json.tmp" -b autogen/"$IN.mrn.json" ; then
     echo "With $IN.mrn:"
     echo
-    echo "=== EXPECTED ==="
+    echo "=== GENERATED ==="
     cat autogen/"$IN.mrn.json.tmp"
     echo
-    echo "=== ACTUAL ==="
-    echo
+    echo "=== IN THE REPO ==="
     cat autogen/"$IN.mrn.json"
+    echo
+    echo "=== INTERMEDIATE ==="
+    cat autogen/"$IN.mrn.h"
+    echo
+    echo "=== DEBUG 1 ==="
+    g++ -E "autogen/$IN.mrn.h" 2>/dev/null | grep -v '^#' | grep -v '^$'
+    echo
+    echo "=== DEBUG 2 ==="
+    echo '#include "../src/boilerplate/dsl.spec.h"' >"autogen/$IN.mrn.h"
+    echo 'MAROON_SOURCE("'$IN.mrn'");' >>"autogen/$IN.mrn.h"
+    echo '#line 1' >>"autogen/$IN.mrn.h"
+    cat "$IN.mrn" >>"autogen/$IN.mrn.h"
+    cp src/boilerplate/dsl.prefix.h autogen/"$IN.mrn.cc"
+    g++ -E "autogen/$IN.mrn.h" 2>/dev/null | grep -v '^#' | grep -v '^$' >>autogen/"$IN.mrn.cc"
+    echo -e "  ;\n  std::cout << JSON<JSONFormat::Minimalistic>(ctx.out) << std::endl;\n}" >>autogen/"$IN.mrn.cc"
+    cat autogen/"$IN.mrn.cc"
+    echo
+    echo "=== DEBUG 3 ==="
+    CLANG_FORMAT=""
+    if clang-format --version >/dev/null 2>&1 ; then
+      CLANG_FORMAT="clang-format"
+    elif clang-format-10 --version >/dev/null 2>&1 ; then
+      CLANG_FORMAT="clang-format-10"
+    fi
+    if [ "$CLANG_FORMAT" != "" ] ; then
+      $CLANG_FORMAT -i autogen/"$IN.mrn.cc"
+    fi
+    cat autogen/"$IN.mrn.cc"
+    echo
+    echo "=== DEBUG 4 ==="
+    g++ -std=c++17 autogen/"$IN.mrn.cc" -o autogen/"$IN.mrn.tmp.bin" && echo "Build successful."
+    echo
+    echo "=== RE-GENERATED ==="
+    autogen/"$IN.mrn.tmp.bin"
+    echo
+    echo "=== RE-GENERATED II ==="
+    autogen/"$IN.mrn.tmp.bin" | $JQ
     echo
     exit 1
   fi
@@ -69,5 +101,8 @@ fi
 
 # Remove the now-unneeded "original" files.
 rm -f "autogen/$IN.mrn.bin"
-rm -f "autogen/$IN.mrn.cc"
-rm -f "autogen/$IN.mrn.h"
+
+# NOTE(dkorolev): Examinine these now.
+# TODO(dkorolev): Remove them later.
+# rm -f "autogen/$IN.mrn.gen.cc"
+# rm -f "autogen/$IN.mrn.gen.h"

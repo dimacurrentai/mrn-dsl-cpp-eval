@@ -15,9 +15,7 @@ MAROON(two_steps) {
   };
 };
 
-TEST_SIMPLE_RUN(
+TEST_FIBER(
   two_steps,
-  {
-    {0, "hello"},
-    {0, "world"}
-  })
+  global,
+  {"hello","world"});

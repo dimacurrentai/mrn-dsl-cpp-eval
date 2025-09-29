@@ -1,21 +1,33 @@
 {
+  "src": "01_simple.mrn",
   "maroon": {
     "two_steps": {
+      "line": 3,
       "fibers": {
         "global": {
+          "line": 4,
           "functions": {
-            "main": [
-              {
-                "MaroonIRCodeStatement": {
-                  "code": "{ DEBUG(\"hello\"); NEXT(); }"
-                }
-              },
-              {
-                "MaroonIRCodeStatement": {
-                  "code": "{ DEBUG(\"world\"); DONE(); }"
-                }
+            "main": {
+              "line": 5,
+              "body": {
+                "line": 5,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 9,
+                      "stmt": "{ DEBUG(\"hello\"); NEXT(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 13,
+                      "stmt": "{ DEBUG(\"world\"); DONE(); }"
+                    }
+                  }
+                ]
               }
-            ]
+            }
           }
         }
       }
@@ -23,17 +35,13 @@
   },
   "tests": [
     {
-      "MaroonTestCaseSimple": {
+      "MaroonTestCaseRunFiber": {
+        "line": 21,
         "maroon": "two_steps",
-        "debug_statements": [
-          {
-            "ts": 0,
-            "msg": "hello"
-          },
-          {
-            "ts": 0,
-            "msg": "world"
-          }
+        "fiber": "global",
+        "golden_output": [
+          "hello",
+          "world"
         ]
       }
     }

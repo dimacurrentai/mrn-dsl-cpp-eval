@@ -1,0 +1,172 @@
+{
+  "src": "03_death_tests.mrn",
+  "maroon": {
+    "done_after_next": {
+      "line": 26,
+      "fibers": {
+        "global": {
+          "line": 27,
+          "functions": {
+            "main": {
+              "line": 28,
+              "body": {
+                "line": 28,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 33,
+                      "stmt": "{ DEBUG(\"hang on tight ...\"); NEXT(); DONE(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "duplicate_next": {
+      "line": 50,
+      "fibers": {
+        "global": {
+          "line": 51,
+          "functions": {
+            "main": {
+              "line": 52,
+              "body": {
+                "line": 52,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 57,
+                      "stmt": "{ DEBUG(\"hang on tight ...\"); NEXT(); NEXT(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "faulty_next": {
+      "line": 4,
+      "fibers": {
+        "global": {
+          "line": 6,
+          "functions": {
+            "main": {
+              "line": 7,
+              "body": {
+                "line": 7,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 11,
+                      "stmt": "{ DEBUG(\"hang on tight ...\"); NEXT(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "missing_next": {
+      "line": 16,
+      "fibers": {
+        "global": {
+          "line": 17,
+          "functions": {
+            "main": {
+              "line": 18,
+              "body": {
+                "line": 18,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 21,
+                      "stmt": "{ DEBUG(\"hang on tight ...\"); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "next_after_done": {
+      "line": 38,
+      "fibers": {
+        "global": {
+          "line": 39,
+          "functions": {
+            "main": {
+              "line": 40,
+              "body": {
+                "line": 40,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 45,
+                      "stmt": "{ DEBUG(\"hang on tight ...\"); DONE(); NEXT(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tests": [
+    {
+      "MaroonTestCaseFiberShouldThrow": {
+        "line": 62,
+        "maroon": "faulty_next",
+        "fiber": "global",
+        "error": "NEXT() out of bounds."
+      }
+    },
+    {
+      "MaroonTestCaseFiberShouldThrow": {
+        "line": 63,
+        "maroon": "missing_next",
+        "fiber": "global",
+        "error": "`AWAIT` or `RETURN` condition missing in an `STMT`."
+      }
+    },
+    {
+      "MaroonTestCaseFiberShouldThrow": {
+        "line": 64,
+        "maroon": "done_after_next",
+        "fiber": "global",
+        "error": "TODO(dkorolev): FIXME: Attempted `DONE()` in the wrong place."
+      }
+    },
+    {
+      "MaroonTestCaseFiberShouldThrow": {
+        "line": 65,
+        "maroon": "next_after_done",
+        "fiber": "global",
+        "error": "TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place."
+      }
+    },
+    {
+      "MaroonTestCaseFiberShouldThrow": {
+        "line": 66,
+        "maroon": "duplicate_next",
+        "fiber": "global",
+        "error": "TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place."
+      }
+    }
+  ]
+}

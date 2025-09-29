@@ -10,32 +10,43 @@
 
 #pragma once
 
-#define MAROON(name) RegisterMaroon(ctx, #name) << [&]()
-#define FIBER(name) RegisterFiber(ctx, #name) << [&]()
-#define FN(name) RegisterFn(ctx, #name) << [&]()
-#define STMT(stmt) RegisterStmt(ctx, #stmt);
+#define HLP_EMPTY_HLP_CF_TYPE_EXTRACT
+#define HLP_CF_TYPE_PASTE(x, ...) x##__VA_ARGS__
+#define HLP_CF_TYPE_PASTE2(x, ...) HLP_CF_TYPE_PASTE(x, __VA_ARGS__)
+#define HLP_CF_TYPE_EXTRACT(...) HLP_CF_TYPE_EXTRACT __VA_ARGS__
+#define NOPARENS(...) HLP_CF_TYPE_PASTE2(HLP_EMPTY_, HLP_CF_TYPE_EXTRACT __VA_ARGS__)
 
-#define TEST_SIMPLE_RUN(maroon_name, ...)           \
-  {                                                 \
-    MaroonTestCaseSimple t;                         \
-    t.maroon = #maroon_name;                        \
-    struct {                                        \
-      uint64_t ts;                                  \
-      std::string msg;                              \
-    } v[] = __VA_ARGS__;                            \
-    for (auto const& [ts, msg] : v) {               \
-      MaroonDebugStatement tmp;                     \
-      tmp.ts = ts;                                  \
-      tmp.msg = msg;                                \
-      t.debug_statements.push_back(std::move(tmp)); \
-    }                                               \
-    ctx.out.tests.push_back(std::move(t));          \
+#define MAROON_SOURCE(s) ctx.out.src = s;
+#define MAROON(name) RegisterMaroon(ctx, #name, __LINE__) << [&]()
+#define FIBER(name) RegisterFiber(ctx, #name, __LINE__) << [&]()
+#define FN(name) RegisterFn(ctx, #name, __LINE__) << [&]()
+#define STMT(stmt) RegisterStmt(ctx, __LINE__, #stmt);
+#define BLOCK RegisterBlock(ctx, __LINE__) << [&]()
+
+// NOTE(dkorolev): Requires extra parentheses around (yes) and (no) in user code. Sigh.
+#define IF(cond, yes, no) RegisterIf(ctx, #cond, [&]() { NOPARENS(yes) }, [&]() { NOPARENS(no) }, __LINE__)
+
+#define VAR(name, type, init) RegisterVar(ctx, #name, VarTypes::type, #init, __LINE__);
+
+#define TEST_FIBER(maroon_name, maroon_fiber, ...) \
+  {                                                \
+    MaroonTestCaseRunFiber t;                      \
+    t.line = __LINE__;                             \
+    t.maroon = #maroon_name;                       \
+    t.fiber = #maroon_fiber;                       \
+    std::string v[] = __VA_ARGS__;                 \
+    for (auto const& msg : v) {                    \
+      t.golden_output.push_back(msg);              \
+    }                                              \
+    ctx.out.tests.push_back(std::move(t));         \
   }
 
-#define TEST_SHOULD_THROW(maroon_name, err) \
-  {                                         \
-    MaroonTestCaseShouldThrow t;            \
-    t.maroon = #maroon_name;                \
-    t.error = err;                          \
-    ctx.out.tests.push_back(std::move(t));  \
+#define TEST_FIBER_SHOULD_THROW(maroon_name, maroon_fiber, err) \
+  {                                                             \
+    MaroonTestCaseFiberShouldThrow t;                           \
+    t.line = __LINE__;                                          \
+    t.maroon = #maroon_name;                                    \
+    t.fiber = #maroon_fiber;                                    \
+    t.error = err;                                              \
+    ctx.out.tests.push_back(std::move(t));                      \
   }
