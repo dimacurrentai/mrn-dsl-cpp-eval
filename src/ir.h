@@ -27,7 +27,11 @@ CURRENT_STRUCT(MaroonIRVar) {
 CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRStmt);
 CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRIf);
 CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRBlock);
-CURRENT_VARIANT(MaroonIRStmtOrBlock, MaroonIRStmt, MaroonIRIf, MaroonIRBlock);
+CURRENT_STRUCT(MaroonIRBlockPlaceholder) {  // NOTE(dkorolev): To avoid pointers.
+  CURRENT_FIELD(line, uint32_t);
+  CURRENT_FIELD(_idx, uint32_t);
+};
+CURRENT_VARIANT(MaroonIRStmtOrBlock, MaroonIRStmt, MaroonIRIf, MaroonIRBlock, MaroonIRBlockPlaceholder);
 
 // A piece of "O(1)" code to execute.
 // TODO(dkorolev): Handle the `AWAIT`-condition separately here, on the type system level.

@@ -12,6 +12,7 @@
 
 DEFINE_string(a, "", "One IR file as JSON.");
 DEFINE_string(b, "", "Another IR file as JSON.");
+DEFINE_bool(verbose, false, "Actually dump post-line-nullified JSONs.");
 
 void ZeroLineNumbers(MaroonIRScenarios& m);
 
@@ -46,8 +47,13 @@ int main(int argc, char** argv) {
   ZeroLineNumbers(b);
 
   // Poor man's comparison.
-  if (JSON(a) != JSON(b)) {
+  std::string const sa = JSON<JSONFormat::Minimalistic>(a);
+  std::string const sb = JSON<JSONFormat::Minimalistic>(b);
+  if (sa != sb) {
     std::cout << "The IR JSONs are not identical." << std::endl;
+    if (FLAGS_verbose) {
+      std::cout << std::endl << sa << std::endl << sb << std::endl << std::endl;
+    }
     std::exit(1);
   }
 }
@@ -91,9 +97,15 @@ inline void ZeroLineNumbers(MaroonIRScenarios& m) {
 
     void operator()(MaroonIRStmtOrBlock& m) { m.Call(*this); }
 
+    void operator()(MaroonIRBlockPlaceholder&) {}
+
     void operator()(MaroonIRStmt& m) { m.line = 0; }
 
-    void operator()(MaroonIRIf& m) { m.line = 0; }
+    void operator()(MaroonIRIf& m) {
+      m.line = 0;
+      (*this)(m.yes);
+      (*this)(m.no);
+    }
 
     void operator()(MaroonTestCaseRunFiber& m) { m.line = 0; }
     void operator()(MaroonTestCaseFiberShouldThrow& m) { m.line = 0; }

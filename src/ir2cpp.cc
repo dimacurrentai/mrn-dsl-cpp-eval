@@ -179,6 +179,11 @@ int main(int argc, char** argv) {
           }
           local_vars.resize(local_vars.size() - blk.vars.size());
         }
+
+        void operator()(MaroonIRBlockPlaceholder const&) {
+          std::cerr << "Internal invaviant error: seeing `MaroonIRBlockPlaceholder`." << std::endl;
+          std::exit(1);
+        }
       };
 
       StatementsRecursiveVisitor visitor(fo);
