@@ -27,14 +27,14 @@ MAROON(factorial) {
             // Make the recursive call.
             CALL(r, factorial, (n-1));
           });
+          // The `CALL` must be the end of an `STMT`, so the `RETURN` part is in the next `STMT`.
           STMT({
             DEBUG("after");
             DEBUG_DUMP_STACK();
             // Return the result.
             RETURN(r * n);
           });
-         };
-        )
+        })
       );
     };
   };

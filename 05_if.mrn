@@ -33,7 +33,7 @@ MAROON(if_condition) {
             DEBUG("A>=10");
             DONE();  // Will not print "OK" if >= 10.
           })
-        }; ));
+        }));
       STMT({
         DEBUG("OK");
         DONE();

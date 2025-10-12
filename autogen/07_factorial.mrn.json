@@ -50,7 +50,7 @@
                             },
                             {
                               "MaroonIRStmt": {
-                                "line": 35,
+                                "line": 36,
                                 "stmt": "{ DEBUG(\"after\"); DEBUG_DUMP_STACK(); RETURN(r * n); }"
                               }
                             }

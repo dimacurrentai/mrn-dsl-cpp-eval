@@ -24,7 +24,7 @@
 #define BLOCK RegisterBlock(ctx, __LINE__) << [&]()
 
 // NOTE(dkorolev): Requires extra parentheses around (yes) and (no) in user code. Sigh.
-#define IF(cond, yes, no) RegisterIf(ctx, #cond, [&]() { NOPARENS(yes) }, [&]() { NOPARENS(no) }, __LINE__)
+#define IF(cond, yes, no) RegisterIf(ctx, #cond, [&]() { NOPARENS(yes); }, [&]() { NOPARENS(no); }, __LINE__)
 
 #define VAR(name, type, init) RegisterVar(ctx, #name, VarTypes::type, #init, __LINE__);
 
