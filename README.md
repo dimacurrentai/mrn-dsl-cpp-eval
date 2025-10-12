@@ -1,20 +1,6 @@
-TO DISCUSS W/ FOLKS AND TO CODE CORRECTLY
-
-- adding vars happens before the step begins
-- removing vars happens after the step is done, based on what's the next step, but during processing of the current step
-
 TODO BEFORE CHECKING IN
 
-- custom `makefile`, the clean one
-- the `tmp` directory with `.*.h`, symlinked, `.gitignore`-d
-- git hooks
-- github hooks & actions to check them
 - protect the branch
-- alter the `.clang-format` and `indent.sh` from `C5T/Current`.
-
-NOTE TO SELF
-
-I tried to add `__LINE__` to reference the source `.mrn` file, but things got ugly with Github actions and its preprocessor — spent some time and decided to drop this idea.
 
 ADD THE NOTE THAT:
 
@@ -47,9 +33,9 @@ Perhaps if I do this part of the job well enough, these tests will live on for l
 
 To be feature-complete I'll need to support:
 
-- [ ] Basic trivial syntax for "code blocks".
-- [ ] Stack variables.
-- [ ] Code blocks, sequential and hierarchical.
+- [x] Basic trivial syntax for "code blocks".
+- [x] Stack variables.
+- [x] Code blocks, sequential and hierarchical.
 - [ ] Heap variables.
 - [ ] Futures, of various types.
 - [ ] Timeouts on `await`-s and `select`-s (or perhaps I'll group them into one "construct").
@@ -59,24 +45,11 @@ To be feature-complete I'll need to support:
 
 ## Less structured TODOs
 
-- stack vars
-  - including nested
-- heap vars
-- global heap vars
-- full dump with vars
-- function calls such as factorial
 - have the future declared on the stack
   - perhaps have some debug_futures on/off, as part of full dump
-- have the future declared
 - do not forget ticks as part of setting timeouts / quantization
 
 - dump the schema and have a test for that! (Via diff -w)
 
-- some structure is enforced, quite a bit in fact (the only allowed hierarchy is maroon -> fiber -> function -> { stmt, block, ... }, and TODO heap stack vars match await etc
-
-- add line numbers and source file numbers in DEBUG outputs, esp. for longer dumps (stack, heap, futures)
-- rename src/ir2cpp.cc into src/gen_test.cc
+- TODO rename src/ir2cpp.cc into src/gen_test.cc
 - move to `size_t` when we're dealing with indexes, there's a discrepancy now, and sometimes it's `uint32_t`
-- rename `.mrn.{cc,h}` into `.mrn.gen.{cc,h}`
-- RegisterStmt should be a function, not an object, there's no "destructor" after all =)
-- tests: sequential blocks, inner blocks, empty blocks, blocks within blocks, same named variable / shadowing

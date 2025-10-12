@@ -1,0 +1,123 @@
+{
+  "src": "07_factorial.mrn",
+  "maroon": {
+    "factorial": {
+      "line": 1,
+      "fibers": {
+        "global": {
+          "line": 2,
+          "functions": {
+            "factorial": {
+              "line": 14,
+              "number_of_args": 1,
+              "body": {
+                "line": 14,
+                "vars": [
+                  {
+                    "line": 15,
+                    "name": "n",
+                    "type": "TODO(dkorolev): Implement this."
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRIf": {
+                      "line": 38,
+                      "cond": "(n <= 1)",
+                      "yes": {
+                        "MaroonIRStmt": {
+                          "line": 19,
+                          "stmt": "RETURN(1)"
+                        }
+                      },
+                      "no": {
+                        "MaroonIRBlock": {
+                          "line": 21,
+                          "vars": [
+                            {
+                              "line": 23,
+                              "name": "r",
+                              "type": "TODO(dkorolev): Implement this.",
+                              "init": "0"
+                            }
+                          ],
+                          "code": [
+                            {
+                              "MaroonIRStmt": {
+                                "line": 29,
+                                "stmt": "{ DEBUG(\"before\"); DEBUG_DUMP_STACK(); CALL(r, factorial, (n-1)); }"
+                              }
+                            },
+                            {
+                              "MaroonIRStmt": {
+                                "line": 36,
+                                "stmt": "{ DEBUG(\"after\"); DEBUG_DUMP_STACK(); RETURN(r * n); }"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "main": {
+              "line": 3,
+              "number_of_args": 0,
+              "body": {
+                "line": 3,
+                "vars": [
+                  {
+                    "line": 5,
+                    "name": "result",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "0"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 8,
+                      "stmt": "{ CALL(result, factorial, (4)); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 12,
+                      "stmt": "{ DEBUG_EXPR(result); RETURN(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tests": [
+    {
+      "MaroonTestCaseRunFiber": {
+        "line": 61,
+        "maroon": "factorial",
+        "fiber": "global",
+        "golden_output": [
+          "before",
+          "<[result:0],factorial@[n:4,r:0]>",
+          "before",
+          "<[result:0],factorial@[n:4,r:0],factorial@[n:3,r:0]>",
+          "before",
+          "<[result:0],factorial@[n:4,r:0],factorial@[n:3,r:0],factorial@[n:2,r:0]>",
+          "after",
+          "<[result:0],factorial@[n:4,r:0],factorial@[n:3,r:0],factorial@[n:2,r:1]>",
+          "after",
+          "<[result:0],factorial@[n:4,r:0],factorial@[n:3,r:2]>",
+          "after",
+          "<[result:0],factorial@[n:4,r:6]>",
+          "result=24"
+        ]
+      }
+    }
+  ]
+}

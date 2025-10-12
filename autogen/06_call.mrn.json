@@ -1,0 +1,511 @@
+{
+  "src": "06_call.mrn",
+  "maroon": {
+    "call_dump": {
+      "line": 27,
+      "fibers": {
+        "call": {
+          "line": 28,
+          "functions": {
+            "inner": {
+              "line": 45,
+              "number_of_args": 0,
+              "body": {
+                "line": 45,
+                "vars": [
+                  {
+                    "line": 46,
+                    "name": "b",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "1"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 51,
+                      "stmt": "{ DEBUG(\"inner\"); DEBUG_DUMP_STACK(); RETURN(); }"
+                    }
+                  }
+                ]
+              }
+            },
+            "main": {
+              "line": 29,
+              "number_of_args": 0,
+              "body": {
+                "line": 29,
+                "vars": [
+                  {
+                    "line": 30,
+                    "name": "a",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "1"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 35,
+                      "stmt": "{ DEBUG(\"begin\"); DEBUG_DUMP_STACK(); NEXT(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 38,
+                      "stmt": "{ CALL(inner, ()); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 43,
+                      "stmt": "{ DEBUG(\"end\"); DEBUG_DUMP_STACK(); RETURN(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "call_not_ok_to_fail_to_provide_result": {
+      "line": 152,
+      "fibers": {
+        "call": {
+          "line": 153,
+          "functions": {
+            "bar": {
+              "line": 163,
+              "number_of_args": 0,
+              "body": {
+                "line": 163,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 166,
+                      "stmt": "{ RETURN(); }"
+                    }
+                  }
+                ]
+              }
+            },
+            "main": {
+              "line": 154,
+              "number_of_args": 0,
+              "body": {
+                "line": 154,
+                "vars": [
+                  {
+                    "line": 155,
+                    "name": "a",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "0"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 158,
+                      "stmt": "{ CALL(a, bar, ()); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 161,
+                      "stmt": "{ RETURN(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "call_ok_to_ignore_result": {
+      "line": 134,
+      "fibers": {
+        "call": {
+          "line": 135,
+          "functions": {
+            "foo": {
+              "line": 144,
+              "number_of_args": 0,
+              "body": {
+                "line": 144,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 147,
+                      "stmt": "{ RETURN(1); }"
+                    }
+                  }
+                ]
+              }
+            },
+            "main": {
+              "line": 136,
+              "number_of_args": 0,
+              "body": {
+                "line": 136,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 139,
+                      "stmt": "{ CALL(foo, ()); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 142,
+                      "stmt": "{ RETURN(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "call_smoke": {
+      "line": 3,
+      "fibers": {
+        "call": {
+          "line": 4,
+          "functions": {
+            "inner": {
+              "line": 18,
+              "number_of_args": 0,
+              "body": {
+                "line": 18,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 22,
+                      "stmt": "{ DEBUG(\"inner\"); RETURN(); }"
+                    }
+                  }
+                ]
+              }
+            },
+            "main": {
+              "line": 5,
+              "number_of_args": 0,
+              "body": {
+                "line": 5,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 9,
+                      "stmt": "{ DEBUG(\"begin\"); NEXT(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 12,
+                      "stmt": "{ CALL(inner, ()); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 16,
+                      "stmt": "{ DEBUG(\"end\"); RETURN(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "call_with_arg": {
+      "line": 80,
+      "fibers": {
+        "call": {
+          "line": 81,
+          "functions": {
+            "add_one": {
+              "line": 96,
+              "number_of_args": 1,
+              "body": {
+                "line": 96,
+                "vars": [
+                  {
+                    "line": 97,
+                    "name": "a",
+                    "type": "TODO(dkorolev): Implement this."
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 101,
+                      "stmt": "{ DEBUG_EXPR(a); RETURN(a + 1); }"
+                    }
+                  }
+                ]
+              }
+            },
+            "main": {
+              "line": 82,
+              "number_of_args": 0,
+              "body": {
+                "line": 82,
+                "vars": [
+                  {
+                    "line": 83,
+                    "name": "x",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "10"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 87,
+                      "stmt": "{ DEBUG_EXPR(x); NEXT(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 90,
+                      "stmt": "{ CALL(x, add_one, (x)); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 94,
+                      "stmt": "{ DEBUG_EXPR(x); RETURN(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "call_with_return": {
+      "line": 56,
+      "fibers": {
+        "call": {
+          "line": 57,
+          "functions": {
+            "main": {
+              "line": 58,
+              "number_of_args": 0,
+              "body": {
+                "line": 58,
+                "vars": [
+                  {
+                    "line": 59,
+                    "name": "a",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "0"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 63,
+                      "stmt": "{ DEBUG_EXPR(a); NEXT(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 66,
+                      "stmt": "{ CALL(a, one, ()); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 70,
+                      "stmt": "{ DEBUG_EXPR(a); RETURN(); }"
+                    }
+                  }
+                ]
+              }
+            },
+            "one": {
+              "line": 72,
+              "number_of_args": 0,
+              "body": {
+                "line": 72,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 75,
+                      "stmt": "{ RETURN(1); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "call_with_two_args": {
+      "line": 106,
+      "fibers": {
+        "call": {
+          "line": 107,
+          "functions": {
+            "main": {
+              "line": 108,
+              "number_of_args": 0,
+              "body": {
+                "line": 108,
+                "vars": [
+                  {
+                    "line": 109,
+                    "name": "x",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "10"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 113,
+                      "stmt": "{ DEBUG_EXPR(x); NEXT(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 116,
+                      "stmt": "{ CALL(x, sum, (x, 32)); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 120,
+                      "stmt": "{ DEBUG_EXPR(x); RETURN(); }"
+                    }
+                  }
+                ]
+              }
+            },
+            "sum": {
+              "line": 122,
+              "number_of_args": 2,
+              "body": {
+                "line": 122,
+                "vars": [
+                  {
+                    "line": 123,
+                    "name": "a",
+                    "type": "TODO(dkorolev): Implement this."
+                  },
+                  {
+                    "line": 124,
+                    "name": "b",
+                    "type": "TODO(dkorolev): Implement this."
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 129,
+                      "stmt": "{ DEBUG_EXPR(a); DEBUG_EXPR(b); RETURN(a + b); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tests": [
+    {
+      "MaroonTestCaseRunFiber": {
+        "line": 178,
+        "maroon": "call_smoke",
+        "fiber": "call",
+        "golden_output": [
+          "begin",
+          "inner",
+          "end"
+        ]
+      }
+    },
+    {
+      "MaroonTestCaseRunFiber": {
+        "line": 183,
+        "maroon": "call_dump",
+        "fiber": "call",
+        "golden_output": [
+          "begin",
+          "<[a:1]>",
+          "inner",
+          "<[a:1],inner@[b:1]>",
+          "end",
+          "<[a:1]>"
+        ]
+      }
+    },
+    {
+      "MaroonTestCaseRunFiber": {
+        "line": 188,
+        "maroon": "call_with_return",
+        "fiber": "call",
+        "golden_output": [
+          "a=0",
+          "a=1"
+        ]
+      }
+    },
+    {
+      "MaroonTestCaseRunFiber": {
+        "line": 193,
+        "maroon": "call_with_arg",
+        "fiber": "call",
+        "golden_output": [
+          "x=10",
+          "a=10",
+          "x=11"
+        ]
+      }
+    },
+    {
+      "MaroonTestCaseRunFiber": {
+        "line": 198,
+        "maroon": "call_with_two_args",
+        "fiber": "call",
+        "golden_output": [
+          "x=10",
+          "a=10",
+          "b=32",
+          "x=42"
+        ]
+      }
+    },
+    {
+      "MaroonTestCaseRunFiber": {
+        "line": 203,
+        "maroon": "call_ok_to_ignore_result",
+        "fiber": "call",
+        "golden_output": []
+      }
+    },
+    {
+      "MaroonTestCaseFiberShouldThrow": {
+        "line": 208,
+        "maroon": "call_not_ok_to_fail_to_provide_result",
+        "fiber": "call",
+        "error": "A return value must have been provided."
+      }
+    }
+  ]
+}

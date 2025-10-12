@@ -1,4 +1,4 @@
-// Confirm that `DONE()` indeed terminates the function.
+// Confirm that `RETURN()` indeed terminates the function.
 // TODO(dkorolev): Or should it be `RETURN()`? Because it's the function, not the fiber, that is terminated?
 // TODO(dkorolev): Or perhaps a fiber needs some `STOP()` or `EXIT()`?
 
@@ -7,11 +7,11 @@ MAROON(second_step_ignored) {
     FN(main) {
       STMT({
         DEBUG("yes");
-        DONE();
+        RETURN();
       });
       STMT({
         DEBUG("no");
-        DONE();
+        RETURN();
       });
     };
   };

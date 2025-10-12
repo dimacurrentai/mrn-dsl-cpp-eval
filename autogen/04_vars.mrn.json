@@ -9,6 +9,7 @@
           "functions": {
             "main": {
               "line": 63,
+              "number_of_args": 0,
               "body": {
                 "line": 63,
                 "vars": [],
@@ -22,6 +23,7 @@
           "functions": {
             "main": {
               "line": 67,
+              "number_of_args": 0,
               "body": {
                 "line": 67,
                 "vars": [],
@@ -43,6 +45,7 @@
           "functions": {
             "main": {
               "line": 72,
+              "number_of_args": 0,
               "body": {
                 "line": 72,
                 "vars": [],
@@ -72,6 +75,7 @@
           "functions": {
             "name": {
               "line": 79,
+              "number_of_args": 0,
               "body": {
                 "line": 79,
                 "vars": [
@@ -126,6 +130,7 @@
           "functions": {
             "main": {
               "line": 3,
+              "number_of_args": 0,
               "body": {
                 "line": 3,
                 "vars": [
@@ -146,7 +151,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 15,
-                      "stmt": "{ DEBUG_EXPR(a); DONE(); }"
+                      "stmt": "{ DEBUG_EXPR(a); RETURN(); }"
                     }
                   }
                 ]
@@ -159,6 +164,7 @@
           "functions": {
             "main": {
               "line": 19,
+              "number_of_args": 0,
               "body": {
                 "line": 19,
                 "vars": [
@@ -239,7 +245,7 @@
                         {
                           "MaroonIRStmt": {
                             "line": 57,
-                            "stmt": "{ DONE(); }"
+                            "stmt": "{ RETURN(); }"
                           }
                         }
                       ]

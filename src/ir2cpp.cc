@@ -46,8 +46,8 @@ inline void GenerateTestCase(std::ostream& fo, MaroonTestCase const& test, std::
   fo << '}' << std::endl;
 }
 
-constexpr static char const* const kVarsFunctionSignature = "(ImplEnv& env)";
-constexpr static char const* const kStepFunctionSignature = "(ImplEnv& env, ImplResultCollector& result)";
+constexpr static char const* const kVarsFunctionSignature = "(ImplEnv& MAROON_env)";
+constexpr static char const* const kStepFunctionSignature = "(ImplEnv& MAROON_env, ImplResultCollector& MAROON_result)";
 
 int main(int argc, char** argv) {
   ParseDFlags(&argc, &argv);
@@ -108,10 +108,16 @@ int main(int argc, char** argv) {
 
           // Declare the vars.
           fo << "    static void VARS_" << step_idx << kVarsFunctionSignature << "{ // " << fn_name << std::endl;
-          fo << "      static_cast<void>(env);" << std::endl;
+          fo << "      static_cast<void>(MAROON_env);" << std::endl;
           for (auto const& var : next_step_init_vars) {
-            fo << "      env.DeclareVar(" << local_vars.size() << ",\"" << var.name << "\"," << var.init << ");"
-               << std::endl;
+            if (Exists(var.init)) {
+              fo << "      MAROON_env.DeclareVar(" << local_vars.size() << ",\"" << var.name << "\"," << Value(var.init)
+                 << ");" << std::endl;
+            } else {
+              // TODO(dkorolev): Vars with no `init` are all function arguments, right?
+              fo << "      MAROON_env.DeclareFunctionArg(" << local_vars.size() << ",\"" << var.name << "\");"
+                 << std::endl;
+            }
             local_vars.push_back(var);
           }
           next_step_init_vars.clear();
@@ -121,8 +127,9 @@ int main(int argc, char** argv) {
           size_t tmp_idx = 0;
           // TODO(dkorolev): Different var types, not just names here.
           for (auto const& var : local_vars) {
-            fo << "      auto& " << var.name << " = env.AccessVar(" << tmp_idx++ << ",\"" << var.name << "\");"
-               << std::endl;
+            fo << "      auto& " << var.name << " = MAROON_env.AccessVar(" << tmp_idx << ",\"" << var.name << "\");\n"
+               << "      auto MAROON_VAR_INDEX_" << var.name << " = static_cast<MaroonVarIndex>(" << tmp_idx << ");\n";
+            ++tmp_idx;
           }
           for (auto const& var : local_vars) {
             fo << "      static_cast<void>(" << var.name << ");" << std::endl;
@@ -134,7 +141,8 @@ int main(int argc, char** argv) {
 
         void operator()(MaroonIRStmt const& code) {
           PrintHeader();
-          fo << code.stmt << std::endl;
+          // Enable `STMT(...)` without `STMT({...})` for short `STMT`-s.
+          fo << code.stmt << std::endl << ';' << std::endl;
           PrintFooter();
         }
 
@@ -142,23 +150,25 @@ int main(int argc, char** argv) {
           size_t const step_idx = nvars.size();
           PrintHeader();
           fo << "      if (" << cond.cond << ") {" << std::endl;
-          fo << "        result.branch(IF_YES_" << step_idx << "());" << std::endl;
+          fo << "        MAROON_result.branch(IF_YES_" << step_idx << "());" << std::endl;
           fo << "      } else {" << std::endl;
-          fo << "        result.branch(IF_NO_" << step_idx << "());" << std::endl;
+          fo << "        MAROON_result.branch(IF_NO_" << step_idx << "());" << std::endl;
           fo << "      }" << std::endl;
           PrintFooter();
           // NOTE(dkorolev): On `yes` it will always be the next step index, but that's details.
-          fo << "  constexpr static size_t IF_YES_" << step_idx << "() { return " << nvars.size() << "; }" << std::endl;
+          fo << "  constexpr static MaroonStateIndex IF_YES_" << step_idx
+             << "() { return static_cast<MaroonStateIndex>(" << nvars.size() << "); }" << std::endl;
           cond.yes.Call(*this);
 
           PrintHeader();
-          fo << "      result.branch(IF_DONE_" << step_idx << "());";
+          fo << "      MAROON_result.branch(IF_DONE_" << step_idx << "());";
           PrintFooter();
 
-          fo << "  constexpr static size_t IF_NO_" << step_idx << "() { return " << nvars.size() << "; }" << std::endl;
+          fo << "  constexpr static MaroonStateIndex IF_NO_" << step_idx << "() { return static_cast<MaroonStateIndex>("
+             << nvars.size() << "); }" << std::endl;
           cond.no.Call(*this);
-          fo << "  constexpr static size_t IF_DONE_" << step_idx << "() { return " << nvars.size() << "; }"
-             << std::endl;
+          fo << "  constexpr static MaroonStateIndex IF_DONE_" << step_idx
+             << "() { return static_cast<MaroonStateIndex>(" << nvars.size() << "); }" << std::endl;
         }
 
         void operator()(MaroonIRBlock const& blk) {
@@ -189,9 +199,9 @@ int main(int argc, char** argv) {
       StatementsRecursiveVisitor visitor(fo);
       for (auto const& [fn_name, fn] : fiber.functions) {
         visitor.EnsureNoLocalVars();
-        fo << "    inline constexpr static MaronStateIndex " << fn_name << " = static_cast<MaronStateIndex>("
+        fo << "    inline constexpr static MaroonStateIndex FN_" << fn_name << " = static_cast<MaroonStateIndex>("
            << visitor.nvars.size() << ");" << std::endl;
-        ;
+        fo << "    inline constexpr static size_t NUMBER_OF_ARGS_" << fn_name << " = " << fn.number_of_args << ";\n";
         visitor.fn_name = fn_name;
         visitor(fn.body);
       }

@@ -9,7 +9,7 @@ MAROON(two_steps) {
       });
       STMT({
         DEBUG("world");
-        DONE();
+        RETURN();
       });
     };
   };

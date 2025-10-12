@@ -9,6 +9,7 @@
           "functions": {
             "main": {
               "line": 3,
+              "number_of_args": 0,
               "body": {
                 "line": 3,
                 "vars": [
@@ -33,7 +34,7 @@
                       "no": {
                         "MaroonIRStmt": {
                           "line": 14,
-                          "stmt": "{ DEBUG(\"A>=10\"); DONE(); }"
+                          "stmt": "{ DEBUG(\"A>=10\"); RETURN(); }"
                         }
                       }
                     }
@@ -41,7 +42,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 18,
-                      "stmt": "{ DEBUG(\"OK\"); DONE(); }"
+                      "stmt": "{ DEBUG(\"OK\"); RETURN(); }"
                     }
                   }
                 ]
@@ -54,6 +55,7 @@
           "functions": {
             "main": {
               "line": 22,
+              "number_of_args": 0,
               "body": {
                 "line": 22,
                 "vars": [
@@ -67,7 +69,7 @@
                 "code": [
                   {
                     "MaroonIRIf": {
-                      "line": 33,
+                      "line": 36,
                       "cond": "(a < 10)",
                       "yes": {
                         "MaroonIRStmt": {
@@ -76,17 +78,25 @@
                         }
                       },
                       "no": {
-                        "MaroonIRStmt": {
-                          "line": 33,
-                          "stmt": "{ DEBUG(\"A>=10\"); DONE(); }"
+                        "MaroonIRBlock": {
+                          "line": 31,
+                          "vars": [],
+                          "code": [
+                            {
+                              "MaroonIRStmt": {
+                                "line": 35,
+                                "stmt": "{ DEBUG(\"A>=10\"); RETURN(); }"
+                              }
+                            }
+                          ]
                         }
                       }
                     }
                   },
                   {
                     "MaroonIRStmt": {
-                      "line": 37,
-                      "stmt": "{ DEBUG(\"OK\"); DONE(); }"
+                      "line": 40,
+                      "stmt": "{ DEBUG(\"OK\"); RETURN(); }"
                     }
                   }
                 ]
@@ -100,7 +110,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 47,
+        "line": 50,
         "maroon": "if_condition",
         "fiber": "t1",
         "golden_output": [
@@ -111,7 +121,7 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 52,
+        "line": 55,
         "maroon": "if_condition",
         "fiber": "t2",
         "golden_output": [

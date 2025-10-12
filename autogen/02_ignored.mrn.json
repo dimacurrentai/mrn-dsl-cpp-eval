@@ -9,6 +9,7 @@
           "functions": {
             "main": {
               "line": 7,
+              "number_of_args": 0,
               "body": {
                 "line": 7,
                 "vars": [],
@@ -16,13 +17,13 @@
                   {
                     "MaroonIRStmt": {
                       "line": 11,
-                      "stmt": "{ DEBUG(\"yes\"); DONE(); }"
+                      "stmt": "{ DEBUG(\"yes\"); RETURN(); }"
                     }
                   },
                   {
                     "MaroonIRStmt": {
                       "line": 15,
-                      "stmt": "{ DEBUG(\"no\"); DONE(); }"
+                      "stmt": "{ DEBUG(\"no\"); RETURN(); }"
                     }
                   }
                 ]

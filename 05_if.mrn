@@ -10,11 +10,11 @@ MAROON(if_condition) {
         })),
         (STMT({
           DEBUG("A>=10");
-          DONE();  // Will not print "OK" if >= 10.
+          RETURN();  // Will not print "OK" if >= 10.
         })));
       STMT({
         DEBUG("OK");
-        DONE();
+        RETURN();
       });
     };
   };
@@ -27,13 +27,16 @@ MAROON(if_condition) {
           DEBUG("A<10");
           NEXT();
         })),
-        (STMT({
-          DEBUG("A>=10");
-          DONE();  // Will not print "OK" if >= 10.
-        })));
+        // Confirming `BLOCK` is legal within an `IF`, albeit with this ugly syntax.
+        (BLOCK {
+          STMT({
+            DEBUG("A>=10");
+            RETURN();  // Will not print "OK" if >= 10.
+          })
+        }));
       STMT({
         DEBUG("OK");
-        DONE();
+        RETURN();
       });
     };
   };
