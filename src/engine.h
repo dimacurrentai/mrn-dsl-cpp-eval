@@ -25,7 +25,7 @@ inline std::vector<uint64_t> pack_args(TS... args) {
   return {static_cast<uint64_t>(args)...};
 }
 
-enum TmpNextStatus { None = 0, Next, Branch, Done, Call, Return };
+enum TmpNextStatus { None = 0, Next, Branch, Call, Return };
 struct ImplResultCollector final {
   MaroonStateIndex next_idx_;
   TmpNextStatus status_ = TmpNextStatus::None;
@@ -51,14 +51,11 @@ struct ImplResultCollector final {
     status_ = TmpNextStatus::Branch;
     next_idx_ = idx;
   }
-  void done() {
-    if (status_ != TmpNextStatus::None) {
-      CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `DONE()` in the wrong place."));
-    }
-    status_ = TmpNextStatus::Done;
-  }
 
   void call_ignore_return(size_t number_of_args, MaroonStateIndex idx, std::string f, std::vector<uint64_t> args) {
+    if (status_ != TmpNextStatus::None) {
+      CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `CALL()` in the wrong place."));
+    }
     if (args.size() != number_of_args) {
       // TODO(dkorolev): The error message should make sense. Including `file:line` perhaps.
       CURRENT_THROW(ImplException("WRONG NUMBER OF ARGS"));
@@ -72,6 +69,9 @@ struct ImplResultCollector final {
 
   void call_capture_return(
       MaroonVarIndex v, size_t number_of_args, MaroonStateIndex idx, std::string f, std::vector<uint64_t> args) {
+    if (status_ != TmpNextStatus::None) {
+      CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `CALL()` in the wrong place."));
+    }
     if (args.size() != number_of_args) {
       // TODO(dkorolev): The error message should make sense. Including `file:line` perhaps.
       CURRENT_THROW(ImplException("WRONG NUMBER OF ARGS"));
@@ -84,12 +84,18 @@ struct ImplResultCollector final {
   }
 
   void ret() {
+    if (status_ != TmpNextStatus::None) {
+      CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `RETURN()` in the wrong place."));
+    }
     status_ = TmpNextStatus::Return;
     has_retval_ = false;
   }
 
   template <typename T>
   void ret(T val) {
+    if (status_ != TmpNextStatus::None) {
+      CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `RETURN()` in the wrong place."));
+    }
     status_ = TmpNextStatus::Return;
     has_retval_ = true;
     retval_ = static_cast<VarValue>(val);
@@ -259,7 +265,6 @@ struct MaroonStep final {
 #define DEBUG_DUMP_VARS() MAROON_env.debug_dump_vars(__FILE__, __LINE__)
 #define DEBUG_DUMP_STACK() MAROON_env.debug_dump_stack(__FILE__, __LINE__)
 #define NEXT() MAROON_result.next()
-#define DONE() MAROON_result.done()
 
 // NOTE(dkorolev): The ugly yet functional way to tell 1-arg vs. 2-args macros.
 #define CALL_DISPATCH(_1, _2, _3, NAME, ...) NAME
@@ -315,9 +320,7 @@ struct MaroonEngine final {
         ImplResultCollector result;
         step.code(env, result);
 
-        if (result.status() == TmpNextStatus::Done) {
-          break;
-        } else if (result.status() == TmpNextStatus::Next) {
+        if (result.status() == TmpNextStatus::Next) {
           env.call_stack_.back().current_idx_ =
               static_cast<MaroonStateIndex>(static_cast<uint32_t>(env.call_stack_.back().current_idx_) + 1);
         } else if (result.status() == TmpNextStatus::Branch) {

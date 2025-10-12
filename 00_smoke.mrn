@@ -6,7 +6,7 @@ MAROON(code) {
       STMT({
         // This is what the test checks for.
         DEBUG("hello");
-        // Essential to terminate the fiber via `DONE()`, see the next tests for invalid programs.
+        // Essential to terminate the fiber via `RETURN()`, see the next tests for invalid programs.
         RETURN();
       });
     };

@@ -8,7 +8,7 @@ MAROON(factorial) {
       });
       STMT({
         DEBUG_EXPR(result);
-        DONE();
+        RETURN();
       });
     };
     FN(factorial) {

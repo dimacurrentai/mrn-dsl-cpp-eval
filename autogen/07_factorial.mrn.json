@@ -85,7 +85,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 12,
-                      "stmt": "{ DEBUG_EXPR(result); DONE(); }"
+                      "stmt": "{ DEBUG_EXPR(result); RETURN(); }"
                     }
                   }
                 ]

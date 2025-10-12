@@ -59,7 +59,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 43,
-                      "stmt": "{ DEBUG(\"end\"); DEBUG_DUMP_STACK(); DONE(); }"
+                      "stmt": "{ DEBUG(\"end\"); DEBUG_DUMP_STACK(); RETURN(); }"
                     }
                   }
                 ]
@@ -114,7 +114,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 161,
-                      "stmt": "{ DONE(); }"
+                      "stmt": "{ RETURN(); }"
                     }
                   }
                 ]
@@ -162,7 +162,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 142,
-                      "stmt": "{ DONE(); }"
+                      "stmt": "{ RETURN(); }"
                     }
                   }
                 ]
@@ -216,7 +216,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 16,
-                      "stmt": "{ DEBUG(\"end\"); DONE(); }"
+                      "stmt": "{ DEBUG(\"end\"); RETURN(); }"
                     }
                   }
                 ]
@@ -283,7 +283,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 94,
-                      "stmt": "{ DEBUG_EXPR(x); DONE(); }"
+                      "stmt": "{ DEBUG_EXPR(x); RETURN(); }"
                     }
                   }
                 ]
@@ -328,7 +328,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 70,
-                      "stmt": "{ DEBUG_EXPR(a); DONE(); }"
+                      "stmt": "{ DEBUG_EXPR(a); RETURN(); }"
                     }
                   }
                 ]
@@ -389,7 +389,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 120,
-                      "stmt": "{ DEBUG_EXPR(x); DONE(); }"
+                      "stmt": "{ DEBUG_EXPR(x); RETURN(); }"
                     }
                   }
                 ]

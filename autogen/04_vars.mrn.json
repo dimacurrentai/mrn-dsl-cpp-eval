@@ -151,7 +151,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 15,
-                      "stmt": "{ DEBUG_EXPR(a); DONE(); }"
+                      "stmt": "{ DEBUG_EXPR(a); RETURN(); }"
                     }
                   }
                 ]
@@ -245,7 +245,7 @@
                         {
                           "MaroonIRStmt": {
                             "line": 57,
-                            "stmt": "{ DONE(); }"
+                            "stmt": "{ RETURN(); }"
                           }
                         }
                       ]

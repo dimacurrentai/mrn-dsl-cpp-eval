@@ -17,7 +17,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 33,
-                      "stmt": "{ DEBUG(\"hang on tight ...\"); NEXT(); DONE(); }"
+                      "stmt": "{ DEBUG(\"hang on tight ...\"); NEXT(); RETURN(); }"
                     }
                   }
                 ]
@@ -121,7 +121,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 45,
-                      "stmt": "{ DEBUG(\"hang on tight ...\"); DONE(); NEXT(); }"
+                      "stmt": "{ DEBUG(\"hang on tight ...\"); RETURN(); NEXT(); }"
                     }
                   }
                 ]
@@ -154,7 +154,7 @@
         "line": 64,
         "maroon": "done_after_next",
         "fiber": "global",
-        "error": "TODO(dkorolev): FIXME: Attempted `DONE()` in the wrong place."
+        "error": "TODO(dkorolev): FIXME: Attempted `RETURN()` in the wrong place."
       }
     },
     {

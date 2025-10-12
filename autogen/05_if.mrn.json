@@ -34,7 +34,7 @@
                       "no": {
                         "MaroonIRStmt": {
                           "line": 14,
-                          "stmt": "{ DEBUG(\"A>=10\"); DONE(); }"
+                          "stmt": "{ DEBUG(\"A>=10\"); RETURN(); }"
                         }
                       }
                     }
@@ -42,7 +42,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 18,
-                      "stmt": "{ DEBUG(\"OK\"); DONE(); }"
+                      "stmt": "{ DEBUG(\"OK\"); RETURN(); }"
                     }
                   }
                 ]
@@ -85,7 +85,7 @@
                             {
                               "MaroonIRStmt": {
                                 "line": 35,
-                                "stmt": "{ DEBUG(\"A>=10\"); DONE(); }"
+                                "stmt": "{ DEBUG(\"A>=10\"); RETURN(); }"
                               }
                             }
                           ]
@@ -96,7 +96,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 40,
-                      "stmt": "{ DEBUG(\"OK\"); DONE(); }"
+                      "stmt": "{ DEBUG(\"OK\"); RETURN(); }"
                     }
                   }
                 ]
