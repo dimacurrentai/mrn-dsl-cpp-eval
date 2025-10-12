@@ -17,7 +17,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 11,
-                      "stmt": "{ DEBUG(\"hello\"); DONE(); }"
+                      "stmt": "{ DEBUG(\"hello\"); RETURN(); }"
                     }
                   }
                 ]

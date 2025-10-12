@@ -288,12 +288,7 @@ struct MaroonEngine final {
 
       // TODO(dkorolev): Proper engine =)
       env.call_stack_.push_back(ImplCallStackEntry(T_FIBER::FN_main));
-      while (true) {
-        if (env.call_stack_.empty()) {
-          // TODO(dkorolev): Soon, `RETURN()` should be the right way to exit, not `DONE()`.
-          std::cerr << "Internal invariant failed: not in any function somehow." << std::endl;
-        }
-
+      while (!env.call_stack_.empty()) {
         if (static_cast<uint32_t>(env.call_stack_.back().current_idx_) >= T_FIBER::kStepsCount) {
           CURRENT_THROW(ImplException("NEXT() out of bounds."));
         }
