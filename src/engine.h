@@ -104,7 +104,6 @@ struct ImplCallStackEntry final {
 
   ImplCallStackEntry(ImplCallStackEntry const&) = default;
   ImplCallStackEntry& operator=(ImplCallStackEntry const&) = default;
-  // TODO(dkorolev): The pointer to the variable on stack of the caller where the result should be stored!
 };
 
 struct ImplEnv final {
