@@ -70,7 +70,7 @@
                 "vars": [
                   {
                     "line": 5,
-                    "name": "tmp_result",
+                    "name": "result",
                     "type": "TODO(dkorolev): Implement this.",
                     "init": "0"
                   }
@@ -79,13 +79,13 @@
                   {
                     "MaroonIRStmt": {
                       "line": 8,
-                      "stmt": "{ CALL(tmp_result, factorial, (4)); }"
+                      "stmt": "{ CALL(result, factorial, (4)); }"
                     }
                   },
                   {
                     "MaroonIRStmt": {
                       "line": 12,
-                      "stmt": "{ DEBUG_EXPR(tmp_result); DONE(); }"
+                      "stmt": "{ DEBUG_EXPR(result); DONE(); }"
                     }
                   }
                 ]
@@ -104,18 +104,18 @@
         "fiber": "global",
         "golden_output": [
           "before",
-          "<[tmp_result:0],factorial@[n:4,r:0]>",
+          "<[result:0],factorial@[n:4,r:0]>",
           "before",
-          "<[tmp_result:0],factorial@[n:4,r:0],factorial@[n:3,r:0]>",
+          "<[result:0],factorial@[n:4,r:0],factorial@[n:3,r:0]>",
           "before",
-          "<[tmp_result:0],factorial@[n:4,r:0],factorial@[n:3,r:0],factorial@[n:2,r:0]>",
+          "<[result:0],factorial@[n:4,r:0],factorial@[n:3,r:0],factorial@[n:2,r:0]>",
           "after",
-          "<[tmp_result:0],factorial@[n:4,r:0],factorial@[n:3,r:0],factorial@[n:2,r:1]>",
+          "<[result:0],factorial@[n:4,r:0],factorial@[n:3,r:0],factorial@[n:2,r:1]>",
           "after",
-          "<[tmp_result:0],factorial@[n:4,r:0],factorial@[n:3,r:2]>",
+          "<[result:0],factorial@[n:4,r:0],factorial@[n:3,r:2]>",
           "after",
-          "<[tmp_result:0],factorial@[n:4,r:6]>",
-          "tmp_result=24"
+          "<[result:0],factorial@[n:4,r:6]>",
+          "result=24"
         ]
       }
     }

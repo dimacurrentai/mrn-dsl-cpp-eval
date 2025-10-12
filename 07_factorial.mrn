@@ -2,12 +2,12 @@ MAROON(factorial) {
   FIBER(global) {
     FN(main) {
       // TODO(dkorolev): Make just `result` work!
-      VAR(tmp_result, U64, 0);
+      VAR(result, U64, 0);
       STMT({
-        CALL(tmp_result, factorial, (4));
+        CALL(result, factorial, (4));
       });
       STMT({
-        DEBUG_EXPR(tmp_result);
+        DEBUG_EXPR(result);
         DONE();
       });
     };
@@ -47,16 +47,16 @@ TEST_FIBER(
   global,
   {
     "before",
-    "<[tmp_result:0],factorial@[n:4,r:0]>",
+    "<[result:0],factorial@[n:4,r:0]>",
     "before",
-    "<[tmp_result:0],factorial@[n:4,r:0],factorial@[n:3,r:0]>",
+    "<[result:0],factorial@[n:4,r:0],factorial@[n:3,r:0]>",
     "before",
-    "<[tmp_result:0],factorial@[n:4,r:0],factorial@[n:3,r:0],factorial@[n:2,r:0]>",
+    "<[result:0],factorial@[n:4,r:0],factorial@[n:3,r:0],factorial@[n:2,r:0]>",
     "after",
-    "<[tmp_result:0],factorial@[n:4,r:0],factorial@[n:3,r:0],factorial@[n:2,r:1]>",
+    "<[result:0],factorial@[n:4,r:0],factorial@[n:3,r:0],factorial@[n:2,r:1]>",
     "after",
-    "<[tmp_result:0],factorial@[n:4,r:0],factorial@[n:3,r:2]>",
+    "<[result:0],factorial@[n:4,r:0],factorial@[n:3,r:2]>",
     "after",
-    "<[tmp_result:0],factorial@[n:4,r:6]>",
-    "tmp_result=24",
+    "<[result:0],factorial@[n:4,r:6]>",
+    "result=24",
   });
