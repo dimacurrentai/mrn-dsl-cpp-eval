@@ -20,6 +20,11 @@ struct ImplException : current::Exception {
   using current::Exception::Exception;
 };
 
+template <typename... TS>
+inline std::vector<uint64_t> pack_args(TS... args) {
+  return {static_cast<uint64_t>(args)...};
+}
+
 enum TmpNextStatus { None = 0, Next, Branch, Done, Call, Return };
 struct ImplResultCollector final {
   MaroonStateIndex next_idx_;
@@ -28,6 +33,7 @@ struct ImplResultCollector final {
   MaroonStateIndex call_idx_;
   std::string call_f_;
   MaroonVarIndex call_retval_var_idx_;
+  std::vector<uint64_t> call_args_;
 
   bool has_retval_;
   VarValue retval_;
@@ -51,17 +57,30 @@ struct ImplResultCollector final {
     }
     status_ = TmpNextStatus::Done;
   }
-  void call1(MaroonStateIndex idx, std::string f) {
+
+  void call_ignore_return(size_t number_of_args, MaroonStateIndex idx, std::string f, std::vector<uint64_t> args) {
+    if (args.size() != number_of_args) {
+      // TODO(dkorolev): The error message should make sense. Including `file:line` perhaps.
+      CURRENT_THROW(ImplException("WRONG NUMBER OF ARGS"));
+    }
     status_ = TmpNextStatus::Call;
     call_idx_ = idx;
     call_f_ = std::move(f);
     call_retval_var_idx_ = static_cast<MaroonVarIndex>(-1);
+    call_args_ = std::move(args);
   }
-  void call2(MaroonVarIndex v, MaroonStateIndex idx, std::string f) {
+
+  void call_capture_return(
+      MaroonVarIndex v, size_t number_of_args, MaroonStateIndex idx, std::string f, std::vector<uint64_t> args) {
+    if (args.size() != number_of_args) {
+      // TODO(dkorolev): The error message should make sense. Including `file:line` perhaps.
+      CURRENT_THROW(ImplException("WRONG NUMBER OF ARGS"));
+    }
     status_ = TmpNextStatus::Call;
     call_idx_ = idx;
     call_f_ = std::move(f);
     call_retval_var_idx_ = v;
+    call_args_ = std::move(args);
   }
 
   void ret() {
@@ -95,6 +114,9 @@ struct ImplCallStackEntry final {
   std::string f_;
   MaroonVarIndex call_retval_var_idx_;
   std::vector<ImplVar> vars_;
+
+  size_t args_used_ = 0u;
+  std::vector<uint64_t> args_;  // TODO(dkorolev): Obviously, no `uint64_t`!
 
   ImplCallStackEntry() = delete;
   explicit ImplCallStackEntry(MaroonStateIndex idx,
@@ -191,6 +213,22 @@ struct ImplEnv final {
     call_stack_.back().vars_.push_back(std::move(var));
   }
 
+  void DeclareFunctionArg(size_t idx, std::string name) {
+    if (idx != call_stack_.back().vars_.size()) {
+      std::cerr << "Internal invariant error: corrupted stack." << std::endl;
+      std::exit(1);
+    }
+    if (call_stack_.back().args_used_ >= call_stack_.back().args_.size()) {
+      std::cerr << "Internal invariant error: not enough args, should never happen." << std::endl;
+      std::exit(1);
+    }
+    ImplVar var;
+    var.name = std::move(name);
+    // TODO(dkorolev): Support other var types.
+    var.value = static_cast<VarValue>(call_stack_.back().args_[call_stack_.back().args_used_++]);
+    call_stack_.back().vars_.push_back(std::move(var));
+  }
+
   uint64_t& AccessVar(size_t idx, char const* const name) {
     if (idx >= call_stack_.back().vars_.size()) {
       std::cerr << "Internal invariant error: var out of stack." << std::endl;
@@ -224,11 +262,12 @@ struct MaroonStep final {
 #define DONE() result.done()
 
 // NOTE(dkorolev): The ugly yet functional way to tell 1-arg vs. 2-args macros.
-#define CALL_DISPATCH(_1, _2, NAME, ...) NAME
-#define CALL(...) CALL_DISPATCH(__VA_ARGS__, CALL2, CALL1)(__VA_ARGS__)
+#define CALL_DISPATCH(_1, _2, _3, NAME, ...) NAME
+#define CALL(...) CALL_DISPATCH(__VA_ARGS__, CALL3, CALL2, NONEXISTENT_CALL1)(__VA_ARGS__)
 
-#define CALL1(f) result.call1(FN_##f, #f)
-#define CALL2(v, f) result.call2(MAROON_VAR_INDEX_##v, FN_##f, #f)
+#define CALL2(f, args) result.call_ignore_return(NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args args)
+#define CALL3(v, f, args) \
+  result.call_capture_return(MAROON_VAR_INDEX_##v, NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args args)
 
 #define RETURN(...) result.ret(__VA_ARGS__)
 
@@ -244,6 +283,8 @@ struct MaroonEngine final {
 
       // NOTE(dkorolev): This will not compile if there's no `main` in the `global` fiber.
       static_assert(T_FIBER::kIsFiber);
+
+      static_assert(T_FIBER::NUMBER_OF_ARGS_main == 0);
 
       // TODO(dkorolev): Proper engine =)
       env.call_stack_.push_back(ImplCallStackEntry(T_FIBER::FN_main));
@@ -291,6 +332,7 @@ struct MaroonEngine final {
               static_cast<MaroonStateIndex>(static_cast<uint32_t>(env.call_stack_.back().current_idx_) + 1);
           env.call_stack_.push_back(
               ImplCallStackEntry(result.call_idx_, std::move(result.call_f_), result.call_retval_var_idx_));
+          env.call_stack_.back().args_ = std::move(result.call_args_);
         } else if (result.status() == TmpNextStatus::Return) {
           auto const retval_var_idx = env.call_stack_.back().call_retval_var_idx_;
           env.call_stack_.pop_back();

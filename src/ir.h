@@ -20,8 +20,8 @@
 CURRENT_STRUCT(MaroonIRVar) {
   CURRENT_FIELD(line, uint32_t);
   CURRENT_FIELD(name, std::string);
-  CURRENT_FIELD(type, std::string);  // NOTE(dkorolev): Would love to `enum` this somehow.
-  CURRENT_FIELD(init, std::string);  // NOTE(dkorolev): Not sure I like this as `string`, but works for now.
+  CURRENT_FIELD(type, std::string);            // NOTE(dkorolev): Would love to `enum` this somehow.
+  CURRENT_FIELD(init, Optional<std::string>);  // NOTE(dkorolev): Not sure I like this as `string`, but works for now.
 };
 
 CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRStmt);
@@ -58,7 +58,8 @@ CURRENT_STRUCT(MaroonIRBlock) {
 
 CURRENT_STRUCT(MaroonIRFunction) {
   CURRENT_FIELD(line, uint32_t);
-  // TODO(dkorolev): Parameters, as extra "vars".
+  // TODO(dkorolev): Types of arguments!
+  CURRENT_FIELD(number_of_args, uint32_t, 0);
   CURRENT_FIELD(body, MaroonIRBlock);
 };
 

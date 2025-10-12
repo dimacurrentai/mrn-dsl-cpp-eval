@@ -9,6 +9,7 @@
           "functions": {
             "main": {
               "line": 5,
+              "number_of_args": 0,
               "body": {
                 "line": 5,
                 "vars": [],

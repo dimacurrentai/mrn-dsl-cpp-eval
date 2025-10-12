@@ -28,6 +28,13 @@
 
 #define VAR(name, type, init) RegisterVar(ctx, #name, VarTypes::type, #init, __LINE__);
 
+// TODO(dkorolev): We will need to make sure `main` has no `ARG`-s.
+// TODO(dkorolev): We will need to make sure the `ARG`-s are only defined at the very top!
+#define ARG(name, type, init) RegisterArg(ctx, #name, VarTypes::type, #init, __LINE__);
+
+// TODO(dkorolev): We should make sure no `ARG`-s can be registered outside the top level of the function, hehe.
+#define ARG(name, type) RegisterArg(ctx, #name, VarTypes::type, __LINE__);
+
 #define TEST_FIBER(maroon_name, maroon_fiber, ...) \
   {                                                \
     MaroonTestCaseRunFiber t;                      \

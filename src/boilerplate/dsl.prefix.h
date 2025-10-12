@@ -61,6 +61,11 @@ struct Ctx final {
 
   void AddVarToBlock(MaroonIRVar var) { current_fn_blocks_stack.back()->vars.push_back(std::move(var)); }
 
+  void AddArgToFunction() {
+    // TODO(dkorolev): Need to make sure the `main` function has no arguments registered.
+    ++out.maroon[current_maroon_name].fibers[current_fiber_name].functions[current_function_name].number_of_args;
+  }
+
   void MarkInnerBlockAsCompleted(size_t user_key) {
     if (blocks_stack.empty()) {
       std::cerr << "WTF0!" << std::endl;
@@ -305,6 +310,22 @@ inline void RegisterVar(
   var.init = init_as_string;
 
   ctx.AddVarToBlock(std::move(var));
+}
+
+// TODO(dkorolev): Copy-pasted from `RegisterVar`, we can do better.
+inline void RegisterArg(Ctx& ctx, std::string const& name, VarTypes type, uint32_t line) {
+  if (!ctx.InFunction()) {
+    std::cerr << "`ARG()` is only legal inside an `FN()`." << std::endl;
+    std::exit(1);
+  }
+
+  MaroonIRVar var;
+  var.line = line;
+  var.name = name;
+  var.type = "TODO(dkorolev): Implement this.";
+
+  ctx.AddVarToBlock(std::move(var));
+  ctx.AddArgToFunction();
 }
 
 int main() {

@@ -110,8 +110,13 @@ int main(int argc, char** argv) {
           fo << "    static void VARS_" << step_idx << kVarsFunctionSignature << "{ // " << fn_name << std::endl;
           fo << "      static_cast<void>(env);" << std::endl;
           for (auto const& var : next_step_init_vars) {
-            fo << "      env.DeclareVar(" << local_vars.size() << ",\"" << var.name << "\"," << var.init << ");"
-               << std::endl;
+            if (Exists(var.init)) {
+              fo << "      env.DeclareVar(" << local_vars.size() << ",\"" << var.name << "\"," << Value(var.init)
+                 << ");" << std::endl;
+            } else {
+              // TODO(dkorolev): Vars with no `init` are all function arguments, right?
+              fo << "      env.DeclareFunctionArg(" << local_vars.size() << ",\"" << var.name << "\");" << std::endl;
+            }
             local_vars.push_back(var);
           }
           next_step_init_vars.clear();
@@ -194,7 +199,7 @@ int main(int argc, char** argv) {
         visitor.EnsureNoLocalVars();
         fo << "    inline constexpr static MaroonStateIndex FN_" << fn_name << " = static_cast<MaroonStateIndex>("
            << visitor.nvars.size() << ");" << std::endl;
-        ;
+        fo << "    inline constexpr static size_t NUMBER_OF_ARGS_" << fn_name << " = " << fn.number_of_args << ";\n";
         visitor.fn_name = fn_name;
         visitor(fn.body);
       }

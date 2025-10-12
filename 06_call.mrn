@@ -8,7 +8,7 @@ MAROON(call_smoke) {
         NEXT();
       });
       STMT({
-        CALL(inner);  // All `CALL()`-s are presumably async/await, and thus they must end the `STMT`. For now.
+        CALL(inner, ());  // All `CALL()`-s are presumably async/await, and thus they must end the `STMT`. For now.
       });
       STMT({
         DEBUG("end");
@@ -34,7 +34,7 @@ MAROON(call_dump) {
         NEXT();
       });
       STMT({
-        CALL(inner);  // All `CALL()`-s are presumably async/await, and thus they must end the `STMT`. For now.
+        CALL(inner, ());  // All `CALL()`-s are presumably async/await, and thus they must end the `STMT`. For now.
       });
       STMT({
         DEBUG("end");
@@ -62,7 +62,7 @@ MAROON(call_with_return) {
         NEXT();
       });
       STMT({
-        CALL(a, one);
+        CALL(a, one, ());
       });
       STMT({
         DEBUG_EXPR(a);
@@ -77,11 +77,65 @@ MAROON(call_with_return) {
   };
 };
 
+MAROON(call_with_arg) {
+  FIBER(call) {
+    FN(main) {
+      VAR(x, U64, 10);
+      STMT({
+        DEBUG_EXPR(x);
+        NEXT();
+      });
+      STMT({
+        CALL(x, add_one, (x));
+      });
+      STMT({
+        DEBUG_EXPR(x);
+        DONE();
+      });
+    };
+    FN(add_one) {
+      ARG(a, U64);
+      STMT({
+        DEBUG_EXPR(a);
+        RETURN(a + 1);
+      });
+    };
+  };
+};
+
+MAROON(call_with_two_args) {
+  FIBER(call) {
+    FN(main) {
+      VAR(x, U64, 10);
+      STMT({
+        DEBUG_EXPR(x);
+        NEXT();
+      });
+      STMT({
+        CALL(x, sum, (x, 32));
+      });
+      STMT({
+        DEBUG_EXPR(x);
+        DONE();
+      });
+    };
+    FN(sum) {
+      ARG(a, U64);
+      ARG(b, U64);
+      STMT({
+        DEBUG_EXPR(a);
+        DEBUG_EXPR(b);
+        RETURN(a + b);
+      });
+    };
+  };
+};
+
 MAROON(call_ok_to_ignore_result) {
   FIBER(call) {
     FN(main) {
       STMT({
-        CALL(foo);
+        CALL(foo, ());
       });
       STMT({
         DONE();
@@ -100,7 +154,7 @@ MAROON(call_not_ok_to_fail_to_provide_result) {
     FN(main) {
       VAR(a, U64, 0);
       STMT({
-        CALL(a, bar);  // Requiring the return value -- to be stored in `a`.
+        CALL(a, bar, ());  // Requiring the return value -- to be stored in `a`.
       });
       STMT({
         DONE();
@@ -132,6 +186,16 @@ TEST_FIBER(
   call_with_return,
   call,
   {"a=0", "a=1"});
+
+TEST_FIBER(
+  call_with_arg,
+  call,
+  {"x=10","a=10","x=11"});
+
+TEST_FIBER(
+  call_with_two_args,
+  call,
+  {"x=10","a=10","b=32","x=42"});
 
 TEST_FIBER(
   call_ok_to_ignore_result,
