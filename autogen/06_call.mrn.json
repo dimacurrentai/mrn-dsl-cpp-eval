@@ -118,12 +118,71 @@
           }
         }
       }
+    },
+    "call_with_return": {
+      "line": 56,
+      "fibers": {
+        "call": {
+          "line": 57,
+          "functions": {
+            "main": {
+              "line": 58,
+              "body": {
+                "line": 58,
+                "vars": [
+                  {
+                    "line": 59,
+                    "name": "a",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "0"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 63,
+                      "stmt": "{ DEBUG_EXPR(a); NEXT(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 66,
+                      "stmt": "{ CALL(a, one); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 70,
+                      "stmt": "{ DEBUG_EXPR(a); DONE(); }"
+                    }
+                  }
+                ]
+              }
+            },
+            "one": {
+              "line": 72,
+              "body": {
+                "line": 72,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 75,
+                      "stmt": "{ RETURN(1); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
     }
   },
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 63,
+        "line": 88,
         "maroon": "call_smoke",
         "fiber": "call",
         "golden_output": [
@@ -135,7 +194,7 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 68,
+        "line": 93,
         "maroon": "call_dump",
         "fiber": "call",
         "golden_output": [
@@ -145,6 +204,17 @@
           "<[a:1],inner@[b:1]>",
           "end",
           "<[a:1]>"
+        ]
+      }
+    },
+    {
+      "MaroonTestCaseRunFiber": {
+        "line": 98,
+        "maroon": "call_with_return",
+        "fiber": "call",
+        "golden_output": [
+          "a=0",
+          "a=1"
         ]
       }
     }

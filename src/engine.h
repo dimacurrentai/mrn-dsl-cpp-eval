@@ -11,6 +11,10 @@
 
 // TODO(dkorolev): If we agree it's uint32_t, need to make sure the future compiler checks the size of the program.
 enum class MaroonStateIndex : uint32_t;
+enum class MaroonVarIndex : uint32_t;
+
+// TODO(dkorolev): Support different variable types =) and overall the Maroon stack here.
+enum class VarValue : uint64_t;
 
 struct ImplException : current::Exception {
   using current::Exception::Exception;
@@ -20,8 +24,14 @@ enum TmpNextStatus { None = 0, Next, Branch, Done, Call, Return };
 struct ImplResultCollector final {
   MaroonStateIndex next_idx_;
   TmpNextStatus status_ = TmpNextStatus::None;
+
   MaroonStateIndex call_idx_;
   std::string call_f_;
+  MaroonVarIndex call_retval_var_idx_;
+
+  bool has_retval_;
+  VarValue retval_;
+
   void next() {
     if (status_ != TmpNextStatus::None) {
       CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place."));
@@ -41,12 +51,31 @@ struct ImplResultCollector final {
     }
     status_ = TmpNextStatus::Done;
   }
-  void call(MaroonStateIndex idx, std::string f) {
+  void call1(MaroonStateIndex idx, std::string f) {
     status_ = TmpNextStatus::Call;
     call_idx_ = idx;
     call_f_ = std::move(f);
+    call_retval_var_idx_ = static_cast<MaroonVarIndex>(-1);
   }
-  void ret() { status_ = TmpNextStatus::Return; }
+  void call2(MaroonVarIndex v, MaroonStateIndex idx, std::string f) {
+    status_ = TmpNextStatus::Call;
+    call_idx_ = idx;
+    call_f_ = std::move(f);
+    call_retval_var_idx_ = v;
+  }
+
+  void ret() {
+    status_ = TmpNextStatus::Return;
+    has_retval_ = false;
+  }
+
+  template <typename T>
+  void ret(T val) {
+    status_ = TmpNextStatus::Return;
+    has_retval_ = true;
+    retval_ = static_cast<VarValue>(val);
+  }
+
   TmpNextStatus status() const {
     if (status_ == TmpNextStatus::None) {
       CURRENT_THROW(ImplException("`AWAIT` or `RETURN` condition missing in an `STMT`."));
@@ -55,20 +84,24 @@ struct ImplResultCollector final {
   }
 };
 
-// TODO(dkorolev): Support different variable types =) and overall the Maroon stack here.
-enum class VarValue : uint64_t;
-
 struct ImplVar final {
   std::string name;
   VarValue value;
 };
 
 struct ImplCallStackEntry final {
-  std::string f_;
   MaroonStateIndex current_idx_;
+
+  std::string f_;
+  MaroonVarIndex call_retval_var_idx_;
   std::vector<ImplVar> vars_;
+
   ImplCallStackEntry() = delete;
-  explicit ImplCallStackEntry(MaroonStateIndex idx, std::string f = "") : current_idx_(idx), f_(std::move(f)) {}
+  explicit ImplCallStackEntry(MaroonStateIndex idx,
+                              std::string f = "",
+                              MaroonVarIndex call_retval_var_idx = static_cast<MaroonVarIndex>(-1))
+      : current_idx_(idx), f_(std::move(f)), call_retval_var_idx_(call_retval_var_idx) {}
+
   ImplCallStackEntry(ImplCallStackEntry const&) = default;
   ImplCallStackEntry& operator=(ImplCallStackEntry const&) = default;
   // TODO(dkorolev): The pointer to the variable on stack of the caller where the result should be stored!
@@ -190,7 +223,14 @@ struct MaroonStep final {
 #define DEBUG_DUMP_STACK() env.debug_dump_stack(__FILE__, __LINE__)
 #define NEXT() result.next()
 #define DONE() result.done()
-#define CALL(f) result.call(FN_##f, #f)
+
+// NOTE(dkorolev): The ugly yet functional way to tell 1-arg vs. 2-args macros.
+#define CALL_DISPATCH(_1, _2, NAME, ...) NAME
+#define CALL(...) CALL_DISPATCH(__VA_ARGS__, CALL2, CALL1)(__VA_ARGS__)
+
+#define CALL1(f) result.call1(FN_##f, #f)
+#define CALL2(v, f) result.call2(MAROON_VAR_INDEX_##v, FN_##f, #f)
+
 #define RETURN(...) result.ret(__VA_ARGS__)
 
 template <class T_MAROON, class T_FIBER>
@@ -250,9 +290,25 @@ struct MaroonEngine final {
         } else if (result.status() == TmpNextStatus::Call) {
           env.call_stack_.back().current_idx_ =
               static_cast<MaroonStateIndex>(static_cast<uint32_t>(env.call_stack_.back().current_idx_) + 1);
-          env.call_stack_.push_back(ImplCallStackEntry(result.call_idx_, std::move(result.call_f_)));
+          env.call_stack_.push_back(
+              ImplCallStackEntry(result.call_idx_, std::move(result.call_f_), result.call_retval_var_idx_));
         } else if (result.status() == TmpNextStatus::Return) {
+          auto const retval_var_idx = env.call_stack_.back().call_retval_var_idx_;
           env.call_stack_.pop_back();
+          if (result.has_retval_) {
+            if (env.call_stack_.empty()) {
+              std::cerr << "Internal error: returning from the top-level of the fiber should have no value."
+                        << std::endl;
+              std::exit(1);
+            }
+            if (retval_var_idx != static_cast<MaroonVarIndex>(-1)) {
+              env.call_stack_.back().vars_[static_cast<size_t>(retval_var_idx)].value = result.retval_;
+            }
+            // NOTE(dkorolev): Perfectly fine to ignore the returned value!
+          } else if (retval_var_idx != static_cast<MaroonVarIndex>(-1)) {
+            std::cerr << "Internal error: a value must have been returned but it was not." << std::endl;
+            std::exit(1);
+          }
         } else {
           std::cerr << "Internal error: this should never happen." << std::endl;
           std::exit(1);

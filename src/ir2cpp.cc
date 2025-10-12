@@ -121,8 +121,9 @@ int main(int argc, char** argv) {
           size_t tmp_idx = 0;
           // TODO(dkorolev): Different var types, not just names here.
           for (auto const& var : local_vars) {
-            fo << "      auto& " << var.name << " = env.AccessVar(" << tmp_idx++ << ",\"" << var.name << "\");"
-               << std::endl;
+            fo << "      auto& " << var.name << " = env.AccessVar(" << tmp_idx << ",\"" << var.name << "\");\n"
+               << "      auto MAROON_VAR_INDEX_" << var.name << " = static_cast<MaroonVarIndex>(" << tmp_idx << ");\n";
+            ++tmp_idx;
           }
           for (auto const& var : local_vars) {
             fo << "      static_cast<void>(" << var.name << ");" << std::endl;

@@ -53,6 +53,31 @@ MAROON(call_dump) {
   };
 };
 
+MAROON(call_with_return) {
+  FIBER(call) {
+    FN(main) {
+      VAR(a, U64, 0);
+      STMT({
+        DEBUG_EXPR(a);
+        NEXT();
+      });
+      STMT({
+        CALL(a, one);
+      });
+      STMT({
+        DEBUG_EXPR(a);
+        DONE();
+      });
+    };
+    FN(one) {
+      STMT({
+        RETURN(1);
+      });
+    };
+  };
+};
+
+
 // TODO(dkorolev): Function return types (just U64 for now), and `RETURN()`-ing values.
 // TODO(dkorolev): Add dumping the call stack much as we have dumping the vars.
 // TODO(dkorolev): Arbitrary function return types ... once we have types for real.
@@ -66,3 +91,8 @@ TEST_FIBER(
   call_dump,
   call,
   {"begin", "<[a:1]>", "inner", "<[a:1],inner@[b:1]>", "end", "<[a:1]>"});
+
+TEST_FIBER(
+  call_with_return,
+  call,
+  {"a=0", "a=1"});
