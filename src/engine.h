@@ -254,22 +254,22 @@ struct MaroonStep final {
   vars_function_t new_vars;
 };
 
-#define DEBUG(s) env.debug(s, __FILE__, __LINE__)
-#define DEBUG_EXPR(s) env.debug_expr(#s, s, __FILE__, __LINE__)
-#define DEBUG_DUMP_VARS() env.debug_dump_vars(__FILE__, __LINE__)
-#define DEBUG_DUMP_STACK() env.debug_dump_stack(__FILE__, __LINE__)
-#define NEXT() result.next()
-#define DONE() result.done()
+#define DEBUG(s) MAROON_env.debug(s, __FILE__, __LINE__)
+#define DEBUG_EXPR(s) MAROON_env.debug_expr(#s, s, __FILE__, __LINE__)
+#define DEBUG_DUMP_VARS() MAROON_env.debug_dump_vars(__FILE__, __LINE__)
+#define DEBUG_DUMP_STACK() MAROON_env.debug_dump_stack(__FILE__, __LINE__)
+#define NEXT() MAROON_result.next()
+#define DONE() MAROON_result.done()
 
 // NOTE(dkorolev): The ugly yet functional way to tell 1-arg vs. 2-args macros.
 #define CALL_DISPATCH(_1, _2, _3, NAME, ...) NAME
 #define CALL(...) CALL_DISPATCH(__VA_ARGS__, CALL3, CALL2, NONEXISTENT_CALL1)(__VA_ARGS__)
 
-#define CALL2(f, args) result.call_ignore_return(NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args args)
+#define CALL2(f, args) MAROON_result.call_ignore_return(NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args args)
 #define CALL3(v, f, args) \
-  result.call_capture_return(MAROON_VAR_INDEX_##v, NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args args)
+  MAROON_result.call_capture_return(MAROON_VAR_INDEX_##v, NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args args)
 
-#define RETURN(...) result.ret(__VA_ARGS__)
+#define RETURN(...) MAROON_result.ret(__VA_ARGS__)
 
 template <class T_MAROON, class T_FIBER>
 struct MaroonEngine final {

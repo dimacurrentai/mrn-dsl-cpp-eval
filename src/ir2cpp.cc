@@ -46,8 +46,8 @@ inline void GenerateTestCase(std::ostream& fo, MaroonTestCase const& test, std::
   fo << '}' << std::endl;
 }
 
-constexpr static char const* const kVarsFunctionSignature = "(ImplEnv& env)";
-constexpr static char const* const kStepFunctionSignature = "(ImplEnv& env, ImplResultCollector& result)";
+constexpr static char const* const kVarsFunctionSignature = "(ImplEnv& MAROON_env)";
+constexpr static char const* const kStepFunctionSignature = "(ImplEnv& MAROON_env, ImplResultCollector& MAROON_result)";
 
 int main(int argc, char** argv) {
   ParseDFlags(&argc, &argv);
@@ -108,14 +108,15 @@ int main(int argc, char** argv) {
 
           // Declare the vars.
           fo << "    static void VARS_" << step_idx << kVarsFunctionSignature << "{ // " << fn_name << std::endl;
-          fo << "      static_cast<void>(env);" << std::endl;
+          fo << "      static_cast<void>(MAROON_env);" << std::endl;
           for (auto const& var : next_step_init_vars) {
             if (Exists(var.init)) {
-              fo << "      env.DeclareVar(" << local_vars.size() << ",\"" << var.name << "\"," << Value(var.init)
+              fo << "      MAROON_env.DeclareVar(" << local_vars.size() << ",\"" << var.name << "\"," << Value(var.init)
                  << ");" << std::endl;
             } else {
               // TODO(dkorolev): Vars with no `init` are all function arguments, right?
-              fo << "      env.DeclareFunctionArg(" << local_vars.size() << ",\"" << var.name << "\");" << std::endl;
+              fo << "      MAROON_env.DeclareFunctionArg(" << local_vars.size() << ",\"" << var.name << "\");"
+                 << std::endl;
             }
             local_vars.push_back(var);
           }
@@ -126,7 +127,7 @@ int main(int argc, char** argv) {
           size_t tmp_idx = 0;
           // TODO(dkorolev): Different var types, not just names here.
           for (auto const& var : local_vars) {
-            fo << "      auto& " << var.name << " = env.AccessVar(" << tmp_idx << ",\"" << var.name << "\");\n"
+            fo << "      auto& " << var.name << " = MAROON_env.AccessVar(" << tmp_idx << ",\"" << var.name << "\");\n"
                << "      auto MAROON_VAR_INDEX_" << var.name << " = static_cast<MaroonVarIndex>(" << tmp_idx << ");\n";
             ++tmp_idx;
           }
@@ -149,9 +150,9 @@ int main(int argc, char** argv) {
           size_t const step_idx = nvars.size();
           PrintHeader();
           fo << "      if (" << cond.cond << ") {" << std::endl;
-          fo << "        result.branch(IF_YES_" << step_idx << "());" << std::endl;
+          fo << "        MAROON_result.branch(IF_YES_" << step_idx << "());" << std::endl;
           fo << "      } else {" << std::endl;
-          fo << "        result.branch(IF_NO_" << step_idx << "());" << std::endl;
+          fo << "        MAROON_result.branch(IF_NO_" << step_idx << "());" << std::endl;
           fo << "      }" << std::endl;
           PrintFooter();
           // NOTE(dkorolev): On `yes` it will always be the next step index, but that's details.
@@ -160,7 +161,7 @@ int main(int argc, char** argv) {
           cond.yes.Call(*this);
 
           PrintHeader();
-          fo << "      result.branch(IF_DONE_" << step_idx << "());";
+          fo << "      MAROON_result.branch(IF_DONE_" << step_idx << "());";
           PrintFooter();
 
           fo << "  constexpr static MaroonStateIndex IF_NO_" << step_idx << "() { return static_cast<MaroonStateIndex>("
