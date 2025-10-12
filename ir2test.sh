@@ -14,7 +14,7 @@ if ! [ -f "autogen/$IN.mrn.json" ] ; then
   exit 1
 fi
 
-./autogen/ir2cpp.bin --in "autogen/$IN.mrn.json" --name "$IN" --out "autogen/$IN.mrn.test.h"
+./autogen/gen_test.bin --in "autogen/$IN.mrn.json" --name "$IN" --out "autogen/$IN.mrn.test.h"
 
 CLANG_FORMAT=""
 if clang-format --version >/dev/null 2>&1 ; then

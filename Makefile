@@ -36,5 +36,5 @@ autogen/%.mrn.json: %.mrn
 	@[ -f current/current.h ] || git clone --depth 1 https://github.com/C5T/Current current
 	@./mrn2ir.sh $<
 
-autogen/%.mrn.test.h: %.mrn ./autogen/ir2cpp.bin
+autogen/%.mrn.test.h: %.mrn ./autogen/gen_test.bin
 	@./ir2test.sh $< >$@

@@ -51,5 +51,4 @@ To be feature-complete I'll need to support:
 
 - dump the schema and have a test for that! (Via diff -w)
 
-- TODO rename src/ir2cpp.cc into src/gen_test.cc
 - move to `size_t` when we're dealing with indexes, there's a discrepancy now, and sometimes it's `uint32_t`
