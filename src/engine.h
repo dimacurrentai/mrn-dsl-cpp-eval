@@ -306,8 +306,7 @@ struct MaroonEngine final {
             }
             // NOTE(dkorolev): Perfectly fine to ignore the returned value!
           } else if (retval_var_idx != static_cast<MaroonVarIndex>(-1)) {
-            std::cerr << "Internal error: a value must have been returned but it was not." << std::endl;
-            std::exit(1);
+            CURRENT_THROW(ImplException("A return value must have been provided."));
           }
         } else {
           std::cerr << "Internal error: this should never happen." << std::endl;

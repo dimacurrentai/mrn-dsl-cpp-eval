@@ -67,6 +67,59 @@
         }
       }
     },
+    "call_not_ok_to_fail_to_provide_result": {
+      "line": 98,
+      "fibers": {
+        "call": {
+          "line": 99,
+          "functions": {
+            "bar": {
+              "line": 109,
+              "body": {
+                "line": 109,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 112,
+                      "stmt": "{ RETURN(); }"
+                    }
+                  }
+                ]
+              }
+            },
+            "main": {
+              "line": 100,
+              "body": {
+                "line": 100,
+                "vars": [
+                  {
+                    "line": 101,
+                    "name": "a",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "0"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 104,
+                      "stmt": "{ CALL(a, bar); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 107,
+                      "stmt": "{ DONE(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
     "call_ok_to_ignore_result": {
       "line": 80,
       "fibers": {
@@ -228,7 +281,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 105,
+        "line": 124,
         "maroon": "call_smoke",
         "fiber": "call",
         "golden_output": [
@@ -240,7 +293,7 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 110,
+        "line": 129,
         "maroon": "call_dump",
         "fiber": "call",
         "golden_output": [
@@ -255,7 +308,7 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 115,
+        "line": 134,
         "maroon": "call_with_return",
         "fiber": "call",
         "golden_output": [
@@ -266,10 +319,18 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 120,
+        "line": 139,
         "maroon": "call_ok_to_ignore_result",
         "fiber": "call",
         "golden_output": []
+      }
+    },
+    {
+      "MaroonTestCaseFiberShouldThrow": {
+        "line": 144,
+        "maroon": "call_not_ok_to_fail_to_provide_result",
+        "fiber": "call",
+        "error": "A return value must have been provided."
       }
     }
   ]
