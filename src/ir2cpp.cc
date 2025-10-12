@@ -148,17 +148,19 @@ int main(int argc, char** argv) {
           fo << "      }" << std::endl;
           PrintFooter();
           // NOTE(dkorolev): On `yes` it will always be the next step index, but that's details.
-          fo << "  constexpr static size_t IF_YES_" << step_idx << "() { return " << nvars.size() << "; }" << std::endl;
+          fo << "  constexpr static MaroonStateIndex IF_YES_" << step_idx
+             << "() { return static_cast<MaroonStateIndex>(" << nvars.size() << "); }" << std::endl;
           cond.yes.Call(*this);
 
           PrintHeader();
           fo << "      result.branch(IF_DONE_" << step_idx << "());";
           PrintFooter();
 
-          fo << "  constexpr static size_t IF_NO_" << step_idx << "() { return " << nvars.size() << "; }" << std::endl;
+          fo << "  constexpr static MaroonStateIndex IF_NO_" << step_idx << "() { return static_cast<MaroonStateIndex>("
+             << nvars.size() << "); }" << std::endl;
           cond.no.Call(*this);
-          fo << "  constexpr static size_t IF_DONE_" << step_idx << "() { return " << nvars.size() << "; }"
-             << std::endl;
+          fo << "  constexpr static MaroonStateIndex IF_DONE_" << step_idx
+             << "() { return static_cast<MaroonStateIndex>(" << nvars.size() << "); }" << std::endl;
         }
 
         void operator()(MaroonIRBlock const& blk) {
@@ -189,7 +191,7 @@ int main(int argc, char** argv) {
       StatementsRecursiveVisitor visitor(fo);
       for (auto const& [fn_name, fn] : fiber.functions) {
         visitor.EnsureNoLocalVars();
-        fo << "    inline constexpr static MaronStateIndex " << fn_name << " = static_cast<MaronStateIndex>("
+        fo << "    inline constexpr static MaroonStateIndex FN_" << fn_name << " = static_cast<MaroonStateIndex>("
            << visitor.nvars.size() << ");" << std::endl;
         ;
         visitor.fn_name = fn_name;

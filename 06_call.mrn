@@ -1,0 +1,68 @@
+// TODO(dkorolev): Should be able to have the `FIBER` name match the `MAROON` name. But not now.
+
+MAROON(call_smoke) {
+  FIBER(call) {
+    FN(main) {
+      STMT({
+        DEBUG("begin");
+        NEXT();
+      });
+      STMT({
+        CALL(inner);  // All `CALL()`-s are presumably async/await, and thus they must end the `STMT`. For now.
+      });
+      STMT({
+        DEBUG("end");
+        DONE();
+      });
+    };
+    FN(inner) {
+      STMT({
+        DEBUG("inner");
+        RETURN();
+      });
+    };
+  };
+};
+
+MAROON(call_dump) {
+  FIBER(call) {
+    FN(main) {
+      VAR(a, U64, 1);
+      STMT({
+        DEBUG("begin");
+        DEBUG_DUMP_STACK();
+        NEXT();
+      });
+      STMT({
+        CALL(inner);  // All `CALL()`-s are presumably async/await, and thus they must end the `STMT`. For now.
+      });
+      STMT({
+        DEBUG("end");
+        DEBUG_DUMP_STACK();
+        DONE();
+      });
+    };
+    FN(inner) {
+      VAR(b, U64, 1);
+      STMT({
+        DEBUG("inner");
+        DEBUG_DUMP_STACK();
+        RETURN();
+      });
+    };
+  };
+};
+
+// TODO(dkorolev): Function return types (just U64 for now), and `RETURN()`-ing values.
+// TODO(dkorolev): Add dumping the call stack much as we have dumping the vars.
+// TODO(dkorolev): Arbitrary function return types ... once we have types for real.
+
+TEST_FIBER(
+  call_smoke,
+  call,
+  {"begin", "inner", "end"});
+
+TEST_FIBER(
+  call_dump,
+  call,
+  {"begin", "<[a:1]>", "inner", "<[a:1],inner@[b:1]>", "end", "<[a:1]>"});
