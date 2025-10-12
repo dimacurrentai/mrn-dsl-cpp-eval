@@ -1,0 +1,62 @@
+MAROON(factorial) {
+  FIBER(global) {
+    FN(main) {
+      // TODO(dkorolev): Make just `result` work!
+      VAR(tmp_result, U64, 0);
+      STMT({
+        CALL(tmp_result, factorial, (4));
+      });
+      STMT({
+        DEBUG_EXPR(tmp_result);
+        DONE();
+      });
+    };
+    FN(factorial) {
+      ARG(n, U64);
+      IF(
+        (n <= 1),
+        // No need for a `BLOCK` to just `RETURN`, an outer `STMT` is enough.
+        (STMT(RETURN(1))),
+        // Need a `BLOCK` to declare a variable, because need a variable to store the return value of a `CALL`.
+        (BLOCK {
+          // Declare the variable for the intermediate result.
+          VAR(r, U64, 0);
+          STMT({
+            DEBUG("before");
+            DEBUG_DUMP_STACK();
+            // Make the recursive call.
+            CALL(r, factorial, (n-1));
+          });
+          STMT({
+            DEBUG("after");
+            DEBUG_DUMP_STACK();
+            // Return the result.
+            RETURN(r * n);
+          });
+         };
+        )
+        //(BLOCK(STMT({ RETURN(10); })))
+      );
+    };
+  };
+};
+
+// TODO(dkorolev): Should be able to test calling functions with arguments, directly from some `TEST_` macro!
+TEST_FIBER(
+  factorial,
+  global,
+  {
+    "before",
+    "<[tmp_result:0],factorial@[n:4,r:0]>",
+    "before",
+    "<[tmp_result:0],factorial@[n:4,r:0],factorial@[n:3,r:0]>",
+    "before",
+    "<[tmp_result:0],factorial@[n:4,r:0],factorial@[n:3,r:0],factorial@[n:2,r:0]>",
+    "after",
+    "<[tmp_result:0],factorial@[n:4,r:0],factorial@[n:3,r:0],factorial@[n:2,r:1]>",
+    "after",
+    "<[tmp_result:0],factorial@[n:4,r:0],factorial@[n:3,r:2]>",
+    "after",
+    "<[tmp_result:0],factorial@[n:4,r:6]>",
+    "tmp_result=24",
+  });

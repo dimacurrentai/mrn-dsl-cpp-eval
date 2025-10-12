@@ -69,7 +69,7 @@
                 "code": [
                   {
                     "MaroonIRIf": {
-                      "line": 33,
+                      "line": 36,
                       "cond": "(a < 10)",
                       "yes": {
                         "MaroonIRStmt": {
@@ -78,16 +78,24 @@
                         }
                       },
                       "no": {
-                        "MaroonIRStmt": {
-                          "line": 33,
-                          "stmt": "{ DEBUG(\"A>=10\"); DONE(); }"
+                        "MaroonIRBlock": {
+                          "line": 31,
+                          "vars": [],
+                          "code": [
+                            {
+                              "MaroonIRStmt": {
+                                "line": 35,
+                                "stmt": "{ DEBUG(\"A>=10\"); DONE(); }"
+                              }
+                            }
+                          ]
                         }
                       }
                     }
                   },
                   {
                     "MaroonIRStmt": {
-                      "line": 37,
+                      "line": 40,
                       "stmt": "{ DEBUG(\"OK\"); DONE(); }"
                     }
                   }
@@ -102,7 +110,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 47,
+        "line": 50,
         "maroon": "if_condition",
         "fiber": "t1",
         "golden_output": [
@@ -113,7 +121,7 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 52,
+        "line": 55,
         "maroon": "if_condition",
         "fiber": "t2",
         "golden_output": [

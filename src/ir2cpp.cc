@@ -140,7 +140,8 @@ int main(int argc, char** argv) {
 
         void operator()(MaroonIRStmt const& code) {
           PrintHeader();
-          fo << code.stmt << std::endl;
+          // Enable `STMT(...)` without `STMT({...})` for short `STMT`-s.
+          fo << code.stmt << std::endl << ';' << std::endl;
           PrintFooter();
         }
 
