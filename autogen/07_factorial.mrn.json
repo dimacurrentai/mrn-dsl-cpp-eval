@@ -22,7 +22,7 @@
                 "code": [
                   {
                     "MaroonIRIf": {
-                      "line": 39,
+                      "line": 38,
                       "cond": "(n <= 1)",
                       "yes": {
                         "MaroonIRStmt": {
@@ -99,7 +99,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 62,
+        "line": 61,
         "maroon": "factorial",
         "fiber": "global",
         "golden_output": [
