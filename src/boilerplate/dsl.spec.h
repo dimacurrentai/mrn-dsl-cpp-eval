@@ -6,7 +6,7 @@
 // If you have `clang-format` installed, a good example is:
 // g++ -E code.dsl.h 2>/dev/null | grep -v '^#' | grep -v '^$' | clang-format
 
-// TODO(dkorolev): See the `README.md` in this directory for the "life of the Maroon test case" flow.
+// NOTE(dkorolev): See the `README.md` in this directory for the "life of the Maroon test case" flow.
 
 #pragma once
 
@@ -28,11 +28,8 @@
 
 #define VAR(name, type, init) RegisterVar(ctx, #name, VarTypes::type, #init, __LINE__);
 
-// TODO(dkorolev): We will need to make sure `main` has no `ARG`-s.
-// TODO(dkorolev): We will need to make sure the `ARG`-s are only defined at the very top!
-#define ARG(name, type, init) RegisterArg(ctx, #name, VarTypes::type, #init, __LINE__);
-
-// TODO(dkorolev): We should make sure no `ARG`-s can be registered outside the top level of the function, hehe.
+// NOTE(dkorolev): We will need to make sure the `ARG`-s are only defined at the very top!
+// NOTE(dkorolev): Although this is probably unnecessary, since once we have the proper DSL, life will get better.
 #define ARG(name, type) RegisterArg(ctx, #name, VarTypes::type, __LINE__);
 
 #define TEST_FIBER(maroon_name, maroon_fiber, ...) \

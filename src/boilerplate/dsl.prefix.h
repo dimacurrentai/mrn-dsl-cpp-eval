@@ -62,7 +62,6 @@ struct Ctx final {
   void AddVarToBlock(MaroonIRVar var) { current_fn_blocks_stack.back()->vars.push_back(std::move(var)); }
 
   void AddArgToFunction() {
-    // TODO(dkorolev): Need to make sure the `main` function has no arguments registered.
     ++out.maroon[current_maroon_name].fibers[current_fiber_name].functions[current_function_name].number_of_args;
   }
 
