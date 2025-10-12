@@ -67,6 +67,52 @@
         }
       }
     },
+    "call_ok_to_ignore_result": {
+      "line": 80,
+      "fibers": {
+        "call": {
+          "line": 81,
+          "functions": {
+            "foo": {
+              "line": 90,
+              "body": {
+                "line": 90,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 93,
+                      "stmt": "{ RETURN(1); }"
+                    }
+                  }
+                ]
+              }
+            },
+            "main": {
+              "line": 82,
+              "body": {
+                "line": 82,
+                "vars": [],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 85,
+                      "stmt": "{ CALL(foo); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 88,
+                      "stmt": "{ DONE(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
     "call_smoke": {
       "line": 3,
       "fibers": {
@@ -182,7 +228,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 88,
+        "line": 105,
         "maroon": "call_smoke",
         "fiber": "call",
         "golden_output": [
@@ -194,7 +240,7 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 93,
+        "line": 110,
         "maroon": "call_dump",
         "fiber": "call",
         "golden_output": [
@@ -209,13 +255,21 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 98,
+        "line": 115,
         "maroon": "call_with_return",
         "fiber": "call",
         "golden_output": [
           "a=0",
           "a=1"
         ]
+      }
+    },
+    {
+      "MaroonTestCaseRunFiber": {
+        "line": 120,
+        "maroon": "call_ok_to_ignore_result",
+        "fiber": "call",
+        "golden_output": []
       }
     }
   ]

@@ -77,6 +77,23 @@ MAROON(call_with_return) {
   };
 };
 
+MAROON(call_ok_to_ignore_result) {
+  FIBER(call) {
+    FN(main) {
+      STMT({
+        CALL(foo);
+      });
+      STMT({
+        DONE();
+      });
+    };
+    FN(foo) {
+      STMT({
+        RETURN(1);
+      });
+    };
+  };
+};
 
 // TODO(dkorolev): Function return types (just U64 for now), and `RETURN()`-ing values.
 // TODO(dkorolev): Add dumping the call stack much as we have dumping the vars.
@@ -96,3 +113,8 @@ TEST_FIBER(
   call_with_return,
   call,
   {"a=0", "a=1"});
+
+TEST_FIBER(
+  call_ok_to_ignore_result,
+  call,
+  {});
