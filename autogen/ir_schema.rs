@@ -49,7 +49,7 @@ pub struct MaroonIRBlock {
 pub struct MaroonIRFunction {
   pub line: u32,
   pub number_of_args: u32,
-  pub body: Box<MaroonIRBlock>,
+  pub body: MaroonIRBlock,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
