@@ -95,6 +95,7 @@ CURRENT_VARIANT(MaroonTestCase, MaroonTestCaseRunFiber, MaroonTestCaseFiberShoul
 
 CURRENT_STRUCT(MaroonIRScenarios) {
   CURRENT_FIELD(src, std::string);
+  CURRENT_FIELD_DESCRIPTION(src, "The source `.mrn` file.");
   CURRENT_FIELD(maroon, (std::map<std::string, MaroonIRNamespace>));
   CURRENT_FIELD(tests, std::vector<MaroonTestCase>);
 };
