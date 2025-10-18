@@ -39,7 +39,7 @@ g++ -E "autogen/$IN.mrn.h" 2>/dev/null | grep -v '^#' | grep -v '^$' >>autogen/"
 echo -e "  ;\n  std::cout << JSON<JSONFormat::Minimalistic>(ctx.out) << std::endl;\n}" >>autogen/"$IN.mrn.cc"
 
 # Build and run the source file that was just put together to generate the JSON IR.
-if ! g++ -std=c++17 autogen/"$IN.mrn.cc" -o autogen/"$IN.mrn.bin" ; then
+if ! g++ autogen/"$IN.mrn.cc" -o autogen/"$IN.mrn.bin" ; then
   echo "Failed to build."
   exit 1
 fi
@@ -85,7 +85,7 @@ if [ $VERIFY -eq 1 ] ; then
     cat autogen/"$IN.mrn.cc"
     echo
     echo "=== DEBUG 4 ==="
-    g++ -std=c++17 autogen/"$IN.mrn.cc" -o autogen/"$IN.mrn.tmp.bin" && echo "Build successful."
+    g++ autogen/"$IN.mrn.cc" -o autogen/"$IN.mrn.tmp.bin" && echo "Build successful."
     echo
     echo "=== RE-GENERATED ==="
     autogen/"$IN.mrn.tmp.bin"

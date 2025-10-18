@@ -283,13 +283,15 @@ struct MaroonEngine final {
       std::ostringstream oss;
       ImplEnv env(oss);
 
-      static_assert(T_MAROON::kIsMaroon);
+      static_assert(T_MAROON::kIsMaroon, "");
       // TODO(dkorolev): Perhaps add a `static_assert` that this `T_FIBER` is from the right `T_MAROON`.
 
       // NOTE(dkorolev): This will not compile if there's no `main` in the `global` fiber.
-      static_assert(T_FIBER::kIsFiber);
+      static_assert(T_FIBER::kIsFiber, "");
 
-      static_assert(T_FIBER::NUMBER_OF_ARGS_main == 0);
+      static_assert(T_FIBER::NUMBER_OF_ARGS_main == 0, "");
+
+      auto const fiber_steps = T_FIBER::MAROON_steps();
 
       // TODO(dkorolev): Proper engine =)
       env.call_stack_.push_back(ImplCallStackEntry(T_FIBER::FN_main));
@@ -297,7 +299,7 @@ struct MaroonEngine final {
         if (static_cast<uint32_t>(env.call_stack_.back().current_idx_) >= T_FIBER::kStepsCount) {
           CURRENT_THROW(ImplException("NEXT() out of bounds."));
         }
-        MaroonStep const& step = T_FIBER::kSteps[static_cast<uint32_t>(env.call_stack_.back().current_idx_)];
+        MaroonStep const& step = fiber_steps[static_cast<uint32_t>(env.call_stack_.back().current_idx_)];
 
         if (env.call_stack_.back().vars_.size() < step.num_vars_available_before_step) {
           std::cerr << "Internal invariant failed: pre-step vars count mismatch." << std::endl;

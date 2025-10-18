@@ -16,6 +16,6 @@ EOF
 
 (cd autogen; for i in *.mrn.test.h ; do echo "#include \"$i\"" >>test.cc;  done)
 
-g++ -std=c++17 autogen/test.cc -o autogen/test.bin
+g++ autogen/test.cc -o autogen/test.bin
 
 ./autogen/test.bin
