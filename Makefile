@@ -8,7 +8,8 @@ JSONS := $(patsubst %.mrn, autogen/%.mrn.json, $(INPUT))
 TESTS := $(patsubst %.mrn, autogen/%.mrn.test.h, $(INPUT))
 
 test: all
-	@./autogen/gen_markdown_schema.bin >autogen/ir_schema.md
+	@./autogen/output_schema.bin >autogen/ir_schema.md
+	@./autogen/output_schema.bin --rust >autogen/ir_schema.rs
 	./run_tests.sh
 
 verify:
