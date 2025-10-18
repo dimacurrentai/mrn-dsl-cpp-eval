@@ -61,8 +61,8 @@ int main(int argc, char** argv) {
 inline void ZeroLineNumbers(MaroonIRScenarios& m) {
   struct Visitor final {
     void operator()(MaroonIRScenarios& m) {
-      for (auto& [_, v] : m.maroon) {
-        (*this)(v);
+      for (auto& kv : m.maroon) {
+        (*this)(kv.second);
       }
       for (auto& v : m.tests) {
         v.Call(*this);
@@ -71,15 +71,15 @@ inline void ZeroLineNumbers(MaroonIRScenarios& m) {
 
     void operator()(MaroonIRNamespace& m) {
       m.line = 0;
-      for (auto& [_, v] : m.fibers) {
-        (*this)(v);
+      for (auto& kv : m.fibers) {
+        (*this)(kv.second);
       }
     }
 
     void operator()(MaroonIRFiber& m) {
       m.line = 0;
-      for (auto& [_, v] : m.functions) {
-        (*this)(v);
+      for (auto& kv : m.functions) {
+        (*this)(kv.second);
       }
     }
 

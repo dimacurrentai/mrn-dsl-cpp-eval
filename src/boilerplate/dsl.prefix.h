@@ -1,3 +1,5 @@
+#define CURRENT_FOR_CPP14
+
 #include "../src/ir.h"
 
 #include "../current/typesystem/serialization/json.h"
@@ -70,7 +72,9 @@ struct Ctx final {
       std::cerr << "WTF0!" << std::endl;
       std::exit(1);
     }
-    auto [key, idx] = blocks_stack.back();
+    auto key_idx = blocks_stack.back();
+    auto key = key_idx.first;
+    auto idx = key_idx.second;
     blocks_stack.pop_back();
     if (key != user_key) {
       std::cerr << "WTF1!" << std::endl;

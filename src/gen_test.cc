@@ -26,19 +26,19 @@ inline void GenerateTestCase(std::ostream& fo, MaroonTestCase const& test, std::
     GenerateTestCaseVisitor(std::string const& name, std::ostream& fo) : name(name), fo(fo) {}
     void operator()(MaroonTestCaseRunFiber const& test) {
       fo << "  MaroonEngine<" << test.maroon << ", " << test.maroon << "::" << test.fiber << "> engine;" << std::endl;
-      fo << "  auto const [output, error] = engine.run();" << std::endl;
+      fo << "  auto const output_error = engine.run();" << std::endl;
       std::ostringstream oss;
       for (auto const& e : test.golden_output) {
         oss << e << std::endl;
       }
-      fo << "  EXPECT_EQ(R\"\"\"(" << oss.str() << ")\"\"\", output);" << std::endl;
-      fo << "  EXPECT_EQ(\"\", error);" << std::endl;
+      fo << "  EXPECT_EQ(R\"\"\"(" << oss.str() << ")\"\"\", output_error.first);" << std::endl;
+      fo << "  EXPECT_EQ(\"\", output_error.second);" << std::endl;
     }
     void operator()(MaroonTestCaseFiberShouldThrow const& test) {
       fo << "  MaroonEngine<" << test.maroon << ',' << test.maroon << "::" << test.fiber << "> engine;" << std::endl;
-      fo << "  auto const [output, error] = engine.run();" << std::endl;
-      fo << "  EXPECT_EQ(R\"\"\"(" << test.error << ")\"\"\", error);" << std::endl;
-      fo << "  EXPECT_EQ(\"\", output);" << std::endl;
+      fo << "  auto const output_error = engine.run();" << std::endl;
+      fo << "  EXPECT_EQ(R\"\"\"(" << test.error << ")\"\"\", output_error.second);" << std::endl;
+      fo << "  EXPECT_EQ(\"\", output_error.first);" << std::endl;
     }
   };
   GenerateTestCaseVisitor visitor(name, fo);
@@ -74,12 +74,16 @@ int main(int argc, char** argv) {
   fo << std::endl;
   fo << "#include \"../src/engine.h\"" << std::endl;
 
-  for (auto const& [maroon_name, maroon] : scenarios.maroon) {
+  for (auto const& iter : scenarios.maroon) {
+    auto const& maroon_name = iter.first;
+    auto const& maroon = iter.second;
     fo << std::endl;
     fo << "struct " << maroon_name << " {" << std::endl;
     fo << "  constexpr static bool kIsMaroon = true;" << std::endl;
     fo << "  constexpr static char const* const kMaroonName = \"" << maroon_name << "\";" << std::endl;
-    for (auto const& [fiber_name, fiber] : maroon.fibers) {
+    for (auto const& iter : maroon.fibers) {
+      auto const& fiber_name = iter.first;
+      auto const& fiber = iter.second;
       fo << "  struct " << fiber_name << " {" << std::endl;
       fo << "    constexpr static bool kIsFiber = true;" << std::endl;
       fo << "    constexpr static char const* const kFiberName = \"" << fiber_name << "\";" << std::endl;
@@ -197,16 +201,18 @@ int main(int argc, char** argv) {
       };
 
       StatementsRecursiveVisitor visitor(fo);
-      for (auto const& [fn_name, fn] : fiber.functions) {
+      for (auto const& iter : fiber.functions) {
+        auto const& fn_name = iter.first;
+        auto const& fn = iter.second;
         visitor.EnsureNoLocalVars();
-        fo << "    inline constexpr static MaroonStateIndex FN_" << fn_name << " = static_cast<MaroonStateIndex>("
+        fo << "    constexpr static MaroonStateIndex FN_" << fn_name << " = static_cast<MaroonStateIndex>("
            << visitor.nvars.size() << ");" << std::endl;
-        fo << "    inline constexpr static size_t NUMBER_OF_ARGS_" << fn_name << " = " << fn.number_of_args << ";\n";
+        fo << "    constexpr static size_t NUMBER_OF_ARGS_" << fn_name << " = " << fn.number_of_args << ";\n";
         visitor.fn_name = fn_name;
         visitor(fn.body);
       }
-      fo << "    inline constexpr static uint32_t kStepsCount = " << visitor.nvars.size() << ";" << std::endl;
-      fo << "    inline constexpr static std::array<MaroonStep, kStepsCount> kSteps{";
+      fo << "    constexpr static uint32_t kStepsCount = " << visitor.nvars.size() << ";" << std::endl;
+      fo << "    static std::array<MaroonStep, kStepsCount> MAROON_steps() { return {";
       for (uint32_t i = 0; i < visitor.nvars.size(); ++i) {
         if (i) {
           fo << ",";
@@ -214,7 +220,8 @@ int main(int argc, char** argv) {
         fo << "MaroonStep{IMPL_" << i << ',' << visitor.nvars[i].first << ',' << visitor.nvars[i].second << ",VARS_"
            << i << '}';
       }
-      fo << "};" << std::endl;
+      fo << "  };" << std::endl;
+      fo << "}" << std::endl;
       fo << "  };  // fiber `" << fiber_name << '`' << std::endl;
     }
     fo << "};  // maroon `" << maroon_name << '`' << std::endl;
