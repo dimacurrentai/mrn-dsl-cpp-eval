@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -e -o pipefail
 
 if [ "$1" == "" ] ; then
   echo 'Need an argument, the `.mrn` file in this directory that has had `mrn2ir.sh` run on already.'
