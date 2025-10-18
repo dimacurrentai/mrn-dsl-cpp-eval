@@ -1,3 +1,5 @@
+IR Schema: [human-readable](https://github.com/dimacurrentai/mrn-dsl-cpp-eval/blob/main/autogen/ir_schema.md).
+
 TODO BEFORE CHECKING IN
 
 - protect the branch
