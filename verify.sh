@@ -2,11 +2,11 @@
 
 # NOTE(dkorolev): This file is run as the Github check, and it's best to install it as a git hook via:
 
-set -e
-
 CMD="""
 ln -sf "../../verify.sh" ".git/hooks/pre-commit"
 """
+
+set -e -o pipefail
 
 echo 'Running `./verify.sh` ...'
 
@@ -22,5 +22,18 @@ for i in autogen/*.mrn.json ; do
     exit 1
   fi
 done
+
+if ! [ -f autogen/ir_schema.md ] ; then
+  echo 'The `autogen/ir_schema.md` file is missing, regenerate it by running `make`.'
+  exit 1
+fi
+
+make autogen/gen_markdown_schema.bin >/dev/null 2>&1
+autogen/gen_markdown_schema.bin >autogen/ir_schema.md.tmp
+
+if ! diff -w autogen/ir_schema.md autogen/ir_schema.md.tmp ; then
+  echo 'The `autogen/ir_schema.md` file is not what is should be, regenerate it by running `make`.'
+  exit 1
+fi
 
 echo 'Running `./verify.sh` : Success.'
