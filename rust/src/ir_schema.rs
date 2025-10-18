@@ -1,0 +1,1 @@
+../../autogen/ir_schema.rs

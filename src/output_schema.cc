@@ -10,7 +10,8 @@
 
 #include "ir.h"
 
-DEFINE_string(out, "/dev/stdout", "The output file to dump the Markdown schema of the IR into.");
+DEFINE_string(out, "/dev/stdout", "The output file to dump the schema of the IR into.");
+DEFINE_bool(rust, false, "Set to true to output Rust schema, keep at false to output Markdown schema..");
 
 int main(int argc, char** argv) {
   ParseDFlags(&argc, &argv);
@@ -23,5 +24,9 @@ int main(int argc, char** argv) {
   struct_schema.AddType<MaroonIRTopLevel>();
   const SchemaInfo schema = struct_schema.GetSchemaInfo();
 
-  current::FileSystem::WriteStringToFile(schema.Describe<Language::Markdown>(), FLAGS_out.c_str());
+  if (!FLAGS_rust) {
+    current::FileSystem::WriteStringToFile(schema.Describe<Language::Markdown>(), FLAGS_out.c_str());
+  } else {
+    current::FileSystem::WriteStringToFile(schema.Describe<Language::Rust>(), FLAGS_out.c_str());
+  }
 }

@@ -28,11 +28,24 @@ if ! [ -f autogen/ir_schema.md ] ; then
   exit 1
 fi
 
-make autogen/gen_markdown_schema.bin >/dev/null 2>&1
-autogen/gen_markdown_schema.bin >autogen/ir_schema.md.tmp
+make autogen/output_schema.bin >/dev/null 2>&1
+autogen/output_schema.bin >autogen/ir_schema.md.tmp
 
 if ! diff -w autogen/ir_schema.md autogen/ir_schema.md.tmp ; then
   echo 'The `autogen/ir_schema.md` file is not what is should be, regenerate it by running `make`.'
+  exit 1
+fi
+
+if ! [ -f autogen/ir_schema.rs ] ; then
+  echo 'The `autogen/ir_schema.rs` file is missing, regenerate it by running `make`.'
+  exit 1
+fi
+
+make autogen/output_schema.bin >/dev/null 2>&1
+autogen/output_schema.bin --rust >autogen/ir_schema.rs.tmp
+
+if ! diff -w autogen/ir_schema.rs autogen/ir_schema.rs.tmp ; then
+  echo 'The `autogen/ir_schema.rs` file is not what is should be, regenerate it by running `make`.'
   exit 1
 fi
 
