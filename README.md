@@ -1,4 +1,4 @@
-IR Schema: [human-readable](https://github.com/dimacurrentai/mrn-dsl-cpp-eval/blob/main/autogen/ir_schema.md).
+IR Schema: [human-readable](https://github.com/dimacurrentai/mrn-dsl-cpp-eval/blob/main/autogen/ir_schema.md), [`ir_schema.rs`](https://github.com/dimacurrentai/mrn-dsl-cpp-eval/blob/main/autogen/ir_schema.rs).
 
 TODO BEFORE CHECKING IN
 
