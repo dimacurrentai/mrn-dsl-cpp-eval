@@ -64,7 +64,9 @@ struct Ctx final {
 
   void AddVarToBlock(MaroonIRVar var) { current_fn_blocks_stack.back()->vars.push_back(std::move(var)); }
 
-  void AddArgToFunction() {
+  void AddArgToFunction(std::string const& type) {
+    // out.maroon[current_maroon_name].fibers[current_fiber_name].functions[current_function_name].args.push_back(type);
+
     ++out.maroon[current_maroon_name].fibers[current_fiber_name].functions[current_function_name].number_of_args;
   }
 
@@ -367,8 +369,8 @@ inline void RegisterArg(Ctx& ctx, std::string name, std::string type, uint32_t l
   var.name = std::move(name);
   var.type = std::move(type);
 
+  ctx.AddArgToFunction(var.type);
   ctx.AddVarToBlock(std::move(var));
-  ctx.AddArgToFunction();
 }
 
 inline void RegisterField(Ctx& ctx, std::string name, std::string type) {

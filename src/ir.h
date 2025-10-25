@@ -60,6 +60,14 @@ CURRENT_STRUCT(MaroonIRFunction) {
   CURRENT_FIELD(line, uint32_t);
   // TODO(dkorolev): Types of arguments!
   CURRENT_FIELD(number_of_args, uint32_t, 0);
+
+  // TODO(dkorolev): Use this instead of the above in the next commit.
+  // NOTE(dkorolev): The first `args.length` vars of the top-level IR block of `body` are the args.
+  // NOTE(dkorolev): Note that the top-level block of `body` can have more vars.
+  // NOTE(dkorolev): In this case, the extra vars would need to have init values, while args do not.
+  // TODO(dkorolev): Make sure in the IR these "init" values are some "-" or just "ARG".
+  // CURRENT_FIELD(args, std::vector<std::string>);
+
   CURRENT_FIELD(body, MaroonIRBlock);
 };
 
