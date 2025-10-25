@@ -233,9 +233,7 @@ struct ImplCallStackEntry final {
 };
 
 template <typename T>
-struct MaroonFormatValueHelperImpl final {
-  static void DoIt(std::ostream& os, T const& v) { os << JSON(v); }
-};
+struct MaroonFormatValueHelperImpl;
 
 template <>
 struct MaroonFormatValueHelperImpl<MAROON_TYPE_U64> final {

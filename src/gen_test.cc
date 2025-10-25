@@ -87,9 +87,28 @@ int main(int argc, char** argv) {
       if (Exists<MaroonIRTypeDefStruct>(iter.second.def)) {
         extra_types << ", MAROON_TYPE_" << iter.first;
         fo << "  CURRENT_STRUCT(MAROON_TYPE_" << iter.first << ") {" << std::endl;
+        bool has_fields = false;
         for (auto const& fiter : Value<MaroonIRTypeDefStruct>(iter.second.def).fields) {
+          has_fields = true;
           fo << "    CURRENT_FIELD(" << fiter.name << ", MAROON_TYPE_" << fiter.type << ");" << std::endl;
         }
+        fo << "    CURRENT_CONSTRUCTOR(MAROON_TYPE_" << iter.first << ")(MaroonLegalInit";
+        for (auto const& fiter : Value<MaroonIRTypeDefStruct>(iter.second.def).fields) {
+          fo << ", MAROON_TYPE_" << fiter.type << ' ' << fiter.name;
+        }
+        if (has_fields) {
+          fo << ") : ";
+          bool first = true;
+          for (auto const& fiter : Value<MaroonIRTypeDefStruct>(iter.second.def).fields) {
+            if (first) {
+              first = false;
+            } else {
+              fo << ", ";
+            }
+            fo << fiter.name << "(std::move(" << fiter.name << "))";
+          }
+        }
+        fo << " {}" << std::endl;
         fo << "  };" << std::endl;
       }
     }
@@ -263,6 +282,32 @@ int main(int argc, char** argv) {
       fo << "  };  // fiber `" << fiber_name << '`' << std::endl;
     }
     fo << "}  // namespace MAROON_NAMESPACE_`" << maroon_name << '`' << std::endl;
+
+    for (auto const& iter : maroon.types) {
+      if (Exists<MaroonIRTypeDefStruct>(iter.second.def)) {
+        fo << "template <>\n";
+        fo << "struct MaroonFormatValueHelperImpl<MAROON_NAMESPACE_" << maroon_name << "::MAROON_TYPE_" << iter.first
+           << "> final {\n";
+        fo << "  static void DoIt(std::ostream& os, MAROON_NAMESPACE_" << maroon_name << "::MAROON_TYPE_" << iter.first
+           << " const& v) {\n";
+        fo << "    using namespace MAROON_NAMESPACE_" << maroon_name << ";\n";
+        bool first = true;
+        fo << "    os << '{';\n";
+        for (auto const& fiter : Value<MaroonIRTypeDefStruct>(iter.second.def).fields) {
+          if (first) {
+            first = false;
+          } else {
+            fo << "    os << ',';\n";
+          }
+          fo << "    os << \"" << fiter.name << ":\";\n";
+          fo << "    MaroonFormatValueHelperImpl<MAROON_TYPE_" << fiter.type << ">::DoIt(os, v." << fiter.name
+             << ");\n";
+        }
+        fo << "    os << '}';\n";
+        fo << "  }\n";
+        fo << "};\n";
+      }
+    }
   }
 
   size_t index = 0;

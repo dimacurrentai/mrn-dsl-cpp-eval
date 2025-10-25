@@ -338,8 +338,7 @@ struct RegisterBlock final {
   }
 };
 
-inline void RegisterVar(
-    Ctx& ctx, std::string name, std::string type, std::string const& init_as_string, uint32_t line) {
+inline void RegisterVar(Ctx& ctx, std::string name, std::string type, std::string const& init, uint32_t line) {
   if (!ctx.InFunction()) {
     std::cerr << "`VAR()` is only legal inside an `FN()`." << std::endl;
     std::exit(1);
@@ -349,7 +348,11 @@ inline void RegisterVar(
   var.line = line;
   var.name = std::move(name);
   var.type = std::move(type);
-  var.init = init_as_string;
+  if (!init.empty() && init.front() == '(' && init.back() == ')') {
+    var.init = init.substr(1u, init.length() - 2u);
+  } else {
+    var.init = init;
+  }
 
   ctx.AddVarToBlock(std::move(var));
 }

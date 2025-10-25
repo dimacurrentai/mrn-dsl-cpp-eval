@@ -5,7 +5,7 @@ MAROON(struct) {
   };
   FIBER(global) {
     FN(main) {
-      // VAR(ab, AB, ({0, 0}));
+      // VAR(ab, AB, (0, 0));
       VAR(ab, U64, 42);
       STMT({
         // ab.a += 1;
@@ -24,5 +24,6 @@ TEST_FIBER(
   struct,
   global,
   {
+    // "ab={a:1,b:2}",
     "ab=42",
   });

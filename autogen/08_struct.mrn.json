@@ -63,7 +63,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 28,
+        "line": 29,
         "maroon": "struct",
         "fiber": "global",
         "golden_output": [
