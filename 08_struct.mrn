@@ -1,0 +1,30 @@
+MAROON(struct) {
+  /*
+  TYPE(AB) {
+    FIELD(a, U64);
+    FIELD(b, U64);
+  };
+  */
+  FIBER(global) {
+    FN(main) {
+      // VAR(ab, AB, ({0, 0}));
+      VAR(ab, U64, 42);
+      STMT({
+        // ab.a += 1;
+        // ab.b += 2;
+        NEXT();
+      });
+      STMT({
+        DEBUG_EXPR(ab);
+        RETURN();
+      });
+    };
+  };
+};
+
+TEST_FIBER(
+  struct,
+  global,
+  {
+    "ab=42",
+  });

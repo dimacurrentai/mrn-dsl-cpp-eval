@@ -1,0 +1,57 @@
+{
+  "src": "08_struct.mrn",
+  "maroon": {
+    "struct": {
+      "line": 1,
+      "fibers": {
+        "global": {
+          "line": 8,
+          "functions": {
+            "main": {
+              "line": 9,
+              "number_of_args": 0,
+              "body": {
+                "line": 9,
+                "vars": [
+                  {
+                    "line": 11,
+                    "name": "ab",
+                    "type": "TODO(dkorolev): Implement this.",
+                    "init": "42"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 16,
+                      "stmt": "{ NEXT(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 20,
+                      "stmt": "{ DEBUG_EXPR(ab); RETURN(); }"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "types": {}
+    }
+  },
+  "tests": [
+    {
+      "MaroonTestCaseRunFiber": {
+        "line": 30,
+        "maroon": "struct",
+        "fiber": "global",
+        "golden_output": [
+          "ab=42"
+        ]
+      }
+    }
+  ]
+}
