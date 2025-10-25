@@ -1,4 +1,4 @@
-MAROON(struct) {
+MAROON(types) {
   TYPE(AB) {
     FIELD(a, U64);
     FIELD(b, U64);
@@ -21,7 +21,7 @@ MAROON(struct) {
 };
 
 TEST_FIBER(
-  struct,
+  types,
   global,
   {
     // "ab=42",  <--  Keeping this line for now to have the diff of this commit small.
