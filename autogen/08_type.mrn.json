@@ -5,16 +5,16 @@
       "line": 1,
       "fibers": {
         "global": {
-          "line": 6,
+          "line": 7,
           "functions": {
             "main": {
-              "line": 7,
+              "line": 8,
               "args": [],
               "body": {
-                "line": 7,
+                "line": 8,
                 "vars": [
                   {
-                    "line": 8,
+                    "line": 9,
                     "name": "ab",
                     "type": "AB",
                     "init": "0, 0"
@@ -23,14 +23,35 @@
                 "code": [
                   {
                     "MaroonIRStmt": {
-                      "line": 13,
+                      "line": 14,
                       "stmt": "{ ab.a += 1; ab.b += 2; NEXT(); }"
                     }
                   },
                   {
                     "MaroonIRStmt": {
-                      "line": 17,
-                      "stmt": "{ DEBUG_EXPR(ab); RETURN(); }"
+                      "line": 19,
+                      "stmt": "{ DEBUG_EXPR(ab); DEBUG_DUMP_STACK(); NEXT(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRBlock": {
+                      "line": 20,
+                      "vars": [
+                        {
+                          "line": 21,
+                          "name": "e",
+                          "type": "Empty",
+                          "init": ""
+                        }
+                      ],
+                      "code": [
+                        {
+                          "MaroonIRStmt": {
+                            "line": 26,
+                            "stmt": "{ DEBUG_EXPR(e); DEBUG_DUMP_STACK(); RETURN(); }"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]
@@ -56,6 +77,14 @@
               ]
             }
           }
+        },
+        "Empty": {
+          "line": 6,
+          "def": {
+            "MaroonIRTypeDefStruct": {
+              "fields": []
+            }
+          }
         }
       }
     }
@@ -63,11 +92,14 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 27,
+        "line": 40,
         "maroon": "types",
         "fiber": "global",
         "golden_output": [
-          "ab={a:1,b:2}"
+          "ab={a:1,b:2}",
+          "<[ab:{a:1,b:2}]>",
+          "e={}",
+          "<[ab:{a:1,b:2},e:{}]>"
         ]
       }
     }
