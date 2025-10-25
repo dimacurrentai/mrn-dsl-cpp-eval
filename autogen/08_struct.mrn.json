@@ -42,7 +42,6 @@
       "types": {
         "AB": {
           "line": 2,
-          "name": "AB",
           "def": {
             "MaroonIRTypeDefStruct": {
               "fields": [

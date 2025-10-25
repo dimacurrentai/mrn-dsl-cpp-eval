@@ -80,7 +80,6 @@ Algebraic type, `MaroonIRTypeDefStruct`
 | **Field** | **Type** | **Description** |
 | ---: | :--- | :--- |
 | `line` | Integer (32-bit unsigned) |
-| `name` | String |
 | `def` | Algebraic `MaroonIRTypeDefStruct` (a.k.a. `MaroonIRTypeDef`) |
 
 

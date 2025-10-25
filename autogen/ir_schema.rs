@@ -77,7 +77,6 @@ pub enum MaroonIRTypeDef {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MaroonIRType {
   pub line: u32,
-  pub name: String,
   pub def: Box<MaroonIRTypeDef>,
 }
 

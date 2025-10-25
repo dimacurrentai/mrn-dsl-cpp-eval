@@ -84,8 +84,6 @@ CURRENT_VARIANT(MaroonIRTypeDef, MaroonIRTypeDefStruct);
 
 CURRENT_STRUCT(MaroonIRType) {
   CURRENT_FIELD(line, uint32_t);
-  // TODO(dkorolev): Remove this `name`, it's redundant!
-  CURRENT_FIELD(name, std::string);
   CURRENT_FIELD(def, MaroonIRTypeDef);
 };
 
