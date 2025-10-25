@@ -59,9 +59,33 @@ pub struct MaroonIRFiber {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct MaroonIRTypeDefStructField {
+  pub name: String,
+  pub r#type: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct MaroonIRTypeDefStruct {
+  pub fields: Vec<MaroonIRTypeDefStructField>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum MaroonIRTypeDef {
+  MaroonIRTypeDefStruct(MaroonIRTypeDefStruct),
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct MaroonIRType {
+  pub line: u32,
+  pub name: String,
+  pub def: Box<MaroonIRTypeDef>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct MaroonIRNamespace {
   pub line: u32,
   pub fibers: BTreeMap<String, MaroonIRFiber>,
+  pub types: BTreeMap<String, MaroonIRType>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
