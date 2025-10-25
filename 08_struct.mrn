@@ -5,11 +5,11 @@ MAROON(struct) {
   };
   FIBER(global) {
     FN(main) {
-      // VAR(ab, AB, (0, 0));
-      VAR(ab, U64, 42);
+      // VAR(ab, U64, 42);  <--  Keeping this line for now to have the diff of this commit small.
+      VAR(ab, AB, (0, 0));
       STMT({
-        // ab.a += 1;
-        // ab.b += 2;
+        ab.a += 1;
+        ab.b += 2;
         NEXT();
       });
       STMT({
@@ -24,6 +24,6 @@ TEST_FIBER(
   struct,
   global,
   {
-    // "ab={a:1,b:2}",
-    "ab=42",
+    // "ab=42",  <--  Keeping this line for now to have the diff of this commit small.
+    "ab={a:1,b:2}",
   });
