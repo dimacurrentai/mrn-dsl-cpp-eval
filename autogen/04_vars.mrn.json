@@ -82,7 +82,7 @@
                   {
                     "line": 80,
                     "name": "a",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "1"
                   }
                 ],
@@ -100,7 +100,7 @@
                         {
                           "line": 85,
                           "name": "b",
-                          "type": "TODO(dkorolev): Implement this.",
+                          "type": "U64",
                           "init": "2"
                         }
                       ],
@@ -137,7 +137,7 @@
                   {
                     "line": 4,
                     "name": "a",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "100"
                   }
                 ],
@@ -171,7 +171,7 @@
                   {
                     "line": 20,
                     "name": "x",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "1"
                   }
                 ],
@@ -189,7 +189,7 @@
                         {
                           "line": 27,
                           "name": "y",
-                          "type": "TODO(dkorolev): Implement this.",
+                          "type": "U64",
                           "init": "2"
                         }
                       ],
@@ -207,7 +207,7 @@
                               {
                                 "line": 35,
                                 "name": "z",
-                                "type": "TODO(dkorolev): Implement this.",
+                                "type": "U64",
                                 "init": "3"
                               }
                             ],
@@ -228,7 +228,7 @@
                               {
                                 "line": 45,
                                 "name": "t",
-                                "type": "TODO(dkorolev): Implement this.",
+                                "type": "U64",
                                 "init": "4"
                               }
                             ],

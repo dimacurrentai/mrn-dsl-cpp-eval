@@ -16,7 +16,7 @@
                   {
                     "line": 15,
                     "name": "n",
-                    "type": "TODO(dkorolev): Implement this."
+                    "type": "U64"
                   }
                 ],
                 "code": [
@@ -37,7 +37,7 @@
                             {
                               "line": 23,
                               "name": "r",
-                              "type": "TODO(dkorolev): Implement this.",
+                              "type": "U64",
                               "init": "0"
                             }
                           ],
@@ -71,7 +71,7 @@
                   {
                     "line": 5,
                     "name": "result",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "0"
                   }
                 ],

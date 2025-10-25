@@ -16,7 +16,7 @@
                   {
                     "line": 46,
                     "name": "b",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "1"
                   }
                 ],
@@ -39,7 +39,7 @@
                   {
                     "line": 30,
                     "name": "a",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "1"
                   }
                 ],
@@ -101,7 +101,7 @@
                   {
                     "line": 155,
                     "name": "a",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "0"
                   }
                 ],
@@ -245,7 +245,7 @@
                   {
                     "line": 97,
                     "name": "a",
-                    "type": "TODO(dkorolev): Implement this."
+                    "type": "U64"
                   }
                 ],
                 "code": [
@@ -267,7 +267,7 @@
                   {
                     "line": 83,
                     "name": "x",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "10"
                   }
                 ],
@@ -313,7 +313,7 @@
                   {
                     "line": 59,
                     "name": "a",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "0"
                   }
                 ],
@@ -375,7 +375,7 @@
                   {
                     "line": 109,
                     "name": "x",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "10"
                   }
                 ],
@@ -410,12 +410,12 @@
                   {
                     "line": 123,
                     "name": "a",
-                    "type": "TODO(dkorolev): Implement this."
+                    "type": "U64"
                   },
                   {
                     "line": 124,
                     "name": "b",
-                    "type": "TODO(dkorolev): Implement this."
+                    "type": "U64"
                   }
                 ],
                 "code": [
