@@ -9,6 +9,14 @@
 
 #include "../current/bricks/exception.h"
 
+class MaroonDefinition {
+ public:
+  virtual char const* const maroon_name() const = 0;
+
+ protected:
+  ~MaroonDefinition() = default;
+};
+
 // TODO(dkorolev): If we agree it's uint32_t, need to make sure the future compiler checks the size of the program.
 enum class MaroonStateIndex : uint32_t;
 enum class MaroonVarIndex : uint32_t;
@@ -283,7 +291,7 @@ struct MaroonEngine final {
       std::ostringstream oss;
       ImplEnv env(oss);
 
-      static_assert(T_MAROON::kIsMaroon, "");
+      static_assert(std::is_base_of<MaroonDefinition, T_MAROON>::value, "");
       // TODO(dkorolev): Perhaps add a `static_assert` that this `T_FIBER` is from the right `T_MAROON`.
 
       // NOTE(dkorolev): This will not compile if there's no `main` in the `global` fiber.

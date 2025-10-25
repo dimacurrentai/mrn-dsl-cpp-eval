@@ -25,7 +25,8 @@ inline void GenerateTestCase(std::ostream& fo, MaroonTestCase const& test, std::
     std::ostream& fo;
     GenerateTestCaseVisitor(std::string const& name, std::ostream& fo) : name(name), fo(fo) {}
     void operator()(MaroonTestCaseRunFiber const& test) {
-      fo << "  MaroonEngine<" << test.maroon << ", " << test.maroon << "::" << test.fiber << "> engine;" << std::endl;
+      fo << "  MaroonEngine<MAROON_NAMESPACE_" << test.maroon << "::MAROON_spec, MAROON_NAMESPACE_" << test.maroon
+         << "::" << test.fiber << "> engine;" << std::endl;
       fo << "  auto const output_error = engine.run();" << std::endl;
       std::ostringstream oss;
       for (auto const& e : test.golden_output) {
@@ -35,7 +36,8 @@ inline void GenerateTestCase(std::ostream& fo, MaroonTestCase const& test, std::
       fo << "  EXPECT_EQ(\"\", output_error.second);" << std::endl;
     }
     void operator()(MaroonTestCaseFiberShouldThrow const& test) {
-      fo << "  MaroonEngine<" << test.maroon << ',' << test.maroon << "::" << test.fiber << "> engine;" << std::endl;
+      fo << "  MaroonEngine<MAROON_NAMESPACE_" << test.maroon << "::MAROON_spec, MAROON_NAMESPACE_" << test.maroon
+         << "::" << test.fiber << "> engine;" << std::endl;
       fo << "  auto const output_error = engine.run();" << std::endl;
       fo << "  EXPECT_EQ(R\"\"\"(" << test.error << ")\"\"\", output_error.second);" << std::endl;
       fo << "  EXPECT_EQ(\"\", output_error.first);" << std::endl;
@@ -78,9 +80,10 @@ int main(int argc, char** argv) {
     auto const& maroon_name = iter.first;
     auto const& maroon = iter.second;
     fo << std::endl;
-    fo << "struct " << maroon_name << " {" << std::endl;
-    fo << "  constexpr static bool kIsMaroon = true;" << std::endl;
-    fo << "  constexpr static char const* const kMaroonName = \"" << maroon_name << "\";" << std::endl;
+    fo << "namespace MAROON_NAMESPACE_" << maroon_name << " {" << std::endl;
+    fo << "  struct MAROON_spec final : MaroonDefinition {" << std::endl;
+    fo << "    char const* const maroon_name() const override { return \"" << maroon_name << "\"; }" << std::endl;
+    fo << "  };" << std::endl;
     for (auto const& iter : maroon.fibers) {
       auto const& fiber_name = iter.first;
       auto const& fiber = iter.second;
@@ -224,7 +227,7 @@ int main(int argc, char** argv) {
       fo << "}" << std::endl;
       fo << "  };  // fiber `" << fiber_name << '`' << std::endl;
     }
-    fo << "};  // maroon `" << maroon_name << '`' << std::endl;
+    fo << "}  // namespace MAROON_NAMESPACE_`" << maroon_name << '`' << std::endl;
   }
 
   size_t index = 0;
