@@ -197,7 +197,6 @@ struct RegisterType final {
     ctx.current_type_name = name;
     auto& r = ctx.out.maroon[ctx.current_maroon_name].types[ctx.current_type_name];
     r.line = line;
-    r.name = name;
     r.def = MaroonIRTypeDefStruct();
   }
 
