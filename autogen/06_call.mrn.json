@@ -9,7 +9,7 @@
           "functions": {
             "inner": {
               "line": 45,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 45,
                 "vars": [
@@ -32,7 +32,7 @@
             },
             "main": {
               "line": 29,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 29,
                 "vars": [
@@ -78,7 +78,7 @@
           "functions": {
             "bar": {
               "line": 163,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 163,
                 "vars": [],
@@ -94,7 +94,7 @@
             },
             "main": {
               "line": 154,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 154,
                 "vars": [
@@ -134,7 +134,7 @@
           "functions": {
             "foo": {
               "line": 144,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 144,
                 "vars": [],
@@ -150,7 +150,7 @@
             },
             "main": {
               "line": 136,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 136,
                 "vars": [],
@@ -183,7 +183,7 @@
           "functions": {
             "inner": {
               "line": 18,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 18,
                 "vars": [],
@@ -199,7 +199,7 @@
             },
             "main": {
               "line": 5,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 5,
                 "vars": [],
@@ -238,7 +238,9 @@
           "functions": {
             "add_one": {
               "line": 96,
-              "number_of_args": 1,
+              "args": [
+                "U64"
+              ],
               "body": {
                 "line": 96,
                 "vars": [
@@ -260,7 +262,7 @@
             },
             "main": {
               "line": 82,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 82,
                 "vars": [
@@ -306,7 +308,7 @@
           "functions": {
             "main": {
               "line": 58,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 58,
                 "vars": [
@@ -341,7 +343,7 @@
             },
             "one": {
               "line": 72,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 72,
                 "vars": [],
@@ -368,7 +370,7 @@
           "functions": {
             "main": {
               "line": 108,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 108,
                 "vars": [
@@ -403,7 +405,10 @@
             },
             "sum": {
               "line": 122,
-              "number_of_args": 2,
+              "args": [
+                "U64",
+                "U64"
+              ],
               "body": {
                 "line": 122,
                 "vars": [
