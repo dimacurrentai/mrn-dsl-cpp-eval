@@ -16,7 +16,7 @@
                   {
                     "line": 9,
                     "name": "ab",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "42"
                   }
                 ],

@@ -339,12 +339,8 @@ struct RegisterBlock final {
   }
 };
 
-enum class VarTypes {
-  U64,
-};
-
 inline void RegisterVar(
-    Ctx& ctx, std::string const& name, VarTypes type, std::string const& init_as_string, uint32_t line) {
+    Ctx& ctx, std::string name, std::string type, std::string const& init_as_string, uint32_t line) {
   if (!ctx.InFunction()) {
     std::cerr << "`VAR()` is only legal inside an `FN()`." << std::endl;
     std::exit(1);
@@ -352,15 +348,15 @@ inline void RegisterVar(
 
   MaroonIRVar var;
   var.line = line;
-  var.name = name;
-  var.type = "TODO(dkorolev): Implement this.";
+  var.name = std::move(name);
+  var.type = std::move(type);
   var.init = init_as_string;
 
   ctx.AddVarToBlock(std::move(var));
 }
 
 // TODO(dkorolev): Copy-pasted from `RegisterVar`, we can do better.
-inline void RegisterArg(Ctx& ctx, std::string const& name, VarTypes type, uint32_t line) {
+inline void RegisterArg(Ctx& ctx, std::string name, std::string type, uint32_t line) {
   if (!ctx.InFunction()) {
     std::cerr << "`ARG()` is only legal inside an `FN()`." << std::endl;
     std::exit(1);
@@ -368,8 +364,8 @@ inline void RegisterArg(Ctx& ctx, std::string const& name, VarTypes type, uint32
 
   MaroonIRVar var;
   var.line = line;
-  var.name = name;
-  var.type = "TODO(dkorolev): Implement this.";
+  var.name = std::move(name);
+  var.type = std::move(type);
 
   ctx.AddVarToBlock(std::move(var));
   ctx.AddArgToFunction();
