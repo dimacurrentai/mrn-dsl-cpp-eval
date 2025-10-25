@@ -213,8 +213,6 @@ int main(int argc, char** argv) {
         auto const& fn_name = iter.first;
         auto const& fn = iter.second;
         fo << "    using MAROON_F_ARGS_" << fn_name << " = std::tuple<";
-#if 0
-        // TODO(dkorolev): Use this in the next commit.
         bool first = true;
         for (auto const& a : fn.args) {
           if (first) {
@@ -224,14 +222,6 @@ int main(int argc, char** argv) {
           }
           fo << "MAROON_TYPE_" << a;
         }
-#else
-        for (size_t i = 0u; i < fn.number_of_args; ++i) {
-          if (i > 0) {
-            fo << ", ";
-          }
-          fo << "MAROON_TYPE_" << fn.body.vars[i].type;
-        }
-#endif
         fo << ">;\n";
       }
 
@@ -242,8 +232,7 @@ int main(int argc, char** argv) {
         visitor.EnsureNoLocalVars();
         fo << "    constexpr static MaroonStateIndex FN_" << fn_name << " = static_cast<MaroonStateIndex>("
            << visitor.nvars.size() << ");" << std::endl;
-        // fo << "    constexpr static size_t NUMBER_OF_ARGS_" << fn_name << " = " << fn.args.size() << ";\n";
-        fo << "    constexpr static size_t NUMBER_OF_ARGS_" << fn_name << " = " << fn.number_of_args << ";\n";
+        fo << "    constexpr static size_t NUMBER_OF_ARGS_" << fn_name << " = " << fn.args.size() << ";\n";
         visitor.fn_name = fn_name;
         visitor(fn.body);
       }

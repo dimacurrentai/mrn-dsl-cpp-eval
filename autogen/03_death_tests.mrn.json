@@ -9,7 +9,7 @@
           "functions": {
             "main": {
               "line": 28,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 28,
                 "vars": [],
@@ -36,7 +36,7 @@
           "functions": {
             "main": {
               "line": 52,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 52,
                 "vars": [],
@@ -63,7 +63,7 @@
           "functions": {
             "main": {
               "line": 7,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 7,
                 "vars": [],
@@ -90,7 +90,7 @@
           "functions": {
             "main": {
               "line": 18,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 18,
                 "vars": [],
@@ -117,7 +117,7 @@
           "functions": {
             "main": {
               "line": 40,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 40,
                 "vars": [],

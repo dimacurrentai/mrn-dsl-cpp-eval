@@ -9,7 +9,7 @@
           "functions": {
             "main": {
               "line": 3,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 3,
                 "vars": [
@@ -55,7 +55,7 @@
           "functions": {
             "main": {
               "line": 22,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 22,
                 "vars": [

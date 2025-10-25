@@ -65,9 +65,7 @@ struct Ctx final {
   void AddVarToBlock(MaroonIRVar var) { current_fn_blocks_stack.back()->vars.push_back(std::move(var)); }
 
   void AddArgToFunction(std::string const& type) {
-    // out.maroon[current_maroon_name].fibers[current_fiber_name].functions[current_function_name].args.push_back(type);
-
-    ++out.maroon[current_maroon_name].fibers[current_fiber_name].functions[current_function_name].number_of_args;
+    out.maroon[current_maroon_name].fibers[current_fiber_name].functions[current_function_name].args.push_back(type);
   }
 
   void MarkInnerBlockAsCompleted(size_t user_key) {
