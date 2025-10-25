@@ -141,6 +141,16 @@ int main(int argc, char** argv) {
           }
         }
 
+        void ExposeVarsAccessors() {
+          size_t tmp_idx = 0;
+          for (auto const& var : local_vars) {
+            fo << "      auto& " << var.name << " = MAROON_env.AccessVar<MAROON_TYPE_" << var.type << ">(" << tmp_idx
+               << ",\"" << var.name << "\");\n"
+               << "      auto MAROON_VAR_INDEX_" << var.name << " = static_cast<MaroonVarIndex>(" << tmp_idx << ");\n";
+            ++tmp_idx;
+          }
+        }
+
         void PrintHeader() {
           size_t const entry_vars = local_vars.size();
           size_t const declared_vars = next_step_init_vars.size();
@@ -150,6 +160,7 @@ int main(int argc, char** argv) {
 
           // Declare the vars.
           fo << "    static void VARS_" << step_idx << kVarsFunctionSignature << "{ // " << fn_name << std::endl;
+          ExposeVarsAccessors();
           fo << "      static_cast<void>(MAROON_env);" << std::endl;
           for (auto const& var : next_step_init_vars) {
             if (Exists(var.init)) {
@@ -172,14 +183,7 @@ int main(int argc, char** argv) {
           fo << "    }" << std::endl;
 
           fo << "    static void IMPL_" << step_idx << kStepFunctionSignature << " {  // " << fn_name << std::endl;
-          size_t tmp_idx = 0;
-          // TODO(dkorolev): Different var types, not just names here.
-          for (auto const& var : local_vars) {
-            fo << "      auto& " << var.name << " = MAROON_env.AccessVar<MAROON_TYPE_" << var.type << ">(" << tmp_idx
-               << ",\"" << var.name << "\");\n"
-               << "      auto MAROON_VAR_INDEX_" << var.name << " = static_cast<MaroonVarIndex>(" << tmp_idx << ");\n";
-            ++tmp_idx;
-          }
+          ExposeVarsAccessors();
           // TODO(dkorolev): Put the proper type here.
           fo << "    using T_FUNCTION_RETURN_TYPE = MAROON_TYPE_U64;\n";
           for (auto const& var : local_vars) {
