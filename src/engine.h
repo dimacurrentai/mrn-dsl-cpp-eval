@@ -74,14 +74,6 @@ struct ImplException : current::Exception {
   using current::Exception::Exception;
 };
 
-/*
-// TODO(dkorolev): This should be a templated type, passed to `pack_args`, specific to maroon namespaces.
-template <typename... TS>
-inline std::vector<CURRENT_MAROON_NAMESPACE_TYPES> pack_args(TS... args) {
-  return {CURRENT_MAROON_NAMESPACE_TYPES(args)...};
-}
-*/
-
 // TODO(dkorolev): Need to pass in this maroon namespace's types list.
 
 template <class, class...>
