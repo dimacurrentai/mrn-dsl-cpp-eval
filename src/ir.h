@@ -69,12 +69,28 @@ CURRENT_STRUCT(MaroonIRFiber) {
   CURRENT_FIELD(functions, (std::map<std::string, MaroonIRFunction>));
 };
 
+CURRENT_STRUCT(MaroonIRTypeDefStructField) {
+  CURRENT_FIELD(name, std::string);
+  CURRENT_FIELD(type, std::string);
+};
+
+CURRENT_STRUCT(MaroonIRTypeDefStruct) { CURRENT_FIELD(fields, std::vector<MaroonIRTypeDefStructField>); };
+
+CURRENT_VARIANT(MaroonIRTypeDef, MaroonIRTypeDefStruct);
+
+CURRENT_STRUCT(MaroonIRType) {
+  CURRENT_FIELD(line, uint32_t);
+  CURRENT_FIELD(name, std::string);
+  CURRENT_FIELD(def, MaroonIRTypeDef);
+};
+
 CURRENT_STRUCT(MaroonIRNamespace) {
   CURRENT_FIELD(line, uint32_t);
   // TODO(dkorolev): Support types, heaps, etc.
   // CURRENT_FIELD(types, ...);
   // NOTE(dkorolev): The `global` fiber should absolutely exist, others optional.
   CURRENT_FIELD(fibers, (std::map<std::string, MaroonIRFiber>));
+  CURRENT_FIELD(types, (std::map<std::string, MaroonIRType>));
 };
 
 CURRENT_STRUCT(MaroonTestCaseRunFiber) {

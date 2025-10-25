@@ -8,6 +8,7 @@ struct Ctx final {
   MaroonIRScenarios out;
 
   std::string current_maroon_name;
+  std::string current_type_name;
   std::string current_fiber_name;
   std::string current_function_name;
 
@@ -179,6 +180,49 @@ struct RegisterFiber final {
   }
 };
 
+struct RegisterType final {
+  Ctx& ctx;
+  bool entered = false;
+
+  RegisterType(Ctx& ctx, std::string const& name, uint32_t line) : ctx(ctx) {
+    if (ctx.current_maroon_name.empty()) {
+      std::cerr << "`TYPE(" << name << ")` should be defined within some `MAROON()`." << std::endl;
+      std::exit(1);
+    }
+    if (ctx.out.maroon[ctx.current_maroon_name].types.count(name)) {
+      std::cerr << "`TYPE(" << name << ")` is defined more than once in `MAROON(" << ctx.current_maroon_name << ")`."
+                << std::endl;
+      std::exit(1);
+    }
+    ctx.current_type_name = name;
+    auto& r = ctx.out.maroon[ctx.current_maroon_name].types[ctx.current_type_name];
+    r.line = line;
+    r.name = name;
+    r.def = MaroonIRTypeDefStruct();
+  }
+
+  ~RegisterType() {
+    if (!entered) {
+      std::cerr << "BAZ1" << std::endl;
+      std::exit(1);
+    }
+  }
+
+  void operator<<(std::function<void()> f) {
+    if (ctx.current_type_name.empty()) {
+      std::cerr << "BAZ2" << std::endl;
+      std::exit(1);
+    }
+    if (entered) {
+      std::cerr << "BAZ3" << std::endl;
+      std::exit(1);
+    }
+    entered = true;
+    f();
+    ctx.current_type_name = "";
+  }
+};
+
 struct RegisterFn final {
   Ctx& ctx;
   bool entered = false;
@@ -329,6 +373,23 @@ inline void RegisterArg(Ctx& ctx, std::string const& name, VarTypes type, uint32
 
   ctx.AddVarToBlock(std::move(var));
   ctx.AddArgToFunction();
+}
+
+inline void RegisterField(Ctx& ctx, std::string name, std::string type) {
+  if (ctx.current_type_name.empty()) {
+    std::cerr << "`FIELD()` is only legal inside `TYPE()`." << std::endl;
+    std::exit(1);
+  }
+
+  auto& p = ctx.out.maroon[ctx.current_maroon_name].types[ctx.current_type_name].def;
+  if (!Exists<MaroonIRTypeDefStruct>(p)) {
+    std::cerr << "`FIELD()` is only legal inside the type that is a proper `TYPE()`." << std::endl;
+    std::exit(1);
+  }
+  MaroonIRTypeDefStructField f;
+  f.name = std::move(name);
+  f.type = std::move(type);
+  Value<MaroonIRTypeDefStruct>(p).fields.push_back(std::move(f));
 }
 
 int main() {

@@ -18,6 +18,8 @@
 
 #define MAROON_SOURCE(s) ctx.out.src = s;
 #define MAROON(name) RegisterMaroon(ctx, #name, __LINE__) << [&]()
+#define TYPE(name) RegisterType(ctx, #name, __LINE__) << [&]()
+#define FIELD(name, type) RegisterField(ctx, #name, #type)
 #define FIBER(name) RegisterFiber(ctx, #name, __LINE__) << [&]()
 #define FN(name) RegisterFn(ctx, #name, __LINE__) << [&]()
 #define STMT(stmt) RegisterStmt(ctx, __LINE__, #stmt);

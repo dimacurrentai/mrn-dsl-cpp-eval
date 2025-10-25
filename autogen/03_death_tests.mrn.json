@@ -25,7 +25,8 @@
             }
           }
         }
-      }
+      },
+      "types": {}
     },
     "duplicate_next": {
       "line": 50,
@@ -51,7 +52,8 @@
             }
           }
         }
-      }
+      },
+      "types": {}
     },
     "faulty_next": {
       "line": 4,
@@ -77,7 +79,8 @@
             }
           }
         }
-      }
+      },
+      "types": {}
     },
     "missing_next": {
       "line": 16,
@@ -103,7 +106,8 @@
             }
           }
         }
-      }
+      },
+      "types": {}
     },
     "next_after_done": {
       "line": 38,
@@ -129,7 +133,8 @@
             }
           }
         }
-      }
+      },
+      "types": {}
     }
   },
   "tests": [
