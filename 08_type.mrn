@@ -4,6 +4,11 @@ MAROON(types) {
     FIELD(b, U64);
   };
   TYPE(Empty) {};
+  TYPE(Nested) {
+    FIELD(x, AB);
+    FIELD(y, BOOL);
+    FIELD(z, Empty);
+  };
   FIBER(global) {
     FN(main) {
       VAR(ab, AB, (0, 0));
@@ -22,8 +27,16 @@ MAROON(types) {
         STMT({
           DEBUG_EXPR(e);
           DEBUG_DUMP_STACK();
-          RETURN();
+          NEXT();
         });
+        BLOCK {
+          VAR(t, Nested, (ab, true, e));
+          STMT({
+            DEBUG_EXPR(t);
+            DEBUG_DUMP_STACK();
+            RETURN();
+          });
+        };
       };
     };
   };
@@ -37,4 +50,6 @@ TEST_FIBER(
     "<[ab:{a:1,b:2}]>",
     "e={}",
     "<[ab:{a:1,b:2},e:{}]>",
+    "t={x:{a:1,b:2},y:true,z:{}}",
+    "<[ab:{a:1,b:2},e:{},t:{x:{a:1,b:2},y:true,z:{}}]>",
   });
