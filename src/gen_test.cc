@@ -48,8 +48,9 @@ inline void GenerateTestCase(std::ostream& fo, MaroonTestCase const& test, std::
   fo << '}' << std::endl;
 }
 
-constexpr static char const* const kVarsFunctionSignature = "(ImplEnv& MAROON_env)";
-constexpr static char const* const kStepFunctionSignature = "(ImplEnv& MAROON_env, ImplResultCollector& MAROON_result)";
+constexpr static char const* const kVarsFunctionSignature = "(ImplEnv<T_VARS_TYPELIST>& MAROON_env)";
+constexpr static char const* const kStepFunctionSignature =
+    "(ImplEnv<T_VARS_TYPELIST>& MAROON_env, ImplResultCollector<T_VARS_TYPELIST>& MAROON_result)";
 
 int main(int argc, char** argv) {
   ParseDFlags(&argc, &argv);
@@ -84,6 +85,8 @@ int main(int argc, char** argv) {
     fo << "  struct MAROON_spec final : MaroonDefinition {" << std::endl;
     fo << "    char const* const maroon_name() const override { return \"" << maroon_name << "\"; }" << std::endl;
     fo << "  };" << std::endl;
+    // TODO(dkorolev): This should be a custom `Variant` that includes this maroon namespace's types.
+    fo << "  using T_VARS_TYPELIST = CURRENT_MAROON_NAMESPACE_TYPES;" << std::endl;
     for (auto const& iter : maroon.fibers) {
       auto const& fiber_name = iter.first;
       auto const& fiber = iter.second;
@@ -118,12 +121,12 @@ int main(int argc, char** argv) {
           fo << "      static_cast<void>(MAROON_env);" << std::endl;
           for (auto const& var : next_step_init_vars) {
             if (Exists(var.init)) {
-              fo << "      MAROON_env.DeclareVar(" << local_vars.size() << ",\"" << var.name << "\"," << Value(var.init)
-                 << ");" << std::endl;
+              fo << "      MAROON_env.DeclareVar<MAROON_TYPE_" << var.type << ">(" << local_vars.size() << ",\""
+                 << var.name << "\"," << Value(var.init) << ");" << std::endl;
             } else {
               // TODO(dkorolev): Vars with no `init` are all function arguments, right?
-              fo << "      MAROON_env.DeclareFunctionArg(" << local_vars.size() << ",\"" << var.name << "\");"
-                 << std::endl;
+              fo << "      MAROON_env.DeclareFunctionArg<MAROON_TYPE_" << var.type << ">(" << local_vars.size() << ",\""
+                 << var.name << "\");" << std::endl;
             }
             local_vars.push_back(var);
           }
@@ -134,10 +137,13 @@ int main(int argc, char** argv) {
           size_t tmp_idx = 0;
           // TODO(dkorolev): Different var types, not just names here.
           for (auto const& var : local_vars) {
-            fo << "      auto& " << var.name << " = MAROON_env.AccessVar(" << tmp_idx << ",\"" << var.name << "\");\n"
+            fo << "      auto& " << var.name << " = MAROON_env.AccessVar<MAROON_TYPE_" << var.type << ">(" << tmp_idx
+               << ",\"" << var.name << "\");\n"
                << "      auto MAROON_VAR_INDEX_" << var.name << " = static_cast<MaroonVarIndex>(" << tmp_idx << ");\n";
             ++tmp_idx;
           }
+          // TODO(dkorolev): Put the proper type here.
+          fo << "    using T_FUNCTION_RETURN_TYPE = MAROON_TYPE_U64;\n";
           for (auto const& var : local_vars) {
             fo << "      static_cast<void>(" << var.name << ");" << std::endl;
           }
@@ -203,6 +209,32 @@ int main(int argc, char** argv) {
         }
       };
 
+      for (auto const& iter : fiber.functions) {
+        auto const& fn_name = iter.first;
+        auto const& fn = iter.second;
+        fo << "    using MAROON_F_ARGS_" << fn_name << " = std::tuple<";
+#if 0
+        // TODO(dkorolev): Use this in the next commit.
+        bool first = true;
+        for (auto const& a : fn.args) {
+          if (first) {
+            first = false;
+          } else {
+            fo << ", ";
+          }
+          fo << "MAROON_TYPE_" << a;
+        }
+#else
+        for (size_t i = 0u; i < fn.number_of_args; ++i) {
+          if (i > 0) {
+            fo << ", ";
+          }
+          fo << "MAROON_TYPE_" << fn.body.vars[i].type;
+        }
+#endif
+        fo << ">;\n";
+      }
+
       StatementsRecursiveVisitor visitor(fo);
       for (auto const& iter : fiber.functions) {
         auto const& fn_name = iter.first;
@@ -210,18 +242,19 @@ int main(int argc, char** argv) {
         visitor.EnsureNoLocalVars();
         fo << "    constexpr static MaroonStateIndex FN_" << fn_name << " = static_cast<MaroonStateIndex>("
            << visitor.nvars.size() << ");" << std::endl;
+        // fo << "    constexpr static size_t NUMBER_OF_ARGS_" << fn_name << " = " << fn.args.size() << ";\n";
         fo << "    constexpr static size_t NUMBER_OF_ARGS_" << fn_name << " = " << fn.number_of_args << ";\n";
         visitor.fn_name = fn_name;
         visitor(fn.body);
       }
       fo << "    constexpr static uint32_t kStepsCount = " << visitor.nvars.size() << ";" << std::endl;
-      fo << "    static std::array<MaroonStep, kStepsCount> MAROON_steps() { return {";
+      fo << "    static std::array<MaroonStep<T_VARS_TYPELIST>, kStepsCount> MAROON_steps() { return {";
       for (uint32_t i = 0; i < visitor.nvars.size(); ++i) {
         if (i) {
           fo << ",";
         }
-        fo << "MaroonStep{IMPL_" << i << ',' << visitor.nvars[i].first << ',' << visitor.nvars[i].second << ",VARS_"
-           << i << '}';
+        fo << "MaroonStep<T_VARS_TYPELIST>{IMPL_" << i << ',' << visitor.nvars[i].first << ','
+           << visitor.nvars[i].second << ",VARS_" << i << '}';
       }
       fo << "  };" << std::endl;
       fo << "}" << std::endl;
