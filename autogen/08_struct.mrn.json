@@ -16,15 +16,15 @@
                   {
                     "line": 9,
                     "name": "ab",
-                    "type": "U64",
-                    "init": "42"
+                    "type": "AB",
+                    "init": "0, 0"
                   }
                 ],
                 "code": [
                   {
                     "MaroonIRStmt": {
                       "line": 14,
-                      "stmt": "{ NEXT(); }"
+                      "stmt": "{ ab.a += 1; ab.b += 2; NEXT(); }"
                     }
                   },
                   {
@@ -67,7 +67,7 @@
         "maroon": "struct",
         "fiber": "global",
         "golden_output": [
-          "ab=42"
+          "ab={a:1,b:2}"
         ]
       }
     }
