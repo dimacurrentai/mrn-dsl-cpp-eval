@@ -1,7 +1,7 @@
 {
-  "src": "08_struct.mrn",
+  "src": "08_type.mrn",
   "maroon": {
-    "struct": {
+    "types": {
       "line": 1,
       "fibers": {
         "global": {
@@ -64,7 +64,7 @@
     {
       "MaroonTestCaseRunFiber": {
         "line": 29,
-        "maroon": "struct",
+        "maroon": "types",
         "fiber": "global",
         "golden_output": [
           "ab={a:1,b:2}"
