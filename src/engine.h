@@ -9,35 +9,50 @@
 
 #include "../current/bricks/exception.h"
 
-// TODO(dkorolev): This will go away soon.
+struct MaroonLegalInit final {};
+
 CURRENT_STRUCT(MAROON_TYPE_U64) {
   CURRENT_FIELD(value, uint64_t);
+  CURRENT_CONSTRUCTOR(MAROON_TYPE_U64)(MaroonLegalInit, uint64_t v) : value(v) {}
+  // NOTE(dkorolev): Still need w/o this `MaroonLegalInit` for `RETURN()` statements.
   CURRENT_CONSTRUCTOR(MAROON_TYPE_U64)(uint64_t v = 0) : value(v) {}
+  MAROON_TYPE_U64& operator=(uint64_t v) {
+    value = v;
+    return *this;
+  }
 };
 
 CURRENT_STRUCT(MAROON_TYPE_BOOL) {
   CURRENT_FIELD(value, bool);
+  CURRENT_CONSTRUCTOR(MAROON_TYPE_BOOL)(MaroonLegalInit, bool v) : value(v) {}
+  // NOTE(dkorolev): Still need w/o this `MaroonLegalInit` for `RETURN()` statements.
   CURRENT_CONSTRUCTOR(MAROON_TYPE_BOOL)(bool v = false) : value(v) {}
+  MAROON_TYPE_BOOL& operator=(bool v) {
+    value = v;
+    return *this;
+  }
 };
 
 #define MAROON_BASE_TYPES_CSV MAROON_TYPE_U64, MAROON_TYPE_BOOL
 
 // TODO(dkorolev): This is kinda ugly, although seemingly necessary — need to reconcile for the future.
 
-#define DEFINE_BINARY_OP(type, op1, op2)                                                               \
-  inline type operator op1(type const& lhs, type const& rhs) { return type(lhs.value op1 rhs.value); } \
-  template <typename IMMEDIATE>                                                                        \
-  inline type operator op1(type const& lhs, IMMEDIATE rhs) {                                           \
-    return type(lhs.value op1 rhs);                                                                    \
-  }                                                                                                    \
-  inline type& operator op2(type & lhs, type const& rhs) {                                             \
-    lhs.value op2 rhs.value;                                                                           \
-    return lhs;                                                                                        \
-  }                                                                                                    \
-  template <typename IMMEDIATE>                                                                        \
-  inline type& operator op2(type & lhs, IMMEDIATE rhs) {                                               \
-    lhs.value op2 rhs;                                                                                 \
-    return lhs;                                                                                        \
+#define DEFINE_BINARY_OP(type, op1, op2)                       \
+  inline type operator op1(type const& lhs, type const& rhs) { \
+    return type(MaroonLegalInit(), lhs.value op1 rhs.value);   \
+  }                                                            \
+  template <typename IMMEDIATE>                                \
+  inline type operator op1(type const& lhs, IMMEDIATE rhs) {   \
+    return type(MaroonLegalInit(), lhs.value op1 rhs);         \
+  }                                                            \
+  inline type& operator op2(type & lhs, type const& rhs) {     \
+    lhs.value op2 rhs.value;                                   \
+    return lhs;                                                \
+  }                                                            \
+  template <typename IMMEDIATE>                                \
+  inline type& operator op2(type & lhs, IMMEDIATE rhs) {       \
+    lhs.value op2 rhs;                                         \
+    return lhs;                                                \
   }
 
 #define DEFINE_BOOLEAN_OP(type, op)                                                            \
@@ -326,15 +341,14 @@ struct ImplEnv final {
   }
 
   template <typename T_VAR>
-  void DeclareVar(size_t idx, std::string name, uint64_t init) {
+  void DeclareVar(size_t idx, std::string name, T_VAR init) {
     if (idx != call_stack_.back().vars_.size()) {
       std::cerr << "Internal invariant error: corrupted stack." << std::endl;
       std::exit(1);
     }
     ImplVar<T_VARS_TYPELIST> var;
     var.name = std::move(name);
-    T_VAR val = T_VAR(init);
-    var.value = T_VARS_TYPELIST(std::move(val));
+    var.value = T_VARS_TYPELIST(std::move(init));
     call_stack_.back().vars_.push_back(std::move(var));
   }
 
