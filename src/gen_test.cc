@@ -82,7 +82,18 @@ int main(int argc, char** argv) {
     auto const& maroon = iter.second;
     fo << std::endl;
     fo << "namespace MAROON_NAMESPACE_" << maroon_name << " {" << std::endl;
-    fo << "  CURRENT_VARIANT(MAROON_NAMESPACE_TYPELIST, MAROON_BASE_TYPES_CSV);\n";
+    std::ostringstream extra_types;
+    for (auto const& iter : maroon.types) {
+      if (Exists<MaroonIRTypeDefStruct>(iter.second.def)) {
+        extra_types << ", MAROON_TYPE_" << iter.first;
+        fo << "  CURRENT_STRUCT(MAROON_TYPE_" << iter.first << ") {" << std::endl;
+        for (auto const& fiter : Value<MaroonIRTypeDefStruct>(iter.second.def).fields) {
+          fo << "    CURRENT_FIELD(" << fiter.name << ", MAROON_TYPE_" << fiter.type << ");" << std::endl;
+        }
+        fo << "  };" << std::endl;
+      }
+    }
+    fo << "  CURRENT_VARIANT(MAROON_NAMESPACE_TYPELIST, MAROON_BASE_TYPES_CSV" << extra_types.str() << ");\n";
     fo << "  struct MAROON_spec final : MaroonDefinition {" << std::endl;
     fo << "    using maroon_namespace_types_t = MAROON_NAMESPACE_TYPELIST;" << std::endl;
     fo << "    char const* const maroon_name() const override { return \"" << maroon_name << "\"; }" << std::endl;
@@ -123,7 +134,8 @@ int main(int argc, char** argv) {
           for (auto const& var : next_step_init_vars) {
             if (Exists(var.init)) {
               fo << "      MAROON_env.DeclareVar<MAROON_TYPE_" << var.type << ">(" << local_vars.size() << ",\""
-                 << var.name << "\"," << Value(var.init) << ");" << std::endl;
+                 << var.name << "\", MAROON_TYPE_" << var.type << "(MaroonLegalInit(), " << Value(var.init) << "));"
+                 << std::endl;
             } else {
               // TODO(dkorolev): Vars with no `init` are all function arguments, right?
               fo << "      MAROON_env.DeclareFunctionArg<MAROON_TYPE_" << var.type << ">(" << local_vars.size() << ",\""
