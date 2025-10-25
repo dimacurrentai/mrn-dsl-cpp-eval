@@ -5,16 +5,16 @@
       "line": 1,
       "fibers": {
         "global": {
-          "line": 8,
+          "line": 6,
           "functions": {
             "main": {
-              "line": 9,
+              "line": 7,
               "number_of_args": 0,
               "body": {
-                "line": 9,
+                "line": 7,
                 "vars": [
                   {
-                    "line": 11,
+                    "line": 9,
                     "name": "ab",
                     "type": "TODO(dkorolev): Implement this.",
                     "init": "42"
@@ -23,13 +23,13 @@
                 "code": [
                   {
                     "MaroonIRStmt": {
-                      "line": 16,
+                      "line": 14,
                       "stmt": "{ NEXT(); }"
                     }
                   },
                   {
                     "MaroonIRStmt": {
-                      "line": 20,
+                      "line": 18,
                       "stmt": "{ DEBUG_EXPR(ab); RETURN(); }"
                     }
                   }
@@ -39,13 +39,32 @@
           }
         }
       },
-      "types": {}
+      "types": {
+        "AB": {
+          "line": 2,
+          "name": "AB",
+          "def": {
+            "MaroonIRTypeDefStruct": {
+              "fields": [
+                {
+                  "name": "a",
+                  "type": "U64"
+                },
+                {
+                  "name": "b",
+                  "type": "U64"
+                }
+              ]
+            }
+          }
+        }
+      }
     }
   },
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 30,
+        "line": 28,
         "maroon": "struct",
         "fiber": "global",
         "golden_output": [
