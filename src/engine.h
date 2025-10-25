@@ -9,23 +9,113 @@
 
 #include "../current/bricks/exception.h"
 
+struct MaroonLegalInit final {};
+
+CURRENT_STRUCT(MAROON_TYPE_U64) {
+  CURRENT_FIELD(value, uint64_t);
+  CURRENT_CONSTRUCTOR(MAROON_TYPE_U64)(MaroonLegalInit, uint64_t v) : value(v) {}
+  // NOTE(dkorolev): Still need w/o this `MaroonLegalInit` for `RETURN()` statements.
+  CURRENT_CONSTRUCTOR(MAROON_TYPE_U64)(uint64_t v = 0) : value(v) {}
+  MAROON_TYPE_U64& operator=(uint64_t v) {
+    value = v;
+    return *this;
+  }
+};
+
+CURRENT_STRUCT(MAROON_TYPE_BOOL) {
+  CURRENT_FIELD(value, bool);
+  CURRENT_CONSTRUCTOR(MAROON_TYPE_BOOL)(MaroonLegalInit, bool v) : value(v) {}
+  // NOTE(dkorolev): Still need w/o this `MaroonLegalInit` for `RETURN()` statements.
+  CURRENT_CONSTRUCTOR(MAROON_TYPE_BOOL)(bool v = false) : value(v) {}
+  MAROON_TYPE_BOOL& operator=(bool v) {
+    value = v;
+    return *this;
+  }
+};
+
+#define MAROON_BASE_TYPES_CSV MAROON_TYPE_U64, MAROON_TYPE_BOOL
+
+// TODO(dkorolev): This is kinda ugly, although seemingly necessary — need to reconcile for the future.
+
+#define DEFINE_BINARY_OP(type, op1, op2)                       \
+  inline type operator op1(type const& lhs, type const& rhs) { \
+    return type(MaroonLegalInit(), lhs.value op1 rhs.value);   \
+  }                                                            \
+  template <typename IMMEDIATE>                                \
+  inline type operator op1(type const& lhs, IMMEDIATE rhs) {   \
+    return type(MaroonLegalInit(), lhs.value op1 rhs);         \
+  }                                                            \
+  inline type& operator op2(type & lhs, type const& rhs) {     \
+    lhs.value op2 rhs.value;                                   \
+    return lhs;                                                \
+  }                                                            \
+  template <typename IMMEDIATE>                                \
+  inline type& operator op2(type & lhs, IMMEDIATE rhs) {       \
+    lhs.value op2 rhs;                                         \
+    return lhs;                                                \
+  }
+
+#define DEFINE_BOOLEAN_OP(type, op)                                                            \
+  inline bool operator op(type const& lhs, type const& rhs) { return lhs.value op rhs.value; } \
+  template <typename IMMEDIATE>                                                                \
+  inline bool operator op(type const& lhs, IMMEDIATE rhs) {                                    \
+    return lhs.value op rhs;                                                                   \
+  }
+
+DEFINE_BINARY_OP(MAROON_TYPE_U64, +, +=)
+DEFINE_BINARY_OP(MAROON_TYPE_U64, -, -=)
+DEFINE_BINARY_OP(MAROON_TYPE_U64, *, *=)
+DEFINE_BOOLEAN_OP(MAROON_TYPE_U64, ==)
+DEFINE_BOOLEAN_OP(MAROON_TYPE_U64, !=)
+DEFINE_BOOLEAN_OP(MAROON_TYPE_U64, <)
+DEFINE_BOOLEAN_OP(MAROON_TYPE_U64, <=)
+DEFINE_BOOLEAN_OP(MAROON_TYPE_U64, >)
+DEFINE_BOOLEAN_OP(MAROON_TYPE_U64, >=)
+
+class MaroonDefinition {
+ public:
+  virtual char const* const maroon_name() const = 0;
+
+ protected:
+  ~MaroonDefinition() = default;
+};
+
 // TODO(dkorolev): If we agree it's uint32_t, need to make sure the future compiler checks the size of the program.
 enum class MaroonStateIndex : uint32_t;
 enum class MaroonVarIndex : uint32_t;
-
-// TODO(dkorolev): Support different variable types =) and overall the Maroon stack here.
-enum class VarValue : uint64_t;
 
 struct ImplException : current::Exception {
   using current::Exception::Exception;
 };
 
-template <typename... TS>
-inline std::vector<uint64_t> pack_args(TS... args) {
-  return {static_cast<uint64_t>(args)...};
+template <class, class, class...>
+struct MaroonPackArgsImpl;
+
+template <class T_VARS_TYPELIST, class OUT_TYPE, class... OUT_TYPES, typename IN_TYPE, typename... IN_TYPES>
+struct MaroonPackArgsImpl<T_VARS_TYPELIST, std::tuple<OUT_TYPE, OUT_TYPES...>, IN_TYPE, IN_TYPES...> final {
+  static void DoIt(std::vector<T_VARS_TYPELIST>& res, IN_TYPE&& x, IN_TYPES&&... xs) {
+    OUT_TYPE y(std::forward<IN_TYPE>(x));
+    res.push_back(std::move(y));
+    MaroonPackArgsImpl<T_VARS_TYPELIST, std::tuple<OUT_TYPES...>, IN_TYPES...>::DoIt(res,
+                                                                                     std::forward<IN_TYPES>(xs)...);
+  }
+};
+
+template <class T_VARS_TYPELIST>
+struct MaroonPackArgsImpl<T_VARS_TYPELIST, std::tuple<>> {
+  static void DoIt(std::vector<T_VARS_TYPELIST>&) {}
+};
+
+template <class T_VARS_TYPELIST, class OUT_TYPELIST, typename... IN_TYPES>
+std::vector<T_VARS_TYPELIST> pack_args(IN_TYPES&&... args) {
+  std::vector<T_VARS_TYPELIST> res;
+  MaroonPackArgsImpl<T_VARS_TYPELIST, OUT_TYPELIST, IN_TYPES...>::DoIt(res, std::forward<IN_TYPES>(args)...);
+  return res;
 }
 
 enum TmpNextStatus { None = 0, Next, Branch, Call, Return };
+
+template <class T_VARS_TYPELIST>
 struct ImplResultCollector final {
   MaroonStateIndex next_idx_;
   TmpNextStatus status_ = TmpNextStatus::None;
@@ -33,10 +123,11 @@ struct ImplResultCollector final {
   MaroonStateIndex call_idx_;
   std::string call_f_;
   MaroonVarIndex call_retval_var_idx_;
-  std::vector<uint64_t> call_args_;
+
+  std::vector<T_VARS_TYPELIST> call_args_;
 
   bool has_retval_;
-  VarValue retval_;
+  T_VARS_TYPELIST retval_;
 
   void next() {
     if (status_ != TmpNextStatus::None) {
@@ -52,7 +143,10 @@ struct ImplResultCollector final {
     next_idx_ = idx;
   }
 
-  void call_ignore_return(size_t number_of_args, MaroonStateIndex idx, std::string f, std::vector<uint64_t> args) {
+  void call_ignore_return(size_t number_of_args,
+                          MaroonStateIndex idx,
+                          std::string f,
+                          std::vector<T_VARS_TYPELIST> args) {
     if (status_ != TmpNextStatus::None) {
       CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `CALL()` in the wrong place."));
     }
@@ -68,7 +162,7 @@ struct ImplResultCollector final {
   }
 
   void call_capture_return(
-      MaroonVarIndex v, size_t number_of_args, MaroonStateIndex idx, std::string f, std::vector<uint64_t> args) {
+      MaroonVarIndex v, size_t number_of_args, MaroonStateIndex idx, std::string f, std::vector<T_VARS_TYPELIST> args) {
     if (status_ != TmpNextStatus::None) {
       CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `CALL()` in the wrong place."));
     }
@@ -83,6 +177,7 @@ struct ImplResultCollector final {
     call_args_ = std::move(args);
   }
 
+  template <typename T_UNUSED_FUNCTION_RETURN_TYPE>
   void ret() {
     if (status_ != TmpNextStatus::None) {
       CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `RETURN()` in the wrong place."));
@@ -91,14 +186,15 @@ struct ImplResultCollector final {
     has_retval_ = false;
   }
 
-  template <typename T>
-  void ret(T val) {
+  template <typename T_FUNCTION_RETURN_TYPE, typename T_ARG>
+  void ret(T_ARG&& val) {
     if (status_ != TmpNextStatus::None) {
       CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `RETURN()` in the wrong place."));
     }
     status_ = TmpNextStatus::Return;
     has_retval_ = true;
-    retval_ = static_cast<VarValue>(val);
+    T_FUNCTION_RETURN_TYPE tmp = T_FUNCTION_RETURN_TYPE(std::forward<T_ARG>(val));
+    retval_ = T_VARS_TYPELIST(std::move(tmp));
   }
 
   TmpNextStatus status() const {
@@ -109,20 +205,22 @@ struct ImplResultCollector final {
   }
 };
 
+template <class T_VARS_TYPELIST>
 struct ImplVar final {
   std::string name;
-  VarValue value;
+  T_VARS_TYPELIST value;
 };
 
+template <class T_VARS_TYPELIST>
 struct ImplCallStackEntry final {
   MaroonStateIndex current_idx_;
 
   std::string f_;
   MaroonVarIndex call_retval_var_idx_;
-  std::vector<ImplVar> vars_;
+  std::vector<ImplVar<T_VARS_TYPELIST>> vars_;
 
   size_t args_used_ = 0u;
-  std::vector<uint64_t> args_;  // TODO(dkorolev): Obviously, no `uint64_t`!
+  std::vector<T_VARS_TYPELIST> args_;
 
   ImplCallStackEntry() = delete;
   explicit ImplCallStackEntry(MaroonStateIndex idx,
@@ -134,10 +232,40 @@ struct ImplCallStackEntry final {
   ImplCallStackEntry& operator=(ImplCallStackEntry const&) = default;
 };
 
+template <typename T>
+struct MaroonFormatValueHelperImpl;
+
+template <>
+struct MaroonFormatValueHelperImpl<MAROON_TYPE_U64> final {
+  static void DoIt(std::ostream& os, MAROON_TYPE_U64 const& v) { os << v.value; }
+};
+
+template <>
+struct MaroonFormatValueHelperImpl<MAROON_TYPE_BOOL> final {
+  static void DoIt(std::ostream& os, MAROON_TYPE_BOOL const& v) { os << std::boolalpha << v.value; }
+};
+
+struct MaroonFormatValueHelper final {
+  std::ostream& os;
+  MaroonFormatValueHelper(std::ostream& os) : os(os) {}
+
+  template <class T>
+  void operator()(T const& v) const {
+    MaroonFormatValueHelperImpl<T>::DoIt(os, v);
+  }
+};
+
+template <typename T>
+void MaroonFormatValue(std::ostream& os, T const& var) {
+  MaroonFormatValueHelper helper(os);
+  var.Call(helper);
+}
+
+template <class T_VARS_TYPELIST>
 struct ImplEnv final {
   std::ostream& os_;
 
-  std::vector<ImplCallStackEntry> call_stack_;
+  std::vector<ImplCallStackEntry<T_VARS_TYPELIST>> call_stack_;
 
   explicit ImplEnv(std::ostream& os) : os_(os) {}
 
@@ -154,7 +282,8 @@ struct ImplEnv final {
   template <typename T>
   void debug_expr(char const* const expr, T&& v, char const* const file, int line) {
     std::ostringstream oss;
-    oss << expr << '=' << std::forward<T>(v);
+    oss << expr << '=';
+    (MaroonFormatValueHelper(oss))(std::forward<T>(v));
     std::string const s = oss.str();
     std::cerr << "Impl DEBUG: " << s << " @ " << file << ':' << line << std::endl;
     // TODO(dkorolev): Tick index / time.
@@ -170,7 +299,10 @@ struct ImplEnv final {
     os_ << s << std::endl;
   }
 
-  void do_debug_dump_vars(std::ostringstream& oss, std::vector<ImplVar> const& vars, char const* const file, int line) {
+  void do_debug_dump_vars(std::ostringstream& oss,
+                          std::vector<ImplVar<T_VARS_TYPELIST>> const& vars,
+                          char const* const file,
+                          int line) {
     oss << '[';
     bool first = true;
     for (auto const& v : vars) {
@@ -179,8 +311,8 @@ struct ImplEnv final {
       } else {
         oss << ',';
       }
-      // TODO(dkorolev): Proper dynamic dispatch to print the values of vars!
-      oss << v.name << ':' << static_cast<uint64_t>(v.value);
+      oss << v.name << ':';
+      MaroonFormatValue(oss, v.value);
     }
     oss << ']';
   }
@@ -206,19 +338,19 @@ struct ImplEnv final {
     os_ << s << std::endl;
   }
 
-  // TODO(dkorolev): Templated types for vars!
-  void DeclareVar(size_t idx, std::string name, uint64_t init) {
+  template <typename T_VAR>
+  void DeclareVar(size_t idx, std::string name, T_VAR init) {
     if (idx != call_stack_.back().vars_.size()) {
       std::cerr << "Internal invariant error: corrupted stack." << std::endl;
       std::exit(1);
     }
-    ImplVar var;
+    ImplVar<T_VARS_TYPELIST> var;
     var.name = std::move(name);
-    // TODO(dkorolev): This will change.
-    var.value = static_cast<VarValue>(init);
+    var.value = T_VARS_TYPELIST(std::move(init));
     call_stack_.back().vars_.push_back(std::move(var));
   }
 
+  template <typename T_VAR>
   void DeclareFunctionArg(size_t idx, std::string name) {
     if (idx != call_stack_.back().vars_.size()) {
       std::cerr << "Internal invariant error: corrupted stack." << std::endl;
@@ -228,14 +360,15 @@ struct ImplEnv final {
       std::cerr << "Internal invariant error: not enough args, should never happen." << std::endl;
       std::exit(1);
     }
-    ImplVar var;
+    ImplVar<T_VARS_TYPELIST> var;
     var.name = std::move(name);
-    // TODO(dkorolev): Support other var types.
-    var.value = static_cast<VarValue>(call_stack_.back().args_[call_stack_.back().args_used_++]);
+    // TODO(dkorolev): Check that we're not out of `args_used_`!
+    var.value = std::move(call_stack_.back().args_[call_stack_.back().args_used_++]);
     call_stack_.back().vars_.push_back(std::move(var));
   }
 
-  uint64_t& AccessVar(size_t idx, char const* const name) {
+  template <class T_VAR>
+  T_VAR& AccessVar(size_t idx, char const* const name) {
     if (idx >= call_stack_.back().vars_.size()) {
       std::cerr << "Internal invariant error: var out of stack." << std::endl;
       std::exit(1);
@@ -245,19 +378,30 @@ struct ImplEnv final {
                 << ", have var " << call_stack_.back().vars_[idx].name << std::endl;
       std::exit(1);
     }
-    // TODO(dkorolev): This will change.
-    return reinterpret_cast<uint64_t&>(call_stack_.back().vars_[idx].value);
+    auto& v = call_stack_.back().vars_[idx].value;
+    if (Exists<T_VAR>(v)) {
+      return Value<T_VAR>(v);
+    } else {
+      // TODO(dkorolev): This error message can be more verbose with `TypeName`-s everywhere.
+      std::cerr << "Internal invariant error: var `" << name << "` at index " << idx << " if of the wrong type."
+                << std::endl;
+      std::exit(1);
+    }
   }
 };
 
-using step_function_t = void (*)(ImplEnv& env, ImplResultCollector& result);
-using vars_function_t = void (*)(ImplEnv& env);
+template <class T_VARS_TYPELIST>
+using step_function_t = void (*)(ImplEnv<T_VARS_TYPELIST>& env, ImplResultCollector<T_VARS_TYPELIST>& result);
 
+template <class T_VARS_TYPELIST>
+using vars_function_t = void (*)(ImplEnv<T_VARS_TYPELIST>& env);
+
+template <class T_VARS_TYPELIST>
 struct MaroonStep final {
-  step_function_t code;
+  step_function_t<T_VARS_TYPELIST> code;
   size_t num_vars_available_before_step;
   size_t num_vars_declared_for_step;
-  vars_function_t new_vars;
+  vars_function_t<T_VARS_TYPELIST> new_vars;
 };
 
 #define DEBUG(s) MAROON_env.debug(s, __FILE__, __LINE__)
@@ -270,36 +414,40 @@ struct MaroonStep final {
 #define CALL_DISPATCH(_1, _2, _3, NAME, ...) NAME
 #define CALL(...) CALL_DISPATCH(__VA_ARGS__, CALL3, CALL2, NONEXISTENT_CALL1)(__VA_ARGS__)
 
-#define CALL2(f, args) MAROON_result.call_ignore_return(NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args args)
-#define CALL3(v, f, args) \
-  MAROON_result.call_capture_return(MAROON_VAR_INDEX_##v, NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args args)
+#define CALL2(f, args) \
+  MAROON_result.call_ignore_return(NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args<types_t, MAROON_F_ARGS_##f> args)
+#define CALL3(v, f, args)            \
+  MAROON_result.call_capture_return( \
+      MAROON_VAR_INDEX_##v, NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args<types_t, MAROON_F_ARGS_##f> args)
 
-#define RETURN(...) MAROON_result.ret(__VA_ARGS__)
+#define RETURN(...) MAROON_result.ret<T_FUNCTION_RETURN_TYPE>(__VA_ARGS__)
 
 template <class T_MAROON, class T_FIBER>
 struct MaroonEngine final {
+  static_assert(std::is_base_of<MaroonDefinition, T_MAROON>::value, "");
+  // TODO(dkorolev): Perhaps add a `static_assert` that this `T_FIBER` is from the right `T_MAROON`.
+  using T_VARS_TYPELIST = typename T_MAROON::maroon_namespace_types_t;
+
+  // NOTE(dkorolev): This will not compile if there's no `main` in the `global` fiber.
+  static_assert(T_FIBER::kIsFiber, "");
+
+  static_assert(T_FIBER::NUMBER_OF_ARGS_main == 0, "");
+
   std::pair<std::string, std::string> run() {
     try {
       std::ostringstream oss;
-      ImplEnv env(oss);
-
-      static_assert(T_MAROON::kIsMaroon, "");
-      // TODO(dkorolev): Perhaps add a `static_assert` that this `T_FIBER` is from the right `T_MAROON`.
-
-      // NOTE(dkorolev): This will not compile if there's no `main` in the `global` fiber.
-      static_assert(T_FIBER::kIsFiber, "");
-
-      static_assert(T_FIBER::NUMBER_OF_ARGS_main == 0, "");
+      ImplEnv<T_VARS_TYPELIST> env(oss);
 
       auto const fiber_steps = T_FIBER::MAROON_steps();
 
       // TODO(dkorolev): Proper engine =)
-      env.call_stack_.push_back(ImplCallStackEntry(T_FIBER::FN_main));
+      env.call_stack_.push_back(ImplCallStackEntry<T_VARS_TYPELIST>(T_FIBER::FN_main));
       while (!env.call_stack_.empty()) {
         if (static_cast<uint32_t>(env.call_stack_.back().current_idx_) >= T_FIBER::kStepsCount) {
           CURRENT_THROW(ImplException("NEXT() out of bounds."));
         }
-        MaroonStep const& step = fiber_steps[static_cast<uint32_t>(env.call_stack_.back().current_idx_)];
+        MaroonStep<T_VARS_TYPELIST> const& step =
+            fiber_steps[static_cast<uint32_t>(env.call_stack_.back().current_idx_)];
 
         if (env.call_stack_.back().vars_.size() < step.num_vars_available_before_step) {
           std::cerr << "Internal invariant failed: pre-step vars count mismatch." << std::endl;
@@ -319,7 +467,7 @@ struct MaroonEngine final {
           std::exit(1);
         }
 
-        ImplResultCollector result;
+        ImplResultCollector<T_VARS_TYPELIST> result;
         step.code(env, result);
 
         if (result.status() == TmpNextStatus::Next) {
@@ -330,8 +478,8 @@ struct MaroonEngine final {
         } else if (result.status() == TmpNextStatus::Call) {
           env.call_stack_.back().current_idx_ =
               static_cast<MaroonStateIndex>(static_cast<uint32_t>(env.call_stack_.back().current_idx_) + 1);
-          env.call_stack_.push_back(
-              ImplCallStackEntry(result.call_idx_, std::move(result.call_f_), result.call_retval_var_idx_));
+          env.call_stack_.push_back(ImplCallStackEntry<T_VARS_TYPELIST>(
+              result.call_idx_, std::move(result.call_f_), result.call_retval_var_idx_));
           env.call_stack_.back().args_ = std::move(result.call_args_);
         } else if (result.status() == TmpNextStatus::Return) {
           auto const retval_var_idx = env.call_stack_.back().call_retval_var_idx_;

@@ -58,8 +58,12 @@ CURRENT_STRUCT(MaroonIRBlock) {
 
 CURRENT_STRUCT(MaroonIRFunction) {
   CURRENT_FIELD(line, uint32_t);
-  // TODO(dkorolev): Types of arguments!
-  CURRENT_FIELD(number_of_args, uint32_t, 0);
+
+  // NOTE(dkorolev): The first `args.length` vars of the top-level IR block of `body` are the args.
+  // NOTE(dkorolev): Note that the top-level block of `body` can have more vars.
+  // NOTE(dkorolev): In this case, the extra vars would need to have init values, while args do not.
+  CURRENT_FIELD(args, std::vector<std::string>);
+
   CURRENT_FIELD(body, MaroonIRBlock);
 };
 
@@ -69,12 +73,27 @@ CURRENT_STRUCT(MaroonIRFiber) {
   CURRENT_FIELD(functions, (std::map<std::string, MaroonIRFunction>));
 };
 
+CURRENT_STRUCT(MaroonIRTypeDefStructField) {
+  CURRENT_FIELD(name, std::string);
+  CURRENT_FIELD(type, std::string);
+};
+
+CURRENT_STRUCT(MaroonIRTypeDefStruct) { CURRENT_FIELD(fields, std::vector<MaroonIRTypeDefStructField>); };
+
+CURRENT_VARIANT(MaroonIRTypeDef, MaroonIRTypeDefStruct);
+
+CURRENT_STRUCT(MaroonIRType) {
+  CURRENT_FIELD(line, uint32_t);
+  CURRENT_FIELD(def, MaroonIRTypeDef);
+};
+
 CURRENT_STRUCT(MaroonIRNamespace) {
   CURRENT_FIELD(line, uint32_t);
   // TODO(dkorolev): Support types, heaps, etc.
   // CURRENT_FIELD(types, ...);
   // NOTE(dkorolev): The `global` fiber should absolutely exist, others optional.
   CURRENT_FIELD(fibers, (std::map<std::string, MaroonIRFiber>));
+  CURRENT_FIELD(types, (std::map<std::string, MaroonIRType>));
 };
 
 CURRENT_STRUCT(MaroonTestCaseRunFiber) {

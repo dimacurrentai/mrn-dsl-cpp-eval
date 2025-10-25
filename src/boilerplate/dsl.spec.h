@@ -18,6 +18,8 @@
 
 #define MAROON_SOURCE(s) ctx.out.src = s;
 #define MAROON(name) RegisterMaroon(ctx, #name, __LINE__) << [&]()
+#define TYPE(name) RegisterType(ctx, #name, __LINE__) << [&]()
+#define FIELD(name, type) RegisterField(ctx, #name, #type)
 #define FIBER(name) RegisterFiber(ctx, #name, __LINE__) << [&]()
 #define FN(name) RegisterFn(ctx, #name, __LINE__) << [&]()
 #define STMT(stmt) RegisterStmt(ctx, __LINE__, #stmt);
@@ -26,11 +28,11 @@
 // NOTE(dkorolev): Requires extra parentheses around (yes) and (no) in user code. Sigh.
 #define IF(cond, yes, no) RegisterIf(ctx, #cond, [&]() { NOPARENS(yes); }, [&]() { NOPARENS(no); }, __LINE__)
 
-#define VAR(name, type, init) RegisterVar(ctx, #name, VarTypes::type, #init, __LINE__);
+#define VAR(name, type, init) RegisterVar(ctx, #name, #type, #init, __LINE__);
 
 // NOTE(dkorolev): We will need to make sure the `ARG`-s are only defined at the very top!
 // NOTE(dkorolev): Although this is probably unnecessary, since once we have the proper DSL, life will get better.
-#define ARG(name, type) RegisterArg(ctx, #name, VarTypes::type, __LINE__);
+#define ARG(name, type) RegisterArg(ctx, #name, #type, __LINE__);
 
 #define TEST_FIBER(maroon_name, maroon_fiber, ...) \
   {                                                \

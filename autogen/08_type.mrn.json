@@ -1,0 +1,151 @@
+{
+  "src": "08_type.mrn",
+  "maroon": {
+    "types": {
+      "line": 1,
+      "fibers": {
+        "global": {
+          "line": 12,
+          "functions": {
+            "main": {
+              "line": 13,
+              "args": [],
+              "body": {
+                "line": 13,
+                "vars": [
+                  {
+                    "line": 14,
+                    "name": "ab",
+                    "type": "AB",
+                    "init": "0, 0"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 19,
+                      "stmt": "{ ab.a += 1; ab.b += 2; NEXT(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 24,
+                      "stmt": "{ DEBUG_EXPR(ab); DEBUG_DUMP_STACK(); NEXT(); }"
+                    }
+                  },
+                  {
+                    "MaroonIRBlock": {
+                      "line": 25,
+                      "vars": [
+                        {
+                          "line": 26,
+                          "name": "e",
+                          "type": "Empty",
+                          "init": ""
+                        }
+                      ],
+                      "code": [
+                        {
+                          "MaroonIRStmt": {
+                            "line": 31,
+                            "stmt": "{ DEBUG_EXPR(e); DEBUG_DUMP_STACK(); NEXT(); }"
+                          }
+                        },
+                        {
+                          "MaroonIRBlock": {
+                            "line": 32,
+                            "vars": [
+                              {
+                                "line": 33,
+                                "name": "t",
+                                "type": "Nested",
+                                "init": "ab, true, e"
+                              }
+                            ],
+                            "code": [
+                              {
+                                "MaroonIRStmt": {
+                                  "line": 38,
+                                  "stmt": "{ DEBUG_EXPR(t); DEBUG_DUMP_STACK(); RETURN(); }"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "types": {
+        "AB": {
+          "line": 2,
+          "def": {
+            "MaroonIRTypeDefStruct": {
+              "fields": [
+                {
+                  "name": "a",
+                  "type": "U64"
+                },
+                {
+                  "name": "b",
+                  "type": "U64"
+                }
+              ]
+            }
+          }
+        },
+        "Empty": {
+          "line": 6,
+          "def": {
+            "MaroonIRTypeDefStruct": {
+              "fields": []
+            }
+          }
+        },
+        "Nested": {
+          "line": 7,
+          "def": {
+            "MaroonIRTypeDefStruct": {
+              "fields": [
+                {
+                  "name": "x",
+                  "type": "AB"
+                },
+                {
+                  "name": "y",
+                  "type": "BOOL"
+                },
+                {
+                  "name": "z",
+                  "type": "Empty"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "tests": [
+    {
+      "MaroonTestCaseRunFiber": {
+        "line": 55,
+        "maroon": "types",
+        "fiber": "global",
+        "golden_output": [
+          "ab={a:1,b:2}",
+          "<[ab:{a:1,b:2}]>",
+          "e={}",
+          "<[ab:{a:1,b:2},e:{}]>",
+          "t={x:{a:1,b:2},y:true,z:{}}",
+          "<[ab:{a:1,b:2},e:{},t:{x:{a:1,b:2},y:true,z:{}}]>"
+        ]
+      }
+    }
+  ]
+}

@@ -9,14 +9,16 @@
           "functions": {
             "factorial": {
               "line": 14,
-              "number_of_args": 1,
+              "args": [
+                "U64"
+              ],
               "body": {
                 "line": 14,
                 "vars": [
                   {
                     "line": 15,
                     "name": "n",
-                    "type": "TODO(dkorolev): Implement this."
+                    "type": "U64"
                   }
                 ],
                 "code": [
@@ -37,7 +39,7 @@
                             {
                               "line": 23,
                               "name": "r",
-                              "type": "TODO(dkorolev): Implement this.",
+                              "type": "U64",
                               "init": "0"
                             }
                           ],
@@ -64,14 +66,14 @@
             },
             "main": {
               "line": 3,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 3,
                 "vars": [
                   {
                     "line": 5,
                     "name": "result",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "0"
                   }
                 ],
@@ -93,7 +95,8 @@
             }
           }
         }
-      }
+      },
+      "types": {}
     }
   },
   "tests": [

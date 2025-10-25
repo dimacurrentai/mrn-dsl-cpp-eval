@@ -9,14 +9,14 @@
           "functions": {
             "main": {
               "line": 3,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 3,
                 "vars": [
                   {
                     "line": 4,
                     "name": "a",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "7"
                   }
                 ],
@@ -55,14 +55,14 @@
           "functions": {
             "main": {
               "line": 22,
-              "number_of_args": 0,
+              "args": [],
               "body": {
                 "line": 22,
                 "vars": [
                   {
                     "line": 23,
                     "name": "a",
-                    "type": "TODO(dkorolev): Implement this.",
+                    "type": "U64",
                     "init": "17"
                   }
                 ],
@@ -104,7 +104,8 @@
             }
           }
         }
-      }
+      },
+      "types": {}
     }
   },
   "tests": [

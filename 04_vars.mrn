@@ -58,6 +58,25 @@ MAROON(variable) {
       };
     };
   };
+  FIBER(test3) {
+    FN(main) {
+      VAR(b, BOOL, false);
+      STMT({
+        DEBUG_EXPR(b);
+        DEBUG_DUMP_VARS();
+        NEXT();
+      });
+      STMT({
+        b = true;
+        NEXT();
+      });
+      STMT({
+        DEBUG_EXPR(b);
+        DEBUG_DUMP_VARS();
+        RETURN();
+      });
+    };
+  };
   // NOTE(dkorolev): These `_` tests are not run, so no need for `NEXT()`/`RETURN()`, they are just to look at the JSON.
   FIBER(_00_main_empty) {
     FN(main) {
@@ -112,4 +131,14 @@ TEST_FIBER(
     "[x:100,y:20]",
     "[x:1000,y:200,z:30]",
     "[x:10000,y:2000,t:40]"
+  });
+
+TEST_FIBER(
+  variable,
+  test3,
+  {
+    "b=false",
+    "[b:false]",
+    "b=true",
+    "[b:true]",
   });

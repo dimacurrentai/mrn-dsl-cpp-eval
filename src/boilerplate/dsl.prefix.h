@@ -8,6 +8,7 @@ struct Ctx final {
   MaroonIRScenarios out;
 
   std::string current_maroon_name;
+  std::string current_type_name;
   std::string current_fiber_name;
   std::string current_function_name;
 
@@ -63,8 +64,8 @@ struct Ctx final {
 
   void AddVarToBlock(MaroonIRVar var) { current_fn_blocks_stack.back()->vars.push_back(std::move(var)); }
 
-  void AddArgToFunction() {
-    ++out.maroon[current_maroon_name].fibers[current_fiber_name].functions[current_function_name].number_of_args;
+  void AddArgToFunction(std::string const& type) {
+    out.maroon[current_maroon_name].fibers[current_fiber_name].functions[current_function_name].args.push_back(type);
   }
 
   void MarkInnerBlockAsCompleted(size_t user_key) {
@@ -176,6 +177,48 @@ struct RegisterFiber final {
     entered = true;
     f();
     ctx.current_fiber_name = "";
+  }
+};
+
+struct RegisterType final {
+  Ctx& ctx;
+  bool entered = false;
+
+  RegisterType(Ctx& ctx, std::string const& name, uint32_t line) : ctx(ctx) {
+    if (ctx.current_maroon_name.empty()) {
+      std::cerr << "`TYPE(" << name << ")` should be defined within some `MAROON()`." << std::endl;
+      std::exit(1);
+    }
+    if (ctx.out.maroon[ctx.current_maroon_name].types.count(name)) {
+      std::cerr << "`TYPE(" << name << ")` is defined more than once in `MAROON(" << ctx.current_maroon_name << ")`."
+                << std::endl;
+      std::exit(1);
+    }
+    ctx.current_type_name = name;
+    auto& r = ctx.out.maroon[ctx.current_maroon_name].types[ctx.current_type_name];
+    r.line = line;
+    r.def = MaroonIRTypeDefStruct();
+  }
+
+  ~RegisterType() {
+    if (!entered) {
+      std::cerr << "BAZ1" << std::endl;
+      std::exit(1);
+    }
+  }
+
+  void operator<<(std::function<void()> f) {
+    if (ctx.current_type_name.empty()) {
+      std::cerr << "BAZ2" << std::endl;
+      std::exit(1);
+    }
+    if (entered) {
+      std::cerr << "BAZ3" << std::endl;
+      std::exit(1);
+    }
+    entered = true;
+    f();
+    ctx.current_type_name = "";
   }
 };
 
@@ -295,12 +338,7 @@ struct RegisterBlock final {
   }
 };
 
-enum class VarTypes {
-  U64,
-};
-
-inline void RegisterVar(
-    Ctx& ctx, std::string const& name, VarTypes type, std::string const& init_as_string, uint32_t line) {
+inline void RegisterVar(Ctx& ctx, std::string name, std::string type, std::string const& init, uint32_t line) {
   if (!ctx.InFunction()) {
     std::cerr << "`VAR()` is only legal inside an `FN()`." << std::endl;
     std::exit(1);
@@ -308,15 +346,19 @@ inline void RegisterVar(
 
   MaroonIRVar var;
   var.line = line;
-  var.name = name;
-  var.type = "TODO(dkorolev): Implement this.";
-  var.init = init_as_string;
+  var.name = std::move(name);
+  var.type = std::move(type);
+  if (!init.empty() && init.front() == '(' && init.back() == ')') {
+    var.init = init.substr(1u, init.length() - 2u);
+  } else {
+    var.init = init;
+  }
 
   ctx.AddVarToBlock(std::move(var));
 }
 
 // TODO(dkorolev): Copy-pasted from `RegisterVar`, we can do better.
-inline void RegisterArg(Ctx& ctx, std::string const& name, VarTypes type, uint32_t line) {
+inline void RegisterArg(Ctx& ctx, std::string name, std::string type, uint32_t line) {
   if (!ctx.InFunction()) {
     std::cerr << "`ARG()` is only legal inside an `FN()`." << std::endl;
     std::exit(1);
@@ -324,11 +366,28 @@ inline void RegisterArg(Ctx& ctx, std::string const& name, VarTypes type, uint32
 
   MaroonIRVar var;
   var.line = line;
-  var.name = name;
-  var.type = "TODO(dkorolev): Implement this.";
+  var.name = std::move(name);
+  var.type = std::move(type);
 
+  ctx.AddArgToFunction(var.type);
   ctx.AddVarToBlock(std::move(var));
-  ctx.AddArgToFunction();
+}
+
+inline void RegisterField(Ctx& ctx, std::string name, std::string type) {
+  if (ctx.current_type_name.empty()) {
+    std::cerr << "`FIELD()` is only legal inside `TYPE()`." << std::endl;
+    std::exit(1);
+  }
+
+  auto& p = ctx.out.maroon[ctx.current_maroon_name].types[ctx.current_type_name].def;
+  if (!Exists<MaroonIRTypeDefStruct>(p)) {
+    std::cerr << "`FIELD()` is only legal inside the type that is a proper `TYPE()`." << std::endl;
+    std::exit(1);
+  }
+  MaroonIRTypeDefStructField f;
+  f.name = std::move(name);
+  f.type = std::move(type);
+  Value<MaroonIRTypeDefStruct>(p).fields.push_back(std::move(f));
 }
 
 int main() {

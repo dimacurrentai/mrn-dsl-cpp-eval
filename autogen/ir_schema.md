@@ -48,7 +48,7 @@ Algebraic type, `MaroonIRStmt` or `MaroonIRIf` or `MaroonIRBlock` or `MaroonIRBl
 | **Field** | **Type** | **Description** |
 | ---: | :--- | :--- |
 | `line` | Integer (32-bit unsigned) |
-| `number_of_args` | Integer (32-bit unsigned) |
+| `args` | Array of String |
 | `body` | `MaroonIRBlock` |
 
 
@@ -59,11 +59,36 @@ Algebraic type, `MaroonIRStmt` or `MaroonIRIf` or `MaroonIRBlock` or `MaroonIRBl
 | `functions` | Ordered map of String into `MaroonIRFunction` |
 
 
+### `MaroonIRTypeDefStructField`
+| **Field** | **Type** | **Description** |
+| ---: | :--- | :--- |
+| `name` | String |
+| `type` | String |
+
+
+### `MaroonIRTypeDefStruct`
+| **Field** | **Type** | **Description** |
+| ---: | :--- | :--- |
+| `fields` | Array of `MaroonIRTypeDefStructField` |
+
+
+### `MaroonIRTypeDef`
+Algebraic type, `MaroonIRTypeDefStruct`
+
+
+### `MaroonIRType`
+| **Field** | **Type** | **Description** |
+| ---: | :--- | :--- |
+| `line` | Integer (32-bit unsigned) |
+| `def` | Algebraic `MaroonIRTypeDefStruct` (a.k.a. `MaroonIRTypeDef`) |
+
+
 ### `MaroonIRNamespace`
 | **Field** | **Type** | **Description** |
 | ---: | :--- | :--- |
 | `line` | Integer (32-bit unsigned) |
 | `fibers` | Ordered map of String into `MaroonIRFiber` |
+| `types` | Ordered map of String into `MaroonIRType` |
 
 
 ### `MaroonTestCaseRunFiber`
