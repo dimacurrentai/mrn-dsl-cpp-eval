@@ -3,6 +3,7 @@ MAROON(types) {
     FIELD(a, U64);
     FIELD(b, U64);
   };
+  TYPE(Empty) {};
   FIBER(global) {
     FN(main) {
       VAR(ab, AB, (0, 0));
@@ -13,8 +14,17 @@ MAROON(types) {
       });
       STMT({
         DEBUG_EXPR(ab);
-        RETURN();
+        DEBUG_DUMP_STACK();
+        NEXT();
       });
+      BLOCK {
+        VAR(e, Empty, ());
+        STMT({
+          DEBUG_EXPR(e);
+          DEBUG_DUMP_STACK();
+          RETURN();
+        });
+      };
     };
   };
 };
@@ -24,4 +34,7 @@ TEST_FIBER(
   global,
   {
     "ab={a:1,b:2}",
+    "<[ab:{a:1,b:2}]>",
+    "e={}",
+    "<[ab:{a:1,b:2},e:{}]>",
   });

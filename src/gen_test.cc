@@ -96,8 +96,9 @@ int main(int argc, char** argv) {
         for (auto const& fiter : Value<MaroonIRTypeDefStruct>(iter.second.def).fields) {
           fo << ", MAROON_TYPE_" << fiter.type << ' ' << fiter.name;
         }
+        fo << ')';
         if (has_fields) {
-          fo << ") : ";
+          fo << " : ";
           bool first = true;
           for (auto const& fiter : Value<MaroonIRTypeDefStruct>(iter.second.def).fields) {
             if (first) {
@@ -153,8 +154,13 @@ int main(int argc, char** argv) {
           for (auto const& var : next_step_init_vars) {
             if (Exists(var.init)) {
               fo << "      MAROON_env.DeclareVar<MAROON_TYPE_" << var.type << ">(" << local_vars.size() << ",\""
-                 << var.name << "\", MAROON_TYPE_" << var.type << "(MaroonLegalInit(), " << Value(var.init) << "));"
-                 << std::endl;
+                 << var.name << "\", MAROON_TYPE_" << var.type << "(MaroonLegalInit()";
+              // TODO(dkorolev): If it does not `Exist`, it's an internal error.
+              std::string const init = Value(var.init);
+              if (!init.empty()) {
+                fo << ", " << init;
+              }
+              fo << "));" << std::endl;
             } else {
               // TODO(dkorolev): Vars with no `init` are all function arguments, right?
               fo << "      MAROON_env.DeclareFunctionArg<MAROON_TYPE_" << var.type << ">(" << local_vars.size() << ",\""
