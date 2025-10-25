@@ -14,7 +14,7 @@
                 "line": 7,
                 "vars": [
                   {
-                    "line": 9,
+                    "line": 8,
                     "name": "ab",
                     "type": "AB",
                     "init": "0, 0"
@@ -23,13 +23,13 @@
                 "code": [
                   {
                     "MaroonIRStmt": {
-                      "line": 14,
+                      "line": 13,
                       "stmt": "{ ab.a += 1; ab.b += 2; NEXT(); }"
                     }
                   },
                   {
                     "MaroonIRStmt": {
-                      "line": 18,
+                      "line": 17,
                       "stmt": "{ DEBUG_EXPR(ab); RETURN(); }"
                     }
                   }
@@ -63,7 +63,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 29,
+        "line": 27,
         "maroon": "types",
         "fiber": "global",
         "golden_output": [
