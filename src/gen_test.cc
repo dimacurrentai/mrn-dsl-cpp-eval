@@ -48,9 +48,9 @@ inline void GenerateTestCase(std::ostream& fo, MaroonTestCase const& test, std::
   fo << '}' << std::endl;
 }
 
-constexpr static char const* const kVarsFunctionSignature = "(ImplEnv<T_VARS_TYPELIST>& MAROON_env)";
+constexpr static char const* const kVarsFunctionSignature = "(ImplEnv<types_t>& MAROON_env)";
 constexpr static char const* const kStepFunctionSignature =
-    "(ImplEnv<T_VARS_TYPELIST>& MAROON_env, ImplResultCollector<T_VARS_TYPELIST>& MAROON_result)";
+    "(ImplEnv<types_t>& MAROON_env, ImplResultCollector<types_t>& MAROON_result)";
 
 int main(int argc, char** argv) {
   ParseDFlags(&argc, &argv);
@@ -82,11 +82,12 @@ int main(int argc, char** argv) {
     auto const& maroon = iter.second;
     fo << std::endl;
     fo << "namespace MAROON_NAMESPACE_" << maroon_name << " {" << std::endl;
+    fo << "  CURRENT_VARIANT(MAROON_NAMESPACE_TYPELIST, MAROON_BASE_TYPES_CSV);\n";
     fo << "  struct MAROON_spec final : MaroonDefinition {" << std::endl;
+    fo << "    using maroon_namespace_types_t = MAROON_NAMESPACE_TYPELIST;" << std::endl;
     fo << "    char const* const maroon_name() const override { return \"" << maroon_name << "\"; }" << std::endl;
     fo << "  };" << std::endl;
-    // TODO(dkorolev): This should be a custom `Variant` that includes this maroon namespace's types.
-    fo << "  using T_VARS_TYPELIST = CURRENT_MAROON_NAMESPACE_TYPES;" << std::endl;
+    fo << "  using types_t = typename MAROON_spec::maroon_namespace_types_t;" << std::endl;
     for (auto const& iter : maroon.fibers) {
       auto const& fiber_name = iter.first;
       auto const& fiber = iter.second;
@@ -237,13 +238,13 @@ int main(int argc, char** argv) {
         visitor(fn.body);
       }
       fo << "    constexpr static uint32_t kStepsCount = " << visitor.nvars.size() << ";" << std::endl;
-      fo << "    static std::array<MaroonStep<T_VARS_TYPELIST>, kStepsCount> MAROON_steps() { return {";
+      fo << "    static std::array<MaroonStep<types_t>, kStepsCount> MAROON_steps() { return {";
       for (uint32_t i = 0; i < visitor.nvars.size(); ++i) {
         if (i) {
           fo << ",";
         }
-        fo << "MaroonStep<T_VARS_TYPELIST>{IMPL_" << i << ',' << visitor.nvars[i].first << ','
-           << visitor.nvars[i].second << ",VARS_" << i << '}';
+        fo << "MaroonStep<types_t>{IMPL_" << i << ',' << visitor.nvars[i].first << ',' << visitor.nvars[i].second
+           << ",VARS_" << i << '}';
       }
       fo << "  };" << std::endl;
       fo << "}" << std::endl;
