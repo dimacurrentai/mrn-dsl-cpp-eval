@@ -1,5 +1,11 @@
 IR Schema: [human-readable](https://github.com/dimacurrentai/mrn-dsl-cpp-eval/blob/main/autogen/ir_schema.md), [`ir_schema.rs`](https://github.com/dimacurrentai/mrn-dsl-cpp-eval/blob/main/autogen/ir_schema.rs).
 
+NOTE TO ADD:
+
+There is an implicit invariant in the IR schema that the `init` value for `Block`-scoped variables should be missing only for the top-level block of the function, and only for the first N variables, where N is the number of elements in the `types` of this function.
+
+Moreover, these types should match, since `args` get passed as the first N top-most "in-function" on-stack vars.
+
 TODO BEFORE CHECKING IN
 
 - protect the branch
