@@ -26,11 +26,11 @@
                   {
                     "MaroonIRIf": {
                       "line": 35,
-                      "cond": "n <= 1",
+                      "cond": "n <= U64(1)",
                       "yes": {
                         "MaroonIRStmt": {
                           "line": 16,
-                          "stmt": "RETURN(1)"
+                          "stmt": "RETURN(U64(1))"
                         }
                       },
                       "no": {
@@ -48,7 +48,7 @@
                             {
                               "MaroonIRStmt": {
                                 "line": 26,
-                                "stmt": "{ DEBUG(\"before\"); DEBUG_DUMP_STACK(); CALL(r, factorial, (n-1)); }"
+                                "stmt": "{ DEBUG(\"before\"); DEBUG_DUMP_STACK(); CALL(r, factorial, (n - U64(1))); }"
                               }
                             },
                             {
@@ -82,7 +82,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 5,
-                      "stmt": "CALL(result, factorial, (4))"
+                      "stmt": "CALL(result, factorial, (U64(4)))"
                     }
                   },
                   {

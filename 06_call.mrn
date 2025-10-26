@@ -64,7 +64,7 @@ MAROON(call_with_return) {
     };
     FN(yes, BOOL) {
       STMT({
-        RETURN(true);
+        RETURN(BOOL(true));
       });
     };
   };
@@ -85,7 +85,7 @@ MAROON(call_with_arg) {
       ARG(a, U64);
       STMT({
         DEBUG_EXPR(a);
-        RETURN(a + 1);
+        RETURN(a + U64(1));
       });
     };
   };
@@ -96,7 +96,7 @@ MAROON(call_with_two_args) {
     FN(main) {
       VAR(x, U64, 10);
       STMT(DEBUG_EXPR(x));
-      STMT(CALL(x, sum, (x, 32)));
+      STMT(CALL(x, sum, (x, U64(32))));
       STMT({
         DEBUG_EXPR(x);
         RETURN();
@@ -123,7 +123,7 @@ MAROON(call_ok_to_ignore_result) {
       STMT(RETURN());
     };
     FN(foo, U64) {
-      STMT(RETURN(1));
+      STMT(RETURN(U64(1)));
     };
   };
 };

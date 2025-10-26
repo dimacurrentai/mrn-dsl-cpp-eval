@@ -3,7 +3,7 @@ MAROON(if_condition) {
     FN(main) {
       VAR(a, U64, 7);
       IF(
-        a < 10,
+        a < U64(10),
         STMT(DEBUG("A<10")),
         STMT({
           DEBUG("A>=10");
@@ -19,7 +19,7 @@ MAROON(if_condition) {
     FN(main) {
       VAR(a, U64, 17);
       IF(
-        a < 10,
+        a < U64(10),
         STMT(DEBUG("A<10")),
         BLOCK {
           STMT({

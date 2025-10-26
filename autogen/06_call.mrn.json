@@ -143,7 +143,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 126,
-                      "stmt": "RETURN(1)"
+                      "stmt": "RETURN(U64(1))"
                     }
                   }
                 ]
@@ -256,7 +256,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 89,
-                      "stmt": "{ DEBUG_EXPR(a); RETURN(a + 1); }"
+                      "stmt": "{ DEBUG_EXPR(a); RETURN(a + U64(1)); }"
                     }
                   }
                 ]
@@ -354,7 +354,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 68,
-                      "stmt": "{ RETURN(true); }"
+                      "stmt": "{ RETURN(BOOL(true)); }"
                     }
                   }
                 ]
@@ -394,7 +394,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 99,
-                      "stmt": "CALL(x, sum, (x, 32))"
+                      "stmt": "CALL(x, sum, (x, U64(32)))"
                     }
                   },
                   {
