@@ -8,16 +8,16 @@
           "line": 2,
           "functions": {
             "factorial": {
-              "line": 14,
+              "line": 11,
               "ret": "U64",
               "args": [
                 "U64"
               ],
               "body": {
-                "line": 14,
+                "line": 11,
                 "vars": [
                   {
-                    "line": 15,
+                    "line": 12,
                     "name": "n",
                     "type": "U64"
                   }
@@ -25,20 +25,20 @@
                 "code": [
                   {
                     "MaroonIRIf": {
-                      "line": 38,
+                      "line": 35,
                       "cond": "n <= 1",
                       "yes": {
                         "MaroonIRStmt": {
-                          "line": 19,
+                          "line": 16,
                           "stmt": "RETURN(1)"
                         }
                       },
                       "no": {
                         "MaroonIRBlock": {
-                          "line": 21,
+                          "line": 18,
                           "vars": [
                             {
-                              "line": 23,
+                              "line": 20,
                               "name": "r",
                               "type": "U64",
                               "init": "0"
@@ -47,13 +47,13 @@
                           "code": [
                             {
                               "MaroonIRStmt": {
-                                "line": 29,
+                                "line": 26,
                                 "stmt": "{ DEBUG(\"before\"); DEBUG_DUMP_STACK(); CALL(r, factorial, (n-1)); }"
                               }
                             },
                             {
                               "MaroonIRStmt": {
-                                "line": 36,
+                                "line": 33,
                                 "stmt": "{ DEBUG(\"after\"); DEBUG_DUMP_STACK(); RETURN(r * n); }"
                               }
                             }
@@ -72,7 +72,7 @@
                 "line": 3,
                 "vars": [
                   {
-                    "line": 5,
+                    "line": 4,
                     "name": "result",
                     "type": "U64",
                     "init": "0"
@@ -81,13 +81,13 @@
                 "code": [
                   {
                     "MaroonIRStmt": {
-                      "line": 8,
+                      "line": 5,
                       "stmt": "CALL(result, factorial, (4))"
                     }
                   },
                   {
                     "MaroonIRStmt": {
-                      "line": 12,
+                      "line": 9,
                       "stmt": "{ DEBUG_EXPR(result); RETURN(); }"
                     }
                   }
@@ -103,7 +103,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 61,
+        "line": 58,
         "maroon": "factorial",
         "fiber": "global",
         "golden_output": [

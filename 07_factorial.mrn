@@ -1,10 +1,7 @@
 MAROON(factorial) {
   FIBER(global) {
     FN(main) {
-      // TODO(dkorolev): Make just `result` work!
       VAR(result, U64, 0);
-      // These two blank lines are only here ...
-      // ... to keep the line numbers the same, and the IR/JSON diff small.
       STMT(CALL(result, factorial, (4)));
       STMT({
         DEBUG_EXPR(result);
