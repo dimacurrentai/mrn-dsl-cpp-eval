@@ -6,7 +6,7 @@ MAROON(args) {
 
   FIBER(swap) {
     FN(main) {
-      VAR(a, XY, (1, 2));
+      VAR(a, XY, (U64(1), U64(2)));
       STMT({
         DEBUG_EXPR(a);
         CALL(a, swap, (a));  // No references yet, so `a = swap(a);` it is; some `inplace_swap(&mut a)` is the future.
@@ -24,14 +24,14 @@ MAROON(args) {
 
   FIBER(first) {
     FN(main) {
-      VAR(p, XY, (1, 2));
-      VAR(q, XY, (3, 4));
+      VAR(p, XY, (U64(1), U64(2)));
+      VAR(q, XY, (U64(3), U64(4)));
       STMT({
         DEBUG_EXPR(p);
         DEBUG_EXPR(q);
       });
       BLOCK {
-        VAR(r, XY, (0, 0));
+        VAR(r, XY, (U64(0), U64(0)));
         STMT(CALL(r, first, (p, q)));
         STMT({
           DEBUG_EXPR(r);
@@ -48,14 +48,14 @@ MAROON(args) {
 
   FIBER(second) {
     FN(main) {
-      VAR(m, XY, (1, 2));
-      VAR(n, XY, (3, 4));
+      VAR(m, XY, (U64(1), U64(2)));
+      VAR(n, XY, (U64(3), U64(4)));
       STMT({
         DEBUG_EXPR(m);
         DEBUG_EXPR(n);
       });
       BLOCK {
-        VAR(r, XY, (0, 0));
+        VAR(r, XY, (U64(0), U64(0)));
         STMT(CALL(r, second, (m, n)));
         STMT({
           DEBUG_EXPR(r);

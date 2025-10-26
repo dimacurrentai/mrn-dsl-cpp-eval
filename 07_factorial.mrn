@@ -2,7 +2,7 @@ MAROON(factorial) {
   FIBER(global) {
     FN(main) {
       VAR(result, U64, 0);
-      STMT(CALL(result, factorial, (4)));
+      STMT(CALL(result, factorial, (U64(4))));
       STMT({
         DEBUG_EXPR(result);
         RETURN();
@@ -11,9 +11,9 @@ MAROON(factorial) {
     FN(factorial, U64) {
       ARG(n, U64);
       IF(
-        n <= 1,
+        n <= U64(1),
         // No need for a `BLOCK` to just `RETURN`, an outer `STMT` is enough.
-        STMT(RETURN(1)),
+        STMT(RETURN(U64(1))),
         // Need a `BLOCK` to declare a variable, because need a variable to store the return value of a `CALL`.
         BLOCK {
           // Declare the variable for the intermediate result.
@@ -22,7 +22,7 @@ MAROON(factorial) {
             DEBUG("before");
             DEBUG_DUMP_STACK();
             // Make the recursive call.
-            CALL(r, factorial, (n-1));
+            CALL(r, factorial, (n - U64(1)));
           });
           // The `CALL` must be the end of an `STMT`, so the `RETURN` part is in the next `STMT`.
           STMT({

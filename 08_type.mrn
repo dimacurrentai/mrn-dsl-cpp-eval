@@ -11,10 +11,10 @@ MAROON(types) {
   };
   FIBER(global) {
     FN(main) {
-      VAR(ab, AB, (0, 0));
+      VAR(ab, AB, (U64(0), U64(0)));
       STMT({
-        ab.a += 1;
-        ab.b += 2;
+        ab.a += U64(1);
+        ab.b += U64(2);
       });
       STMT({
         DEBUG_EXPR(ab);
@@ -27,7 +27,7 @@ MAROON(types) {
           DEBUG_DUMP_STACK();
         });
         BLOCK {
-          VAR(t, Nested, (AB(3, 4), true, Empty()));
+          VAR(t, Nested, (AB(U64(3), U64(4)), BOOL(true), Empty()));
           STMT({
             DEBUG_EXPR(t);
             DEBUG_DUMP_STACK();

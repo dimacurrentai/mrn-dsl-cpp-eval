@@ -17,14 +17,14 @@
                     "line": 14,
                     "name": "ab",
                     "type": "AB",
-                    "init": "0, 0"
+                    "init": "U64(0), U64(0)"
                   }
                 ],
                 "code": [
                   {
                     "MaroonIRStmt": {
                       "line": 18,
-                      "stmt": "{ ab.a += 1; ab.b += 2; }"
+                      "stmt": "{ ab.a += U64(1); ab.b += U64(2); }"
                     }
                   },
                   {
@@ -59,7 +59,7 @@
                                 "line": 30,
                                 "name": "t",
                                 "type": "Nested",
-                                "init": "AB(3, 4), true, Empty()"
+                                "init": "AB(U64(3), U64(4)), BOOL(true), Empty()"
                               }
                             ],
                             "code": [

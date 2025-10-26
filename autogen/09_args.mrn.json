@@ -48,13 +48,13 @@
                     "line": 27,
                     "name": "p",
                     "type": "XY",
-                    "init": "1, 2"
+                    "init": "U64(1), U64(2)"
                   },
                   {
                     "line": 28,
                     "name": "q",
                     "type": "XY",
-                    "init": "3, 4"
+                    "init": "U64(3), U64(4)"
                   }
                 ],
                 "code": [
@@ -72,7 +72,7 @@
                           "line": 34,
                           "name": "r",
                           "type": "XY",
-                          "init": "0, 0"
+                          "init": "U64(0), U64(0)"
                         }
                       ],
                       "code": [
@@ -109,13 +109,13 @@
                     "line": 51,
                     "name": "m",
                     "type": "XY",
-                    "init": "1, 2"
+                    "init": "U64(1), U64(2)"
                   },
                   {
                     "line": 52,
                     "name": "n",
                     "type": "XY",
-                    "init": "3, 4"
+                    "init": "U64(3), U64(4)"
                   }
                 ],
                 "code": [
@@ -133,7 +133,7 @@
                           "line": 58,
                           "name": "r",
                           "type": "XY",
-                          "init": "0, 0"
+                          "init": "U64(0), U64(0)"
                         }
                       ],
                       "code": [
@@ -201,7 +201,7 @@
                     "line": 9,
                     "name": "a",
                     "type": "XY",
-                    "init": "1, 2"
+                    "init": "U64(1), U64(2)"
                   }
                 ],
                 "code": [

@@ -14,24 +14,24 @@ struct MaroonLegalInit final {};
 CURRENT_STRUCT(MAROON_TYPE_U64) {
   CURRENT_FIELD(value, uint64_t);
   CURRENT_CONSTRUCTOR(MAROON_TYPE_U64)(MaroonLegalInit, uint64_t v) : value(v) {}
-  // NOTE(dkorolev): Still need w/o this `MaroonLegalInit` for `RETURN()` statements.
-  CURRENT_CONSTRUCTOR(MAROON_TYPE_U64)(uint64_t v = 0) : value(v) {}
   MAROON_TYPE_U64& operator=(uint64_t v) {
     value = v;
     return *this;
   }
 };
 
+inline MAROON_TYPE_U64 U64(uint64_t v) { return MAROON_TYPE_U64(MaroonLegalInit(), v); }
+
 CURRENT_STRUCT(MAROON_TYPE_BOOL) {
   CURRENT_FIELD(value, bool);
   CURRENT_CONSTRUCTOR(MAROON_TYPE_BOOL)(MaroonLegalInit, bool v) : value(v) {}
-  // NOTE(dkorolev): Still need w/o this `MaroonLegalInit` for `RETURN()` statements.
-  CURRENT_CONSTRUCTOR(MAROON_TYPE_BOOL)(bool v = false) : value(v) {}
   MAROON_TYPE_BOOL& operator=(bool v) {
     value = v;
     return *this;
   }
 };
+
+inline MAROON_TYPE_BOOL BOOL(bool v) { return MAROON_TYPE_BOOL(MaroonLegalInit(), v); }
 
 #define MAROON_BASE_TYPES_CSV MAROON_TYPE_U64, MAROON_TYPE_BOOL
 
@@ -41,26 +41,13 @@ CURRENT_STRUCT(MAROON_TYPE_BOOL) {
   inline type operator op1(type const& lhs, type const& rhs) { \
     return type(MaroonLegalInit(), lhs.value op1 rhs.value);   \
   }                                                            \
-  template <typename IMMEDIATE>                                \
-  inline type operator op1(type const& lhs, IMMEDIATE rhs) {   \
-    return type(MaroonLegalInit(), lhs.value op1 rhs);         \
-  }                                                            \
   inline type& operator op2(type & lhs, type const& rhs) {     \
     lhs.value op2 rhs.value;                                   \
     return lhs;                                                \
-  }                                                            \
-  template <typename IMMEDIATE>                                \
-  inline type& operator op2(type & lhs, IMMEDIATE rhs) {       \
-    lhs.value op2 rhs;                                         \
-    return lhs;                                                \
   }
 
-#define DEFINE_BOOLEAN_OP(type, op)                                                            \
-  inline bool operator op(type const& lhs, type const& rhs) { return lhs.value op rhs.value; } \
-  template <typename IMMEDIATE>                                                                \
-  inline bool operator op(type const& lhs, IMMEDIATE rhs) {                                    \
-    return lhs.value op rhs;                                                                   \
-  }
+#define DEFINE_BOOLEAN_OP(type, op) \
+  inline bool operator op(type const& lhs, type const& rhs) { return lhs.value op rhs.value; }
 
 DEFINE_BINARY_OP(MAROON_TYPE_U64, +, +=)
 DEFINE_BINARY_OP(MAROON_TYPE_U64, -, -=)

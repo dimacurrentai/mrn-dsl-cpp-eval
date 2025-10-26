@@ -5,7 +5,7 @@ MAROON(variable) {
       STMT({
         DEBUG_EXPR(a);
         DEBUG_DUMP_VARS();
-        a = a+1;
+        a = a + U64(1);
         DEBUG_DUMP_VARS();
       });
       STMT({
@@ -18,32 +18,32 @@ MAROON(variable) {
     FN(main) {
       VAR(x, U64, 1);
       STMT({
-        x *= 10;
+        x *= U64(10);
         DEBUG_DUMP_VARS();
       });
       BLOCK {
         VAR(y, U64, 2);
         STMT({
-          x *= 10;
-          y *= 10;
+          x *= U64(10);
+          y *= U64(10);
           DEBUG_DUMP_VARS();
         });
         BLOCK {
           VAR(z, U64, 3);
           STMT({
-            x *= 10;
-            y *= 10;
-            z *= 10;
+            x *= U64(10);
+            y *= U64(10);
+            z *= U64(10);
             DEBUG_DUMP_VARS();
           });
         };
         BLOCK {
           VAR(t, U64, 4);
           STMT({
-            x *= 10;
-            y *= 10;
-            // z *= 10;  <--  NOTE(dkorolev): This will not compile.
-            t *= 10;
+            x *= U64(10);
+            y *= U64(10);
+            // z *= U64(10);  <--  NOTE(dkorolev): This will not compile.
+            t *= U64(10);
             DEBUG_DUMP_VARS();
           });
         };

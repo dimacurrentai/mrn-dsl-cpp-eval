@@ -145,7 +145,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 10,
-                      "stmt": "{ DEBUG_EXPR(a); DEBUG_DUMP_VARS(); a = a+1; DEBUG_DUMP_VARS(); }"
+                      "stmt": "{ DEBUG_EXPR(a); DEBUG_DUMP_VARS(); a = a + U64(1); DEBUG_DUMP_VARS(); }"
                     }
                   },
                   {
@@ -179,7 +179,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 23,
-                      "stmt": "{ x *= 10; DEBUG_DUMP_VARS(); }"
+                      "stmt": "{ x *= U64(10); DEBUG_DUMP_VARS(); }"
                     }
                   },
                   {
@@ -197,7 +197,7 @@
                         {
                           "MaroonIRStmt": {
                             "line": 30,
-                            "stmt": "{ x *= 10; y *= 10; DEBUG_DUMP_VARS(); }"
+                            "stmt": "{ x *= U64(10); y *= U64(10); DEBUG_DUMP_VARS(); }"
                           }
                         },
                         {
@@ -215,7 +215,7 @@
                               {
                                 "MaroonIRStmt": {
                                   "line": 38,
-                                  "stmt": "{ x *= 10; y *= 10; z *= 10; DEBUG_DUMP_VARS(); }"
+                                  "stmt": "{ x *= U64(10); y *= U64(10); z *= U64(10); DEBUG_DUMP_VARS(); }"
                                 }
                               }
                             ]
@@ -236,7 +236,7 @@
                               {
                                 "MaroonIRStmt": {
                                   "line": 48,
-                                  "stmt": "{ x *= 10; y *= 10; t *= 10; DEBUG_DUMP_VARS(); }"
+                                  "stmt": "{ x *= U64(10); y *= U64(10); t *= U64(10); DEBUG_DUMP_VARS(); }"
                                 }
                               }
                             ]
