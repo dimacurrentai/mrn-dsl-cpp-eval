@@ -3,10 +3,7 @@
 MAROON(two_steps) {
   FIBER(global) {
     FN(main) {
-      STMT({
-        DEBUG("hello");
-        NEXT();
-      });
+      STMT(DEBUG("hello"));
       STMT({
         DEBUG("world");
         RETURN();

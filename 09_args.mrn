@@ -29,7 +29,6 @@ MAROON(args) {
       STMT({
         DEBUG_EXPR(p);
         DEBUG_EXPR(q);
-        NEXT();
       });
       BLOCK {
         VAR(r, XY, (0, 0));
@@ -54,7 +53,6 @@ MAROON(args) {
       STMT({
         DEBUG_EXPR(m);
         DEBUG_EXPR(n);
-        NEXT();
       });
       BLOCK {
         VAR(r, XY, (0, 0));

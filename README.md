@@ -6,6 +6,10 @@ There is an implicit invariant in the IR schema that the `init` value for `Block
 
 Moreover, these types should match, since `args` get passed as the first N top-most "in-function" on-stack vars.
 
+ANOTHER NOTE:
+
+We're about to have destructors (or the `Drop` "trait") to confirm the variables are deleted upon leaving the scope, not upon entering the "next" one.
+
 TODO BEFORE CHECKING IN
 
 - protect the branch

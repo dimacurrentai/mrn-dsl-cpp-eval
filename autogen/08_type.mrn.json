@@ -23,22 +23,22 @@
                 "code": [
                   {
                     "MaroonIRStmt": {
-                      "line": 19,
-                      "stmt": "{ ab.a += 1; ab.b += 2; NEXT(); }"
+                      "line": 18,
+                      "stmt": "{ ab.a += 1; ab.b += 2; }"
                     }
                   },
                   {
                     "MaroonIRStmt": {
-                      "line": 24,
-                      "stmt": "{ DEBUG_EXPR(ab); DEBUG_DUMP_STACK(); NEXT(); }"
+                      "line": 22,
+                      "stmt": "{ DEBUG_EXPR(ab); DEBUG_DUMP_STACK(); }"
                     }
                   },
                   {
                     "MaroonIRBlock": {
-                      "line": 25,
+                      "line": 23,
                       "vars": [
                         {
-                          "line": 26,
+                          "line": 24,
                           "name": "e",
                           "type": "Empty",
                           "init": ""
@@ -47,16 +47,16 @@
                       "code": [
                         {
                           "MaroonIRStmt": {
-                            "line": 31,
-                            "stmt": "{ DEBUG_EXPR(e); DEBUG_DUMP_STACK(); NEXT(); }"
+                            "line": 28,
+                            "stmt": "{ DEBUG_EXPR(e); DEBUG_DUMP_STACK(); }"
                           }
                         },
                         {
                           "MaroonIRBlock": {
-                            "line": 32,
+                            "line": 29,
                             "vars": [
                               {
-                                "line": 33,
+                                "line": 30,
                                 "name": "t",
                                 "type": "Nested",
                                 "init": "AB(3, 4), true, Empty()"
@@ -65,13 +65,13 @@
                             "code": [
                               {
                                 "MaroonIRStmt": {
-                                  "line": 38,
-                                  "stmt": "{ DEBUG_EXPR(t); DEBUG_DUMP_STACK(); NEXT(); }"
+                                  "line": 34,
+                                  "stmt": "{ DEBUG_EXPR(t); DEBUG_DUMP_STACK(); }"
                                 }
                               },
                               {
                                 "MaroonIRStmt": {
-                                  "line": 44,
+                                  "line": 40,
                                   "stmt": "{ t.x = ab; DEBUG_EXPR(t); DEBUG_DUMP_STACK(); RETURN(); }"
                                 }
                               }
@@ -140,7 +140,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 64,
+        "line": 60,
         "maroon": "types",
         "fiber": "global",
         "golden_output": [

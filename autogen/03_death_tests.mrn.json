@@ -1,131 +1,23 @@
 {
   "src": "03_death_tests.mrn",
   "maroon": {
-    "done_after_next": {
-      "line": 26,
+    "lack_of_return": {
+      "line": 1,
       "fibers": {
         "global": {
-          "line": 27,
+          "line": 2,
           "functions": {
             "main": {
-              "line": 28,
+              "line": 3,
               "args": [],
               "body": {
-                "line": 28,
+                "line": 3,
                 "vars": [],
                 "code": [
                   {
                     "MaroonIRStmt": {
-                      "line": 33,
-                      "stmt": "{ DEBUG(\"hang on tight ...\"); NEXT(); RETURN(); }"
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        }
-      },
-      "types": {}
-    },
-    "duplicate_next": {
-      "line": 50,
-      "fibers": {
-        "global": {
-          "line": 51,
-          "functions": {
-            "main": {
-              "line": 52,
-              "args": [],
-              "body": {
-                "line": 52,
-                "vars": [],
-                "code": [
-                  {
-                    "MaroonIRStmt": {
-                      "line": 57,
-                      "stmt": "{ DEBUG(\"hang on tight ...\"); NEXT(); NEXT(); }"
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        }
-      },
-      "types": {}
-    },
-    "faulty_next": {
-      "line": 4,
-      "fibers": {
-        "global": {
-          "line": 6,
-          "functions": {
-            "main": {
-              "line": 7,
-              "args": [],
-              "body": {
-                "line": 7,
-                "vars": [],
-                "code": [
-                  {
-                    "MaroonIRStmt": {
-                      "line": 11,
-                      "stmt": "{ DEBUG(\"hang on tight ...\"); NEXT(); }"
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        }
-      },
-      "types": {}
-    },
-    "missing_next": {
-      "line": 16,
-      "fibers": {
-        "global": {
-          "line": 17,
-          "functions": {
-            "main": {
-              "line": 18,
-              "args": [],
-              "body": {
-                "line": 18,
-                "vars": [],
-                "code": [
-                  {
-                    "MaroonIRStmt": {
-                      "line": 21,
+                      "line": 6,
                       "stmt": "{ DEBUG(\"hang on tight ...\"); }"
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        }
-      },
-      "types": {}
-    },
-    "next_after_done": {
-      "line": 38,
-      "fibers": {
-        "global": {
-          "line": 39,
-          "functions": {
-            "main": {
-              "line": 40,
-              "args": [],
-              "body": {
-                "line": 40,
-                "vars": [],
-                "code": [
-                  {
-                    "MaroonIRStmt": {
-                      "line": 45,
-                      "stmt": "{ DEBUG(\"hang on tight ...\"); RETURN(); NEXT(); }"
                     }
                   }
                 ]
@@ -140,42 +32,10 @@
   "tests": [
     {
       "MaroonTestCaseFiberShouldThrow": {
-        "line": 62,
-        "maroon": "faulty_next",
+        "line": 11,
+        "maroon": "lack_of_return",
         "fiber": "global",
-        "error": "NEXT() out of bounds."
-      }
-    },
-    {
-      "MaroonTestCaseFiberShouldThrow": {
-        "line": 63,
-        "maroon": "missing_next",
-        "fiber": "global",
-        "error": "`AWAIT` or `RETURN` condition missing in an `STMT`."
-      }
-    },
-    {
-      "MaroonTestCaseFiberShouldThrow": {
-        "line": 64,
-        "maroon": "done_after_next",
-        "fiber": "global",
-        "error": "TODO(dkorolev): FIXME: Attempted `RETURN()` in the wrong place."
-      }
-    },
-    {
-      "MaroonTestCaseFiberShouldThrow": {
-        "line": 65,
-        "maroon": "next_after_done",
-        "fiber": "global",
-        "error": "TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place."
-      }
-    },
-    {
-      "MaroonTestCaseFiberShouldThrow": {
-        "line": 66,
-        "maroon": "duplicate_next",
-        "fiber": "global",
-        "error": "TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place."
+        "error": "Need `RETURN()` at least at the last `STMT()` of the `FN()`."
       }
     }
   ]

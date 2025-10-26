@@ -7,7 +7,6 @@ MAROON(variable) {
         DEBUG_DUMP_VARS();
         a = a+1;
         DEBUG_DUMP_VARS();
-        NEXT();
       });
       STMT({
         DEBUG_EXPR(a);
@@ -21,7 +20,6 @@ MAROON(variable) {
       STMT({
         x *= 10;
         DEBUG_DUMP_VARS();
-        NEXT();
       });
       BLOCK {
         VAR(y, U64, 2);
@@ -29,7 +27,6 @@ MAROON(variable) {
           x *= 10;
           y *= 10;
           DEBUG_DUMP_VARS();
-          NEXT();
         });
         BLOCK {
           VAR(z, U64, 3);
@@ -38,7 +35,6 @@ MAROON(variable) {
             y *= 10;
             z *= 10;
             DEBUG_DUMP_VARS();
-            NEXT();
           });
         };
         BLOCK {
@@ -49,7 +45,6 @@ MAROON(variable) {
             // z *= 10;  <--  NOTE(dkorolev): This will not compile.
             t *= 10;
             DEBUG_DUMP_VARS();
-            NEXT();
           });
         };
         STMT({
@@ -64,12 +59,8 @@ MAROON(variable) {
       STMT({
         DEBUG_EXPR(b);
         DEBUG_DUMP_VARS();
-        NEXT();
       });
-      STMT({
-        b = true;
-        NEXT();
-      });
+      STMT(b = true);
       STMT({
         DEBUG_EXPR(b);
         DEBUG_DUMP_VARS();
@@ -77,7 +68,7 @@ MAROON(variable) {
       });
     };
   };
-  // NOTE(dkorolev): These `_` tests are not run, so no need for `NEXT()`/`RETURN()`, they are just to look at the JSON.
+  // NOTE(dkorolev): These `_` tests are not run, they are just to look at the JSON.
   FIBER(_00_main_empty) {
     FN(main) {
     };
