@@ -8,6 +8,7 @@
 #include <sstream>
 
 #include "../current/bricks/exception.h"
+#include "../current/typesystem/typename.h"
 
 struct MaroonLegalInit final {};
 
@@ -238,6 +239,30 @@ void MaroonFormatValue(std::ostream& os, T const& var) {
   var.Call(helper);
 }
 
+inline static std::string StripMaroonTypeNamePrefix(std::string const& s) {
+  static std::string prefix = "MAROON_TYPE_";
+  if (s.length() >= prefix.length() && s.substr(0u, prefix.length()) == prefix) {
+    return s.substr(prefix.length());
+  } else {
+    return s;
+  }
+}
+
+struct VariantCaseNameExtractorVisitor final {
+  std::string name;
+  template <class T>
+  void operator()(T const&) {
+    name = current::reflection::CurrentTypeName<T>();
+  }
+};
+
+template <class T>
+std::string VariantCaseNameAsString(T const& obj) {
+  VariantCaseNameExtractorVisitor visitor;
+  obj.Call(visitor);
+  return visitor.name;
+}
+
 template <class T_VARS_TYPELIST>
 struct ImplEnv final {
   std::ostream& os_;
@@ -359,10 +384,11 @@ struct ImplEnv final {
     if (Exists<T_VAR>(v)) {
       return Value<T_VAR>(v);
     } else {
-      // TODO(dkorolev): This error message can be more verbose with `TypeName`-s everywhere.
-      std::cerr << "Internal invariant error: var `" << name << "` at index " << idx << " if of the wrong type."
-                << std::endl;
-      std::exit(1);
+      std::ostringstream oss;
+      oss << "Attempted to use `" << name << "` of type `"
+          << StripMaroonTypeNamePrefix(current::reflection::CurrentTypeName<T_VAR>()) << "` as `"
+          << StripMaroonTypeNamePrefix(VariantCaseNameAsString(v)) << "`.";
+      CURRENT_THROW(ImplException(oss.str()));
     }
   }
 };
