@@ -30,7 +30,7 @@ MAROON(types) {
           NEXT();
         });
         BLOCK {
-          VAR(t, Nested, (ab, true, Empty()));
+          VAR(t, Nested, (AB(3, 4), true, Empty()));
           STMT({
             DEBUG_EXPR(t);
             DEBUG_DUMP_STACK();
@@ -50,6 +50,6 @@ TEST_FIBER(
     "<[ab:{a:1,b:2}]>",
     "e={}",
     "<[ab:{a:1,b:2},e:{}]>",
-    "t={x:{a:1,b:2},y:true,z:{}}",
-    "<[ab:{a:1,b:2},e:{},t:{x:{a:1,b:2},y:true,z:{}}]>",
+    "t={x:{a:3,b:4},y:true,z:{}}",
+    "<[ab:{a:1,b:2},e:{},t:{x:{a:3,b:4},y:true,z:{}}]>",
   });
