@@ -128,19 +128,6 @@ MAROON(call_ok_to_ignore_result) {
   };
 };
 
-/* MAROON(call_not_ok_to_fail_to_provide_result) {  <-- Caught statically now, to remove!
-  FIBER(call) {
-    FN(main) {
-      VAR(a, U64, 0);
-      STMT(CALL(a, bar, ()));  // Requiring the return value -- to be stored in `a`.
-      STMT(RETURN());
-    };
-    FN(bar) {
-      STMT(RETURN());  // No return value -- fail.
-    };
-  };
-}; */
-
 // TODO(dkorolev): Function return types (just U64 for now), and `RETURN()`-ing values.
 // TODO(dkorolev): Add dumping the call stack much as we have dumping the vars.
 // TODO(dkorolev): Arbitrary function return types ... once we have types for real.
