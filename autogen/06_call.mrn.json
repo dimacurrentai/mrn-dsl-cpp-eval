@@ -134,6 +134,7 @@
           "functions": {
             "foo": {
               "line": 144,
+              "ret": "U64",
               "args": [],
               "body": {
                 "line": 144,
@@ -238,6 +239,7 @@
           "functions": {
             "add_one": {
               "line": 96,
+              "ret": "U64",
               "args": [
                 "U64"
               ],
@@ -343,6 +345,7 @@
             },
             "one": {
               "line": 72,
+              "ret": "U64",
               "args": [],
               "body": {
                 "line": 72,
@@ -405,6 +408,7 @@
             },
             "sum": {
               "line": 122,
+              "ret": "U64",
               "args": [
                 "U64",
                 "U64"

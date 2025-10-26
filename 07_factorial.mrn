@@ -11,7 +11,7 @@ MAROON(factorial) {
         RETURN();
       });
     };
-    FN(factorial) {
+    FN(factorial, U64) {
       ARG(n, U64);
       IF(
         (n <= 1),

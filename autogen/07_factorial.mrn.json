@@ -9,6 +9,7 @@
           "functions": {
             "factorial": {
               "line": 14,
+              "ret": "U64",
               "args": [
                 "U64"
               ],

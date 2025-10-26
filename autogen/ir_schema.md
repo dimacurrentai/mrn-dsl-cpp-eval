@@ -48,6 +48,7 @@ Algebraic type, `MaroonIRStmt` or `MaroonIRIf` or `MaroonIRBlock` or `MaroonIRBl
 | **Field** | **Type** | **Description** |
 | ---: | :--- | :--- |
 | `line` | Integer (32-bit unsigned) |
+| `ret` | `null` or String |
 | `args` | Array of String |
 | `body` | `MaroonIRBlock` |
 
