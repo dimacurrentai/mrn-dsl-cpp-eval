@@ -264,7 +264,7 @@ struct ImplEnv final {
     std::ostringstream oss;
     oss << std::forward<T>(v);
     std::string const s = oss.str();
-    std::cerr << "Impl DEBUG: " << s << " @ " << file << ':' << line << std::endl;
+    // std::cerr << "Impl DEBUG: " << s << " @ " << file << ':' << line << std::endl;
     // TODO(dkorolev): Tick index / time.
     os_ << s << std::endl;
   }
@@ -275,7 +275,7 @@ struct ImplEnv final {
     oss << expr << '=';
     (MaroonFormatValueHelper(oss))(std::forward<T>(v));
     std::string const s = oss.str();
-    std::cerr << "Impl DEBUG: " << s << " @ " << file << ':' << line << std::endl;
+    // std::cerr << "Impl DEBUG: " << s << " @ " << file << ':' << line << std::endl;
     // TODO(dkorolev): Tick index / time.
     os_ << s << std::endl;
   }
@@ -284,7 +284,7 @@ struct ImplEnv final {
     std::ostringstream oss;
     do_debug_dump_vars(oss, call_stack_.back().vars_, file, line);
     std::string const s = oss.str();
-    std::cerr << "Impl VARS: " << s << " @ " << file << ':' << line << std::endl;
+    // std::cerr << "Impl VARS: " << s << " @ " << file << ':' << line << std::endl;
     // TODO(dkorolev): Tick index / time.
     os_ << s << std::endl;
   }
@@ -324,7 +324,7 @@ struct ImplEnv final {
     }
     oss << '>';
     std::string const s = oss.str();
-    std::cerr << "Impl STACK: " << s << " @ " << file << ':' << line << std::endl;
+    // std::cerr << "Impl STACK: " << s << " @ " << file << ':' << line << std::endl;
     os_ << s << std::endl;
   }
 
