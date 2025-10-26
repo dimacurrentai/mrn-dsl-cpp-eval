@@ -418,8 +418,10 @@ struct MaroonStep final {
 
 #define CALL2(f, args) \
   MAROON_result.call_ignore_return(NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args<types_t, MAROON_F_ARGS_##f> args)
-#define CALL3(v, f, args)            \
-  MAROON_result.call_capture_return( \
+#define CALL3(v, f, args)                                                           \
+  static_assert(std::is_same<MAROON_VAR_TYPE_##v, MAROON_F_RETURN_TYPE_##f>::value, \
+                "Function call return type mismatch.");                             \
+  MAROON_result.call_capture_return(                                                \
       MAROON_VAR_INDEX_##v, NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args<types_t, MAROON_F_ARGS_##f> args)
 
 #define RETURN(...) MAROON_result.ret<T_FUNCTION_RETURN_TYPE>(__VA_ARGS__)

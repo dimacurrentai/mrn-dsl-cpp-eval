@@ -70,62 +70,6 @@
       },
       "types": {}
     },
-    "call_not_ok_to_fail_to_provide_result": {
-      "line": 131,
-      "fibers": {
-        "call": {
-          "line": 132,
-          "functions": {
-            "bar": {
-              "line": 138,
-              "args": [],
-              "body": {
-                "line": 138,
-                "vars": [],
-                "code": [
-                  {
-                    "MaroonIRStmt": {
-                      "line": 139,
-                      "stmt": "RETURN()"
-                    }
-                  }
-                ]
-              }
-            },
-            "main": {
-              "line": 133,
-              "args": [],
-              "body": {
-                "line": 133,
-                "vars": [
-                  {
-                    "line": 134,
-                    "name": "a",
-                    "type": "U64",
-                    "init": "0"
-                  }
-                ],
-                "code": [
-                  {
-                    "MaroonIRStmt": {
-                      "line": 135,
-                      "stmt": "CALL(a, bar, ())"
-                    }
-                  },
-                  {
-                    "MaroonIRStmt": {
-                      "line": 136,
-                      "stmt": "RETURN()"
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        }
-      },
-      "types": {}
-    },
     "call_ok_to_ignore_result": {
       "line": 117,
       "fibers": {
@@ -513,14 +457,6 @@
         "maroon": "call_ok_to_ignore_result",
         "fiber": "call",
         "golden_output": []
-      }
-    },
-    {
-      "MaroonTestCaseFiberShouldThrow": {
-        "line": 181,
-        "maroon": "call_not_ok_to_fail_to_provide_result",
-        "fiber": "call",
-        "error": "A return value must have been provided."
       }
     }
   ]
