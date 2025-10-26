@@ -390,7 +390,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 151,
+        "line": 138,
         "maroon": "call_smoke",
         "fiber": "call",
         "golden_output": [
@@ -402,7 +402,7 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 156,
+        "line": 143,
         "maroon": "call_dump",
         "fiber": "call",
         "golden_output": [
@@ -417,7 +417,7 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 161,
+        "line": 148,
         "maroon": "call_with_return",
         "fiber": "call",
         "golden_output": [
@@ -428,7 +428,7 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 166,
+        "line": 153,
         "maroon": "call_with_arg",
         "fiber": "call",
         "golden_output": [
@@ -440,7 +440,7 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 171,
+        "line": 158,
         "maroon": "call_with_two_args",
         "fiber": "call",
         "golden_output": [
@@ -453,7 +453,7 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 176,
+        "line": 163,
         "maroon": "call_ok_to_ignore_result",
         "fiber": "call",
         "golden_output": []
