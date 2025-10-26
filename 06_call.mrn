@@ -56,22 +56,22 @@ MAROON(call_dump) {
 MAROON(call_with_return) {
   FIBER(call) {
     FN(main) {
-      VAR(a, U64, 0);
+      VAR(b, BOOL, false);
       STMT({
-        DEBUG_EXPR(a);
+        DEBUG_EXPR(b);
         NEXT();
       });
       STMT({
-        CALL(a, one, ());
+        CALL(b, yes, ());
       });
       STMT({
-        DEBUG_EXPR(a);
+        DEBUG_EXPR(b);
         RETURN();
       });
     };
-    FN(one, U64) {
+    FN(yes, BOOL) {
       STMT({
-        RETURN(1);
+        RETURN(true);
       });
     };
   };
@@ -185,7 +185,7 @@ TEST_FIBER(
 TEST_FIBER(
   call_with_return,
   call,
-  {"a=0", "a=1"});
+  {"b=false", "b=true"});
 
 TEST_FIBER(
   call_with_arg,
