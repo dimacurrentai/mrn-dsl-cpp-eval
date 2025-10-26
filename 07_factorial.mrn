@@ -3,9 +3,9 @@ MAROON(factorial) {
     FN(main) {
       // TODO(dkorolev): Make just `result` work!
       VAR(result, U64, 0);
-      STMT({
-        CALL(result, factorial, (4));
-      });
+      // These two blank lines are only here ...
+      // ... to keep the line numbers the same, and the IR/JSON diff small.
+      STMT(CALL(result, factorial, (4)));
       STMT({
         DEBUG_EXPR(result);
         RETURN();
@@ -14,11 +14,11 @@ MAROON(factorial) {
     FN(factorial, U64) {
       ARG(n, U64);
       IF(
-        (n <= 1),
+        n <= 1,
         // No need for a `BLOCK` to just `RETURN`, an outer `STMT` is enough.
-        (STMT(RETURN(1))),
+        STMT(RETURN(1)),
         // Need a `BLOCK` to declare a variable, because need a variable to store the return value of a `CALL`.
-        (BLOCK {
+        BLOCK {
           // Declare the variable for the intermediate result.
           VAR(r, U64, 0);
           STMT({
@@ -34,7 +34,7 @@ MAROON(factorial) {
             // Return the result.
             RETURN(r * n);
           });
-        })
+        }
       );
     };
   };

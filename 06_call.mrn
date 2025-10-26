@@ -137,14 +137,14 @@ MAROON(call_ok_to_ignore_result) {
       STMT({
         CALL(foo, ());
       });
-      STMT({
-        RETURN();
-      });
+      // These two blank lines are only here ...
+      // ... to keep the line numbers the same, and the IR/JSON diff small.
+      STMT(RETURN());
     };
     FN(foo, U64) {
-      STMT({
-        RETURN(1);
-      });
+      // Same ...
+      // ... here.
+      STMT(RETURN(1));
     };
   };
 };
@@ -153,17 +153,17 @@ MAROON(call_not_ok_to_fail_to_provide_result) {
   FIBER(call) {
     FN(main) {
       VAR(a, U64, 0);
-      STMT({
-        CALL(a, bar, ());  // Requiring the return value -- to be stored in `a`.
-      });
-      STMT({
-        RETURN();
-      });
+      // And ...
+      // ... here.
+      STMT(CALL(a, bar, ()));  // Requiring the return value -- to be stored in `a`.
+      // And ...
+      // ... here.
+      STMT(RETURN());
     };
     FN(bar) {
-      STMT({
-        RETURN();  // No return value -- fail.
-      });
+      // And ...
+      // ... here.
+      STMT(RETURN());  // No return value -- fail.
     };
   };
 };

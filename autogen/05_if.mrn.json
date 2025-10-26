@@ -24,7 +24,7 @@
                   {
                     "MaroonIRIf": {
                       "line": 14,
-                      "cond": "(a < 10)",
+                      "cond": "a < 10",
                       "yes": {
                         "MaroonIRStmt": {
                           "line": 10,
@@ -70,7 +70,7 @@
                   {
                     "MaroonIRIf": {
                       "line": 36,
-                      "cond": "(a < 10)",
+                      "cond": "a < 10",
                       "yes": {
                         "MaroonIRStmt": {
                           "line": 29,

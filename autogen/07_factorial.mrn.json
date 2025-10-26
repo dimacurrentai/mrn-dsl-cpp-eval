@@ -26,7 +26,7 @@
                   {
                     "MaroonIRIf": {
                       "line": 38,
-                      "cond": "(n <= 1)",
+                      "cond": "n <= 1",
                       "yes": {
                         "MaroonIRStmt": {
                           "line": 19,
@@ -82,7 +82,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 8,
-                      "stmt": "{ CALL(result, factorial, (4)); }"
+                      "stmt": "CALL(result, factorial, (4))"
                     }
                   },
                   {

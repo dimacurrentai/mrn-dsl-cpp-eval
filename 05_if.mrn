@@ -3,15 +3,15 @@ MAROON(if_condition) {
     FN(main) {
       VAR(a, U64, 7);
       IF(
-        (a < 10),
-        (STMT({
+        a < 10,
+        STMT({
           DEBUG("A<10");
           NEXT();
-        })),
-        (STMT({
+        }),
+        STMT({
           DEBUG("A>=10");
           RETURN();  // Will not print "OK" if >= 10.
-        })));
+        }));
       STMT({
         DEBUG("OK");
         RETURN();
@@ -22,18 +22,18 @@ MAROON(if_condition) {
     FN(main) {
       VAR(a, U64, 17);
       IF(
-        (a < 10),
-        (STMT({
+        a < 10,
+        STMT({
           DEBUG("A<10");
           NEXT();
-        })),
-        // Confirming `BLOCK` is legal within an `IF`, albeit with this ugly syntax.
-        (BLOCK {
+        }),
+        // Confirming `BLOCK` is legal within an `IF`.
+        BLOCK {
           STMT({
             DEBUG("A>=10");
-            RETURN();  // Will not print "OK" if >= 10.
+            RETURN();  // Will not print the final "OK" if >= 10.
           })
-        }));
+        });
       STMT({
         DEBUG("OK");
         RETURN();
