@@ -167,8 +167,9 @@ int main(int argc, char** argv) {
         void ExposeVarsAccessors() {
           size_t tmp_idx = 0;
           for (auto const& var : local_vars) {
-            fo << "      auto& " << var.name << " = MAROON_env.AccessVar<MAROON_TYPE_" << var.type << ">(" << tmp_idx
-               << ",\"" << var.name << "\");\n"
+            fo << "      using MAROON_VAR_TYPE_" << var.name << " = MAROON_TYPE_" << var.type << ";\n"
+               << "      auto& " << var.name << " = MAROON_env.AccessVar<MAROON_VAR_TYPE_" << var.name << ">("
+               << tmp_idx << ",\"" << var.name << "\");\n"
                << "      auto MAROON_VAR_INDEX_" << var.name << " = static_cast<MaroonVarIndex>(" << tmp_idx << ");\n";
             ++tmp_idx;
           }
@@ -282,6 +283,12 @@ int main(int argc, char** argv) {
       for (auto const& iter : fiber.functions) {
         auto const& fn_name = iter.first;
         auto const& fn = iter.second;
+        if (Exists(fn.ret)) {
+          fo << "    using MAROON_F_RETURN_TYPE_" << fn_name << " = MAROON_TYPE_" << Value(fn.ret) << ";\n";
+        } else {
+          // NOTE(dkorolev): Unnecessary, but let it be.
+          fo << "    using MAROON_F_RETURN_TYPE_" << fn_name << " = void;\n";
+        }
         fo << "    using MAROON_F_ARGS_" << fn_name << " = std::tuple<";
         bool first = true;
         for (auto const& a : fn.args) {

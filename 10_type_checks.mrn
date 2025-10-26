@@ -1,7 +1,7 @@
 // NOTE(dkorolev): The only "runtime" failure mode so far is returning the wrong type.
-// TODO(dkorolev): Perhaps eventuallt we will make is a compile-time error too.
+// TODO(dkorolev): Caught statically now, to remove.
 
-MAROON(type_checks) {
+/* MAROON(type_checks) {
   FIBER(cannot_return_bool_to_u64) {
     FN(main) {
       VAR(u, U64, 0);
@@ -17,4 +17,4 @@ MAROON(type_checks) {
 TEST_FIBER_SHOULD_THROW(
   type_checks,
   cannot_return_bool_to_u64,
-  "Attempted to use `u` of type `U64` as `BOOL`.");
+  "Attempted to use `u` of type `U64` as `BOOL`."); */
