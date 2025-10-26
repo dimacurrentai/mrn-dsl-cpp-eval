@@ -4,10 +4,7 @@ MAROON(if_condition) {
       VAR(a, U64, 7);
       IF(
         a < 10,
-        STMT({
-          DEBUG("A<10");
-          NEXT();
-        }),
+        STMT(DEBUG("A<10")),
         STMT({
           DEBUG("A>=10");
           RETURN();  // Will not print "OK" if >= 10.
@@ -23,11 +20,7 @@ MAROON(if_condition) {
       VAR(a, U64, 17);
       IF(
         a < 10,
-        STMT({
-          DEBUG("A<10");
-          NEXT();
-        }),
-        // Confirming `BLOCK` is legal within an `IF`.
+        STMT(DEBUG("A<10")),
         BLOCK {
           STMT({
             DEBUG("A>=10");

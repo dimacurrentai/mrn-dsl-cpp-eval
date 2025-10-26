@@ -8,22 +8,22 @@
           "line": 25,
           "functions": {
             "first": {
-              "line": 43,
+              "line": 42,
               "ret": "XY",
               "args": [
                 "XY",
                 "XY"
               ],
               "body": {
-                "line": 43,
+                "line": 42,
                 "vars": [
                   {
-                    "line": 44,
+                    "line": 43,
                     "name": "a",
                     "type": "XY"
                   },
                   {
-                    "line": 45,
+                    "line": 44,
                     "name": "b",
                     "type": "XY"
                   }
@@ -31,7 +31,7 @@
                 "code": [
                   {
                     "MaroonIRStmt": {
-                      "line": 46,
+                      "line": 45,
                       "stmt": "RETURN(XY(a.x, b.x))"
                     }
                   }
@@ -60,16 +60,16 @@
                 "code": [
                   {
                     "MaroonIRStmt": {
-                      "line": 33,
-                      "stmt": "{ DEBUG_EXPR(p); DEBUG_EXPR(q); NEXT(); }"
+                      "line": 32,
+                      "stmt": "{ DEBUG_EXPR(p); DEBUG_EXPR(q); }"
                     }
                   },
                   {
                     "MaroonIRBlock": {
-                      "line": 34,
+                      "line": 33,
                       "vars": [
                         {
-                          "line": 35,
+                          "line": 34,
                           "name": "r",
                           "type": "XY",
                           "init": "0, 0"
@@ -78,13 +78,13 @@
                       "code": [
                         {
                           "MaroonIRStmt": {
-                            "line": 36,
+                            "line": 35,
                             "stmt": "CALL(r, first, (p, q))"
                           }
                         },
                         {
                           "MaroonIRStmt": {
-                            "line": 40,
+                            "line": 39,
                             "stmt": "{ DEBUG_EXPR(r); RETURN(); }"
                           }
                         }
@@ -97,22 +97,22 @@
           }
         },
         "second": {
-          "line": 50,
+          "line": 49,
           "functions": {
             "main": {
-              "line": 51,
+              "line": 50,
               "args": [],
               "body": {
-                "line": 51,
+                "line": 50,
                 "vars": [
                   {
-                    "line": 52,
+                    "line": 51,
                     "name": "m",
                     "type": "XY",
                     "init": "1, 2"
                   },
                   {
-                    "line": 53,
+                    "line": 52,
                     "name": "n",
                     "type": "XY",
                     "init": "3, 4"
@@ -121,16 +121,16 @@
                 "code": [
                   {
                     "MaroonIRStmt": {
-                      "line": 58,
-                      "stmt": "{ DEBUG_EXPR(m); DEBUG_EXPR(n); NEXT(); }"
+                      "line": 56,
+                      "stmt": "{ DEBUG_EXPR(m); DEBUG_EXPR(n); }"
                     }
                   },
                   {
                     "MaroonIRBlock": {
-                      "line": 59,
+                      "line": 57,
                       "vars": [
                         {
-                          "line": 60,
+                          "line": 58,
                           "name": "r",
                           "type": "XY",
                           "init": "0, 0"
@@ -139,13 +139,13 @@
                       "code": [
                         {
                           "MaroonIRStmt": {
-                            "line": 61,
+                            "line": 59,
                             "stmt": "CALL(r, second, (m, n))"
                           }
                         },
                         {
                           "MaroonIRStmt": {
-                            "line": 65,
+                            "line": 63,
                             "stmt": "{ DEBUG_EXPR(r); RETURN(); }"
                           }
                         }
@@ -156,22 +156,22 @@
               }
             },
             "second": {
-              "line": 68,
+              "line": 66,
               "ret": "XY",
               "args": [
                 "XY",
                 "XY"
               ],
               "body": {
-                "line": 68,
+                "line": 66,
                 "vars": [
                   {
-                    "line": 69,
+                    "line": 67,
                     "name": "a",
                     "type": "XY"
                   },
                   {
-                    "line": 70,
+                    "line": 68,
                     "name": "b",
                     "type": "XY"
                   }
@@ -179,7 +179,7 @@
                 "code": [
                   {
                     "MaroonIRStmt": {
-                      "line": 71,
+                      "line": 69,
                       "stmt": "RETURN(XY(a.y, b.y))"
                     }
                   }
@@ -272,7 +272,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 82,
+        "line": 80,
         "maroon": "args",
         "fiber": "swap",
         "golden_output": [
@@ -283,7 +283,7 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 91,
+        "line": 89,
         "maroon": "args",
         "fiber": "first",
         "golden_output": [
@@ -295,7 +295,7 @@
     },
     {
       "MaroonTestCaseRunFiber": {
-        "line": 100,
+        "line": 98,
         "maroon": "args",
         "fiber": "second",
         "golden_output": [

@@ -3,10 +3,7 @@
 MAROON(call_smoke) {
   FIBER(call) {
     FN(main) {
-      STMT({
-        DEBUG("begin");
-        NEXT();
-      });
+      STMT(DEBUG("begin"));
       STMT({
         CALL(inner, ());  // All `CALL()`-s are presumably async/await, and thus they must end the `STMT`. For now.
       });
@@ -31,7 +28,6 @@ MAROON(call_dump) {
       STMT({
         DEBUG("begin");
         DEBUG_DUMP_STACK();
-        NEXT();
       });
       STMT({
         CALL(inner, ());  // All `CALL()`-s are presumably async/await, and thus they must end the `STMT`. For now.
@@ -57,10 +53,7 @@ MAROON(call_with_return) {
   FIBER(call) {
     FN(main) {
       VAR(b, BOOL, false);
-      STMT({
-        DEBUG_EXPR(b);
-        NEXT();
-      });
+      STMT(DEBUG_EXPR(b));
       STMT({
         CALL(b, yes, ());
       });
@@ -81,13 +74,8 @@ MAROON(call_with_arg) {
   FIBER(call) {
     FN(main) {
       VAR(x, U64, 10);
-      STMT({
-        DEBUG_EXPR(x);
-        NEXT();
-      });
-      STMT({
-        CALL(x, add_one, (x));
-      });
+      STMT(DEBUG_EXPR(x));
+      STMT(CALL(x, add_one, (x)));
       STMT({
         DEBUG_EXPR(x);
         RETURN();
@@ -107,13 +95,8 @@ MAROON(call_with_two_args) {
   FIBER(call) {
     FN(main) {
       VAR(x, U64, 10);
-      STMT({
-        DEBUG_EXPR(x);
-        NEXT();
-      });
-      STMT({
-        CALL(x, sum, (x, 32));
-      });
+      STMT(DEBUG_EXPR(x));
+      STMT(CALL(x, sum, (x, 32)));
       STMT({
         DEBUG_EXPR(x);
         RETURN();

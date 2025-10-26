@@ -15,26 +15,22 @@ MAROON(types) {
       STMT({
         ab.a += 1;
         ab.b += 2;
-        NEXT();
       });
       STMT({
         DEBUG_EXPR(ab);
         DEBUG_DUMP_STACK();
-        NEXT();
       });
       BLOCK {
         VAR(e, Empty, ());
         STMT({
           DEBUG_EXPR(e);
           DEBUG_DUMP_STACK();
-          NEXT();
         });
         BLOCK {
           VAR(t, Nested, (AB(3, 4), true, Empty()));
           STMT({
             DEBUG_EXPR(t);
             DEBUG_DUMP_STACK();
-            NEXT();
           });
           STMT({
             t.x = ab;

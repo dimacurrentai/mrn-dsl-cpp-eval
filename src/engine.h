@@ -113,7 +113,7 @@ std::vector<T_VARS_TYPELIST> pack_args(IN_TYPES&&... args) {
   return res;
 }
 
-enum TmpNextStatus { None = 0, Next, Branch, Call, Return };
+enum TmpNextStatus { None = 0, Branch, Call, Return };
 
 template <class T_VARS_TYPELIST>
 struct ImplResultCollector final {
@@ -129,12 +129,6 @@ struct ImplResultCollector final {
   bool has_retval_;
   T_VARS_TYPELIST retval_;
 
-  void next() {
-    if (status_ != TmpNextStatus::None) {
-      CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `NEXT()` in the wrong place."));
-    }
-    status_ = TmpNextStatus::Next;
-  }
   void branch(MaroonStateIndex idx) {
     if (status_ != TmpNextStatus::None) {
       CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted to `IF()` in the wrong place."));
@@ -198,12 +192,7 @@ struct ImplResultCollector final {
     retval_ = T_VARS_TYPELIST(std::move(tmp));
   }
 
-  TmpNextStatus status() const {
-    if (status_ == TmpNextStatus::None) {
-      CURRENT_THROW(ImplException("`AWAIT` or `RETURN` condition missing in an `STMT`."));
-    }
-    return status_;
-  }
+  TmpNextStatus status() const { return status_; }
 };
 
 template <class T_VARS_TYPELIST>
@@ -409,7 +398,6 @@ struct MaroonStep final {
 #define DEBUG_EXPR(s) MAROON_env.debug_expr(#s, s, __FILE__, __LINE__)
 #define DEBUG_DUMP_VARS() MAROON_env.debug_dump_vars(__FILE__, __LINE__)
 #define DEBUG_DUMP_STACK() MAROON_env.debug_dump_stack(__FILE__, __LINE__)
-#define NEXT() MAROON_result.next()
 
 // NOTE(dkorolev): The ugly yet functional way to tell 1-arg vs. 2-args macros.
 #define CALL_DISPATCH(_1, _2, _3, NAME, ...) NAME
@@ -445,7 +433,7 @@ struct MaroonEngine final {
       env.call_stack_.push_back(ImplCallStackEntry<T_VARS_TYPELIST>(T_FIBER::FN_main));
       while (!env.call_stack_.empty()) {
         if (static_cast<uint32_t>(env.call_stack_.back().current_idx_) >= T_FIBER::kStepsCount) {
-          CURRENT_THROW(ImplException("NEXT() out of bounds."));
+          CURRENT_THROW(ImplException("Need `RETURN()` at least at the last `STMT()` of the `FN()`."));
         }
         MaroonStep<T_VARS_TYPELIST> const& step =
             fiber_steps[static_cast<uint32_t>(env.call_stack_.back().current_idx_)];
@@ -471,10 +459,7 @@ struct MaroonEngine final {
         ImplResultCollector<T_VARS_TYPELIST> result;
         step.code(env, result);
 
-        if (result.status() == TmpNextStatus::Next) {
-          env.call_stack_.back().current_idx_ =
-              static_cast<MaroonStateIndex>(static_cast<uint32_t>(env.call_stack_.back().current_idx_) + 1);
-        } else if (result.status() == TmpNextStatus::Branch) {
+        if (result.status() == TmpNextStatus::Branch) {
           env.call_stack_.back().current_idx_ = static_cast<MaroonStateIndex>(result.next_idx_);
         } else if (result.status() == TmpNextStatus::Call) {
           env.call_stack_.back().current_idx_ =
@@ -499,11 +484,13 @@ struct MaroonEngine final {
             CURRENT_THROW(ImplException("A return value must have been provided."));
           }
         } else {
-          std::cerr << "Internal error: this should never happen." << std::endl;
-          std::exit(1);
+          // Assume the default is `next`.
+          env.call_stack_.back().current_idx_ =
+              static_cast<MaroonStateIndex>(static_cast<uint32_t>(env.call_stack_.back().current_idx_) + 1);
         }
 
         // TODO(dkorolev): Clean up the vars here, not up there.
+        // TODO(dkorolev): This will be possible to check once we have object with destructors / `drop`!
       }
 
       return {oss.str(), ""};
