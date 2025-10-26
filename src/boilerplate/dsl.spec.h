@@ -21,7 +21,13 @@
 #define TYPE(name) RegisterType(ctx, #name, __LINE__) << [&]()
 #define FIELD(name, type) RegisterField(ctx, #name, #type)
 #define FIBER(name) RegisterFiber(ctx, #name, __LINE__) << [&]()
-#define FN(name) RegisterFn(ctx, #name, __LINE__) << [&]()
+
+#define FN_DISPATCH(_1, _2, NAME, ...) NAME
+#define FN(...) FN_DISPATCH(__VA_ARGS__, FN2, FN1, )(__VA_ARGS__)
+
+#define FN1(name) RegisterFn(ctx, #name, nullptr, __LINE__) << [&]()
+#define FN2(name, ret) RegisterFn(ctx, #name, std::string(#ret), __LINE__) << [&]()
+
 #define STMT(stmt) RegisterStmt(ctx, __LINE__, #stmt);
 #define BLOCK RegisterBlock(ctx, __LINE__) << [&]()
 

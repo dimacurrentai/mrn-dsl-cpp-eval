@@ -59,6 +59,9 @@ CURRENT_STRUCT(MaroonIRBlock) {
 CURRENT_STRUCT(MaroonIRFunction) {
   CURRENT_FIELD(line, uint32_t);
 
+  // The return type.
+  CURRENT_FIELD(ret, Optional<std::string>);
+
   // NOTE(dkorolev): The first `args.length` vars of the top-level IR block of `body` are the args.
   // NOTE(dkorolev): Note that the top-level block of `body` can have more vars.
   // NOTE(dkorolev): In this case, the extra vars would need to have init values, while args do not.

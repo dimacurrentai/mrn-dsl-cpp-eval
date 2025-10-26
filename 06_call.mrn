@@ -69,7 +69,7 @@ MAROON(call_with_return) {
         RETURN();
       });
     };
-    FN(one) {
+    FN(one, U64) {
       STMT({
         RETURN(1);
       });
@@ -93,7 +93,7 @@ MAROON(call_with_arg) {
         RETURN();
       });
     };
-    FN(add_one) {
+    FN(add_one, U64) {
       ARG(a, U64);
       STMT({
         DEBUG_EXPR(a);
@@ -119,7 +119,7 @@ MAROON(call_with_two_args) {
         RETURN();
       });
     };
-    FN(sum) {
+    FN(sum, U64) {
       ARG(a, U64);
       ARG(b, U64);
       STMT({
@@ -141,7 +141,7 @@ MAROON(call_ok_to_ignore_result) {
         RETURN();
       });
     };
-    FN(foo) {
+    FN(foo, U64) {
       STMT({
         RETURN(1);
       });

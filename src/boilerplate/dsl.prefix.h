@@ -226,7 +226,7 @@ struct RegisterFn final {
   Ctx& ctx;
   bool entered = false;
 
-  RegisterFn(Ctx& ctx, std::string const& name, uint32_t line) : ctx(ctx) {
+  RegisterFn(Ctx& ctx, std::string const& name, Optional<std::string> return_type, uint32_t line) : ctx(ctx) {
     if (ctx.current_fiber_name.empty()) {
       std::cerr << "`FN(" << name << ")` should be defined within some `FIBER()`." << std::endl;
       std::exit(1);
@@ -237,6 +237,7 @@ struct RegisterFn final {
       std::exit(1);
     }
     MaroonIRFunction& fn = ctx.out.maroon[ctx.current_maroon_name].fibers[ctx.current_fiber_name].functions[name];
+    fn.ret = std::move(return_type);
     ctx.current_function_name = name;
     fn.line = line;
     ctx.EnterFunction(fn, line);
