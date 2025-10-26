@@ -151,6 +151,7 @@ int main(int argc, char** argv) {
         std::ostream& fo;
         std::vector<std::pair<size_t, size_t>> nvars;  // { # upon entering, # to be added on block entry }
         std::string fn_name = "\n#error \"`fn_name` unset.\"\n";
+        Optional<std::string> fn_return_type;
         std::vector<MaroonIRVar> local_vars;
         std::vector<MaroonIRVar> next_step_init_vars;
 
@@ -207,7 +208,12 @@ int main(int argc, char** argv) {
           fo << "    static void IMPL_" << step_idx << kStepFunctionSignature << " {  // " << fn_name << std::endl;
           ExposeVarsAccessors();
           // TODO(dkorolev): Put the proper type here.
-          fo << "    using T_FUNCTION_RETURN_TYPE = MAROON_TYPE_U64;\n";
+          if (Exists(fn_return_type)) {
+            fo << "    using T_FUNCTION_RETURN_TYPE = MAROON_TYPE_" << Value(fn_return_type) << ";\n";
+          } else {
+            // TODO(dkorolev): Unsure if we even need this, but for extra sanity.
+            fo << "    using T_FUNCTION_RETURN_TYPE = void;\n";
+          }
           for (auto const& var : local_vars) {
             fo << "      static_cast<void>(" << var.name << ");" << std::endl;
           }
@@ -298,7 +304,10 @@ int main(int argc, char** argv) {
            << visitor.nvars.size() << ");" << std::endl;
         fo << "    constexpr static size_t NUMBER_OF_ARGS_" << fn_name << " = " << fn.args.size() << ";\n";
         visitor.fn_name = fn_name;
+        visitor.fn_return_type = fn.ret;
         visitor(fn.body);
+        visitor.fn_name = "";
+        visitor.fn_return_type = nullptr;
       }
       fo << "    constexpr static uint32_t kStepsCount = " << visitor.nvars.size() << ";" << std::endl;
       fo << "    static std::array<MaroonStep<types_t>, kStepsCount> MAROON_steps() { return {";

@@ -188,6 +188,7 @@ struct ImplResultCollector final {
 
   template <typename T_FUNCTION_RETURN_TYPE, typename T_ARG>
   void ret(T_ARG&& val) {
+    static_assert(!std::is_same<T_FUNCTION_RETURN_TYPE, void>::value, "Can't `RETURN(...)` from a `unit` function.");
     if (status_ != TmpNextStatus::None) {
       CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `RETURN()` in the wrong place."));
     }
