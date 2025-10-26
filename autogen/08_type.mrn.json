@@ -66,7 +66,13 @@
                               {
                                 "MaroonIRStmt": {
                                   "line": 38,
-                                  "stmt": "{ DEBUG_EXPR(t); DEBUG_DUMP_STACK(); RETURN(); }"
+                                  "stmt": "{ DEBUG_EXPR(t); DEBUG_DUMP_STACK(); NEXT(); }"
+                                }
+                              },
+                              {
+                                "MaroonIRStmt": {
+                                  "line": 44,
+                                  "stmt": "{ t.x = ab; DEBUG_EXPR(t); DEBUG_DUMP_STACK(); RETURN(); }"
                                 }
                               }
                             ]
@@ -134,7 +140,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 55,
+        "line": 64,
         "maroon": "types",
         "fiber": "global",
         "golden_output": [
@@ -143,7 +149,9 @@
           "e={}",
           "<[ab:{a:1,b:2},e:{}]>",
           "t={x:{a:3,b:4},y:true,z:{}}",
-          "<[ab:{a:1,b:2},e:{},t:{x:{a:3,b:4},y:true,z:{}}]>"
+          "<[ab:{a:1,b:2},e:{},t:{x:{a:3,b:4},y:true,z:{}}]>",
+          "t={x:{a:1,b:2},y:true,z:{}}",
+          "<[ab:{a:1,b:2},e:{},t:{x:{a:1,b:2},y:true,z:{}}]>"
         ]
       }
     }
