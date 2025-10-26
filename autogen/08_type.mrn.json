@@ -59,7 +59,7 @@
                                 "line": 33,
                                 "name": "t",
                                 "type": "Nested",
-                                "init": "ab, true, Empty()"
+                                "init": "AB(3, 4), true, Empty()"
                               }
                             ],
                             "code": [
@@ -142,8 +142,8 @@
           "<[ab:{a:1,b:2}]>",
           "e={}",
           "<[ab:{a:1,b:2},e:{}]>",
-          "t={x:{a:1,b:2},y:true,z:{}}",
-          "<[ab:{a:1,b:2},e:{},t:{x:{a:1,b:2},y:true,z:{}}]>"
+          "t={x:{a:3,b:4},y:true,z:{}}",
+          "<[ab:{a:1,b:2},e:{},t:{x:{a:3,b:4},y:true,z:{}}]>"
         ]
       }
     }
