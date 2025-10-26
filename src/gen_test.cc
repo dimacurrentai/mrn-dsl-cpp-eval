@@ -85,22 +85,23 @@ int main(int argc, char** argv) {
     std::ostringstream extra_types;
     for (auto const& iter : maroon.types) {
       if (Exists<MaroonIRTypeDefStruct>(iter.second.def)) {
+        auto const& def = Value<MaroonIRTypeDefStruct>(iter.second.def);
         extra_types << ", MAROON_TYPE_" << iter.first;
         fo << "  CURRENT_STRUCT(MAROON_TYPE_" << iter.first << ") {" << std::endl;
         bool has_fields = false;
-        for (auto const& fiter : Value<MaroonIRTypeDefStruct>(iter.second.def).fields) {
+        for (auto const& fiter : def.fields) {
           has_fields = true;
           fo << "    CURRENT_FIELD(" << fiter.name << ", MAROON_TYPE_" << fiter.type << ");" << std::endl;
         }
         fo << "    CURRENT_CONSTRUCTOR(MAROON_TYPE_" << iter.first << ")(MaroonLegalInit";
-        for (auto const& fiter : Value<MaroonIRTypeDefStruct>(iter.second.def).fields) {
+        for (auto const& fiter : def.fields) {
           fo << ", MAROON_TYPE_" << fiter.type << ' ' << fiter.name;
         }
         fo << ')';
         if (has_fields) {
           fo << " : ";
           bool first = true;
-          for (auto const& fiter : Value<MaroonIRTypeDefStruct>(iter.second.def).fields) {
+          for (auto const& fiter : def.fields) {
             if (first) {
               first = false;
             } else {
@@ -111,6 +112,27 @@ int main(int argc, char** argv) {
         }
         fo << " {}" << std::endl;
         fo << "  };" << std::endl;
+        fo << "  inline MAROON_TYPE_" << iter.first << ' ' << iter.first << '(';
+        {
+          bool first = true;
+          for (auto const& fiter : def.fields) {
+            if (first) {
+              first = false;
+            } else {
+              fo << ", ";
+            }
+            fo << "MAROON_TYPE_" << fiter.type << ' ' << fiter.name;
+          }
+        }
+        fo << ") {\n";
+        fo << "    return MAROON_TYPE_" << iter.first << "(MaroonLegalInit()";
+        {
+          for (auto const& fiter : def.fields) {
+            fo << ", std::move(" << fiter.name << ')';
+          }
+        }
+        fo << ");\n";
+        fo << "  }\n";
       }
     }
     fo << "  CURRENT_VARIANT(MAROON_NAMESPACE_TYPELIST, MAROON_BASE_TYPES_CSV" << extra_types.str() << ");\n";
