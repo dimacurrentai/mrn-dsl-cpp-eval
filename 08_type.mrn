@@ -34,6 +34,12 @@ MAROON(types) {
           STMT({
             DEBUG_EXPR(t);
             DEBUG_DUMP_STACK();
+            NEXT();
+          });
+          STMT({
+            t.x = ab;
+            DEBUG_EXPR(t);
+            DEBUG_DUMP_STACK();
             RETURN();
           });
         };
@@ -52,4 +58,7 @@ TEST_FIBER(
     "<[ab:{a:1,b:2},e:{}]>",
     "t={x:{a:3,b:4},y:true,z:{}}",
     "<[ab:{a:1,b:2},e:{},t:{x:{a:3,b:4},y:true,z:{}}]>",
+    // After `t.x = ab`.
+    "t={x:{a:1,b:2},y:true,z:{}}",
+    "<[ab:{a:1,b:2},e:{},t:{x:{a:1,b:2},y:true,z:{}}]>",
   });
