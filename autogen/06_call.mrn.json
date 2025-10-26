@@ -316,36 +316,36 @@
                 "vars": [
                   {
                     "line": 59,
-                    "name": "a",
-                    "type": "U64",
-                    "init": "0"
+                    "name": "b",
+                    "type": "BOOL",
+                    "init": "false"
                   }
                 ],
                 "code": [
                   {
                     "MaroonIRStmt": {
                       "line": 63,
-                      "stmt": "{ DEBUG_EXPR(a); NEXT(); }"
+                      "stmt": "{ DEBUG_EXPR(b); NEXT(); }"
                     }
                   },
                   {
                     "MaroonIRStmt": {
                       "line": 66,
-                      "stmt": "{ CALL(a, one, ()); }"
+                      "stmt": "{ CALL(b, yes, ()); }"
                     }
                   },
                   {
                     "MaroonIRStmt": {
                       "line": 70,
-                      "stmt": "{ DEBUG_EXPR(a); RETURN(); }"
+                      "stmt": "{ DEBUG_EXPR(b); RETURN(); }"
                     }
                   }
                 ]
               }
             },
-            "one": {
+            "yes": {
               "line": 72,
-              "ret": "U64",
+              "ret": "BOOL",
               "args": [],
               "body": {
                 "line": 72,
@@ -354,7 +354,7 @@
                   {
                     "MaroonIRStmt": {
                       "line": 75,
-                      "stmt": "{ RETURN(1); }"
+                      "stmt": "{ RETURN(true); }"
                     }
                   }
                 ]
@@ -477,8 +477,8 @@
         "maroon": "call_with_return",
         "fiber": "call",
         "golden_output": [
-          "a=0",
-          "a=1"
+          "b=false",
+          "b=true"
         ]
       }
     },
