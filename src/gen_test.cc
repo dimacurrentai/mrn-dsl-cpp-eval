@@ -359,8 +359,7 @@ int main(int argc, char** argv) {
         fo << "  }\n";
         fo << "};\n";
       } else if (Exists<MaroonIRTypeDefOptional>(iter.second.def)) {
-        fo << "  DECLARE_MAROON_OPTIONAL_TYPE(" << maroon_name << ", " << iter.first << ", "
-           << Value<MaroonIRTypeDefOptional>(iter.second.def).type << ");\n";
+        fo << "  DECLARE_MAROON_OPTIONAL_TYPE(" << maroon_name << ", " << iter.first << ");\n";
       }
     }
   }
