@@ -94,8 +94,74 @@
                     }
                   },
                   {
-                    "MaroonIRStmt": {
+                    "MaroonIRBlock": {
                       "line": 17,
+                      "vars": [
+                        {
+                          "line": 18,
+                          "name": "e",
+                          "type": "OPTIONAL_U64",
+                          "init": "NONE"
+                        }
+                      ],
+                      "code": [
+                        {
+                          "MaroonIRStmt": {
+                            "line": 19,
+                            "stmt": "DEBUG_EXPR(e)"
+                          }
+                        },
+                        {
+                          "MaroonIRStmt": {
+                            "line": 20,
+                            "stmt": "e = a"
+                          }
+                        },
+                        {
+                          "MaroonIRStmt": {
+                            "line": 21,
+                            "stmt": "DEBUG_EXPR(e)"
+                          }
+                        },
+                        {
+                          "MaroonIRBlock": {
+                            "line": 22,
+                            "vars": [
+                              {
+                                "line": 23,
+                                "name": "f",
+                                "type": "U64",
+                                "init": "0"
+                              }
+                            ],
+                            "code": [
+                              {
+                                "MaroonIRStmt": {
+                                  "line": 24,
+                                  "stmt": "DEBUG_EXPR(f)"
+                                }
+                              },
+                              {
+                                "MaroonIRStmt": {
+                                  "line": 25,
+                                  "stmt": "f = a.VALUE()"
+                                }
+                              },
+                              {
+                                "MaroonIRStmt": {
+                                  "line": 26,
+                                  "stmt": "DEBUG_EXPR(f)"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 29,
                       "stmt": "RETURN()"
                     }
                   }
@@ -128,13 +194,17 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 29,
+        "line": 45,
         "maroon": "optional",
         "fiber": "demo",
         "golden_output": [
           "[a:None,b:Some(1),c:None,d:Some(true)]",
           "[a:Some(2),b:None,c:Some(true),d:None]",
-          "[a:Some(2),b:Some(2),c:Some(true),d:Some(true)]"
+          "[a:Some(2),b:Some(2),c:Some(true),d:Some(true)]",
+          "e=None",
+          "e=Some(2)",
+          "f=0",
+          "f=2"
         ]
       }
     }
