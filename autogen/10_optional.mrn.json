@@ -160,8 +160,50 @@
                     }
                   },
                   {
-                    "MaroonIRStmt": {
+                    "MaroonIRIf": {
                       "line": 29,
+                      "cond": "d.EXISTS()",
+                      "yes": {
+                        "MaroonIRStmt": {
+                          "line": 29,
+                          "stmt": "DEBUG(\"D EXISTS\")"
+                        }
+                      },
+                      "no": {
+                        "MaroonIRStmt": {
+                          "line": 29,
+                          "stmt": "DEBUG(\"D IS NONE\")"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 30,
+                      "stmt": "d = NONE"
+                    }
+                  },
+                  {
+                    "MaroonIRIf": {
+                      "line": 31,
+                      "cond": "d.EXISTS()",
+                      "yes": {
+                        "MaroonIRStmt": {
+                          "line": 31,
+                          "stmt": "DEBUG(\"D EXISTS\")"
+                        }
+                      },
+                      "no": {
+                        "MaroonIRStmt": {
+                          "line": 31,
+                          "stmt": "DEBUG(\"D IS NONE\")"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 32,
                       "stmt": "RETURN()"
                     }
                   }
@@ -194,7 +236,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 45,
+        "line": 50,
         "maroon": "optional",
         "fiber": "demo",
         "golden_output": [
@@ -204,7 +246,9 @@
           "e=None",
           "e=Some(2)",
           "f=0",
-          "f=2"
+          "f=2",
+          "D EXISTS",
+          "D IS NONE"
         ]
       }
     }
