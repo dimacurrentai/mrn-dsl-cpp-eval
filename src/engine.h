@@ -60,6 +60,27 @@ DEFINE_BOOLEAN_OP(MAROON_TYPE_U64, <=)
 DEFINE_BOOLEAN_OP(MAROON_TYPE_U64, >)
 DEFINE_BOOLEAN_OP(MAROON_TYPE_U64, >=)
 
+// TODO(dkorolev): Do use `DEFINE_MAROON_OPTIONAL_TYPE`.
+#define DEFINE_MAROON_OPTIONAL_TYPE(...)
+
+struct MAROON_INSTANCE_NONE final {};
+
+static MAROON_INSTANCE_NONE NONE;
+
+CURRENT_STRUCT(MAROON_TYPE_OPTIONAL_U64) {
+  CURRENT_FIELD(value, Optional<MAROON_TYPE_U64>);
+  CURRENT_CONSTRUCTOR(MAROON_TYPE_OPTIONAL_U64)(MaroonLegalInit, MAROON_INSTANCE_NONE) {}
+  CURRENT_CONSTRUCTOR(MAROON_TYPE_OPTIONAL_U64)(MaroonLegalInit, MAROON_TYPE_U64 v) : value(std::move(v)) {}
+  MAROON_TYPE_OPTIONAL_U64& operator=(MAROON_TYPE_U64 v) {
+    value = std::move(v);
+    return *this;
+  }
+  MAROON_TYPE_OPTIONAL_U64& operator=(MAROON_INSTANCE_NONE) {
+    value = nullptr;
+    return *this;
+  }
+};
+
 class MaroonDefinition {
  public:
   virtual char const* const maroon_name() const = 0;
@@ -221,6 +242,21 @@ struct MaroonFormatValueHelperImpl<MAROON_TYPE_U64> final {
 template <>
 struct MaroonFormatValueHelperImpl<MAROON_TYPE_BOOL> final {
   static void DoIt(std::ostream& os, MAROON_TYPE_BOOL const& v) { os << std::boolalpha << v.value; }
+};
+
+// TODO(dkorolev): Do use `DECLARE_MAROON_OPTIONAL_TYPE`.
+#define DECLARE_MAROON_OPTIONAL_TYPE(...)
+template <>
+struct MaroonFormatValueHelperImpl<MAROON_TYPE_OPTIONAL_U64> final {
+  static void DoIt(std::ostream& os, MAROON_TYPE_OPTIONAL_U64 const& v) {
+    if (Exists(v.value)) {
+      os << "Some(";
+      MaroonFormatValueHelperImpl<MAROON_TYPE_U64>::DoIt(os, Value(v.value));
+      os << ')';
+    } else {
+      os << "None";
+    }
+  }
 };
 
 struct MaroonFormatValueHelper final {

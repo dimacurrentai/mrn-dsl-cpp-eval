@@ -73,15 +73,21 @@ Algebraic type, `MaroonIRStmt` or `MaroonIRIf` or `MaroonIRBlock` or `MaroonIRBl
 | `fields` | Array of `MaroonIRTypeDefStructField` |
 
 
+### `MaroonIRTypeDefOptional`
+| **Field** | **Type** | **Description** |
+| ---: | :--- | :--- |
+| `type` | String |
+
+
 ### `MaroonIRTypeDef`
-Algebraic type, `MaroonIRTypeDefStruct`
+Algebraic type, `MaroonIRTypeDefStruct` or `MaroonIRTypeDefOptional`
 
 
 ### `MaroonIRType`
 | **Field** | **Type** | **Description** |
 | ---: | :--- | :--- |
 | `line` | Integer (32-bit unsigned) |
-| `def` | Algebraic `MaroonIRTypeDefStruct` (a.k.a. `MaroonIRTypeDef`) |
+| `def` | Algebraic `MaroonIRTypeDefStruct` / `MaroonIRTypeDefOptional` (a.k.a. `MaroonIRTypeDef`) |
 
 
 ### `MaroonIRNamespace`

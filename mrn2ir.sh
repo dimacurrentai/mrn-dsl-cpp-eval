@@ -36,7 +36,7 @@ echo 'MAROON_SOURCE("'$IN.mrn'");' >>"autogen/$IN.mrn.h"
 echo '#line 1' >>"autogen/$IN.mrn.h"
 cat "$IN.mrn" >>"autogen/$IN.mrn.h"
 g++ -E "autogen/$IN.mrn.h" 2>/dev/null | grep -v '^#' | grep -v '^$' >>autogen/"$IN.mrn.cc"
-echo -e "  ;\n  std::cout << JSON<JSONFormat::Minimalistic>(ctx.out) << std::endl;\n}" >>autogen/"$IN.mrn.cc"
+echo -e "  ;\n  ctx.Finalize(); std::cout << JSON<JSONFormat::Minimalistic>(ctx.out) << std::endl;\n}" >>autogen/"$IN.mrn.cc"
 
 # Build and run the source file that was just put together to generate the JSON IR.
 if ! g++ autogen/"$IN.mrn.cc" -o autogen/"$IN.mrn.bin" ; then

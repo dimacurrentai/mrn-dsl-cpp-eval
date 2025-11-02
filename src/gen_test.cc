@@ -133,6 +133,10 @@ int main(int argc, char** argv) {
         }
         fo << ");\n";
         fo << "  }\n";
+      } else if (Exists<MaroonIRTypeDefOptional>(iter.second.def)) {
+        auto const& def = Value<MaroonIRTypeDefOptional>(iter.second.def);
+        extra_types << ", MAROON_TYPE_" << iter.first;
+        fo << "  DEFINE_MAROON_OPTIONAL_TYPE(" << iter.first << ", " << def.type << ");\n";
       }
     }
     fo << "  CURRENT_VARIANT(MAROON_NAMESPACE_TYPELIST, MAROON_BASE_TYPES_CSV" << extra_types.str() << ");\n";
@@ -329,7 +333,7 @@ int main(int argc, char** argv) {
       fo << "}" << std::endl;
       fo << "  };  // fiber `" << fiber_name << '`' << std::endl;
     }
-    fo << "}  // namespace MAROON_NAMESPACE_`" << maroon_name << '`' << std::endl;
+    fo << "}  // namespace MAROON_NAMESPACE_" << maroon_name << std::endl;
 
     for (auto const& iter : maroon.types) {
       if (Exists<MaroonIRTypeDefStruct>(iter.second.def)) {
@@ -354,6 +358,9 @@ int main(int argc, char** argv) {
         fo << "    os << '}';\n";
         fo << "  }\n";
         fo << "};\n";
+      } else if (Exists<MaroonIRTypeDefOptional>(iter.second.def)) {
+        fo << "  DECLARE_MAROON_OPTIONAL_TYPE(" << maroon_name << ", " << iter.first << ", "
+           << Value<MaroonIRTypeDefOptional>(iter.second.def).type << ");\n";
       }
     }
   }

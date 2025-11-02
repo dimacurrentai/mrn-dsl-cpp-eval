@@ -1,0 +1,104 @@
+{
+  "src": "10_optional.mrn",
+  "maroon": {
+    "optional": {
+      "line": 1,
+      "fibers": {
+        "demo": {
+          "line": 2,
+          "functions": {
+            "main": {
+              "line": 3,
+              "args": [],
+              "body": {
+                "line": 3,
+                "vars": [
+                  {
+                    "line": 4,
+                    "name": "a",
+                    "type": "OPTIONAL_U64",
+                    "init": "NONE"
+                  },
+                  {
+                    "line": 5,
+                    "name": "b",
+                    "type": "OPTIONAL_U64",
+                    "init": "U64(1)"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 6,
+                      "stmt": "DEBUG_DUMP_VARS()"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 7,
+                      "stmt": "a = U64(2)"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 8,
+                      "stmt": "b = NONE"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 9,
+                      "stmt": "DEBUG_DUMP_VARS()"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 10,
+                      "stmt": "b = a"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 11,
+                      "stmt": "DEBUG_DUMP_VARS()"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 12,
+                      "stmt": "RETURN()"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "types": {
+        "OPTIONAL_U64": {
+          "line": 4,
+          "def": {
+            "MaroonIRTypeDefOptional": {
+              "type": "U64"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tests": [
+    {
+      "MaroonTestCaseRunFiber": {
+        "line": 24,
+        "maroon": "optional",
+        "fiber": "demo",
+        "golden_output": [
+          "[a:None,b:Some(1)]",
+          "[a:Some(2),b:None]",
+          "[a:Some(2),b:Some(2)]"
+        ]
+      }
+    }
+  ]
+}
