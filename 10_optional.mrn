@@ -3,11 +3,16 @@ MAROON(optional) {
     FN(main) {
       VAR(a, OPTIONAL<U64>, NONE);
       VAR(b, OPTIONAL<U64>, U64(1));
+      VAR(c, OPTIONAL<BOOL>, NONE);
+      VAR(d, OPTIONAL<BOOL>, BOOL(true));
       STMT(DEBUG_DUMP_VARS());
       STMT(a = U64(2));
       STMT(b = NONE);
+      STMT(c = BOOL(true));
+      STMT(d = NONE);
       STMT(DEBUG_DUMP_VARS());
       STMT(b = a);
+      STMT(d = c);
       STMT(DEBUG_DUMP_VARS());
       STMT(RETURN());  // TODO(dkorolev): Perhaps we could support `RETURN()` w/o `STMT`?
     };
@@ -18,7 +23,7 @@ TEST_FIBER(
   optional,
   demo,
   {
-    "[a:None,b:Some(1)]",
-    "[a:Some(2),b:None]",
-    "[a:Some(2),b:Some(2)]",
+    "[a:None,b:Some(1),c:None,d:Some(true)]",
+    "[a:Some(2),b:None,c:Some(true),d:None]",
+    "[a:Some(2),b:Some(2),c:Some(true),d:Some(true)]",
   });

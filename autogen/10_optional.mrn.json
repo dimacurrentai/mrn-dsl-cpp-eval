@@ -24,48 +24,78 @@
                     "name": "b",
                     "type": "OPTIONAL_U64",
                     "init": "U64(1)"
+                  },
+                  {
+                    "line": 6,
+                    "name": "c",
+                    "type": "OPTIONAL_BOOL",
+                    "init": "NONE"
+                  },
+                  {
+                    "line": 7,
+                    "name": "d",
+                    "type": "OPTIONAL_BOOL",
+                    "init": "BOOL(true)"
                   }
                 ],
                 "code": [
                   {
                     "MaroonIRStmt": {
-                      "line": 6,
-                      "stmt": "DEBUG_DUMP_VARS()"
-                    }
-                  },
-                  {
-                    "MaroonIRStmt": {
-                      "line": 7,
-                      "stmt": "a = U64(2)"
-                    }
-                  },
-                  {
-                    "MaroonIRStmt": {
                       "line": 8,
-                      "stmt": "b = NONE"
+                      "stmt": "DEBUG_DUMP_VARS()"
                     }
                   },
                   {
                     "MaroonIRStmt": {
                       "line": 9,
-                      "stmt": "DEBUG_DUMP_VARS()"
+                      "stmt": "a = U64(2)"
                     }
                   },
                   {
                     "MaroonIRStmt": {
                       "line": 10,
-                      "stmt": "b = a"
+                      "stmt": "b = NONE"
                     }
                   },
                   {
                     "MaroonIRStmt": {
                       "line": 11,
-                      "stmt": "DEBUG_DUMP_VARS()"
+                      "stmt": "c = BOOL(true)"
                     }
                   },
                   {
                     "MaroonIRStmt": {
                       "line": 12,
+                      "stmt": "d = NONE"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 13,
+                      "stmt": "DEBUG_DUMP_VARS()"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 14,
+                      "stmt": "b = a"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 15,
+                      "stmt": "d = c"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 16,
+                      "stmt": "DEBUG_DUMP_VARS()"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 17,
                       "stmt": "RETURN()"
                     }
                   }
@@ -76,6 +106,14 @@
         }
       },
       "types": {
+        "OPTIONAL_BOOL": {
+          "line": 6,
+          "def": {
+            "MaroonIRTypeDefOptional": {
+              "type": "BOOL"
+            }
+          }
+        },
         "OPTIONAL_U64": {
           "line": 4,
           "def": {
@@ -90,13 +128,13 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 24,
+        "line": 29,
         "maroon": "optional",
         "fiber": "demo",
         "golden_output": [
-          "[a:None,b:Some(1)]",
-          "[a:Some(2),b:None]",
-          "[a:Some(2),b:Some(2)]"
+          "[a:None,b:Some(1),c:None,d:Some(true)]",
+          "[a:Some(2),b:None,c:Some(true),d:None]",
+          "[a:Some(2),b:Some(2),c:Some(true),d:Some(true)]"
         ]
       }
     }
