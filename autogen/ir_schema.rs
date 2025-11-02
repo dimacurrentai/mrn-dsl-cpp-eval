@@ -71,8 +71,14 @@ pub struct MaroonIRTypeDefStruct {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct MaroonIRTypeDefOptional {
+  pub r#type: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub enum MaroonIRTypeDef {
   MaroonIRTypeDefStruct(MaroonIRTypeDefStruct),
+  MaroonIRTypeDefOptional(MaroonIRTypeDefOptional),
 }
 
 #[derive(Debug, Serialize, Deserialize)]

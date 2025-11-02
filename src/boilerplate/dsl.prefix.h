@@ -1,3 +1,5 @@
+// TODO(dkorolev): Rename `MAROON` into `NMSPC` some time soon.
+
 #define CURRENT_FOR_CPP14
 
 #include "../src/ir.h"
@@ -16,6 +18,11 @@ struct Ctx final {
   std::vector<std::pair<uint32_t, size_t>> blocks_stack;  // Where to insert the newly completed blocks.
 
   std::vector<std::unique_ptr<MaroonIRBlock>> current_fn_blocks_stack;
+
+  // The value is the first line index where this `OPTIONAL<>` is used.
+  std::map<std::string, std::map<std::string, uint32_t>> optional_types_per_maroon;
+
+  bool finalized = false;
 
   bool InFunction() const { return !current_fn_blocks_stack.empty(); }
 
@@ -102,6 +109,38 @@ struct Ctx final {
     blk->line = Value<MaroonIRBlockPlaceholder>(current_fn_blocks_stack.back()->code[idx]).line;
 
     current_fn_blocks_stack.back()->code[idx] = std::move(*blk);
+  }
+
+  void ConsiderOptionalType(std::string const& type, uint32_t line) {
+    uint32_t& placeholder = optional_types_per_maroon[current_maroon_name][type];
+    if (!placeholder) {
+      placeholder = line;
+    }
+  }
+
+  void Finalize() {
+    if (finalized) {
+      std::cerr << "Internal error, `Finalize()` already called." << std::endl;
+      std::exit(1);
+    }
+    finalized = true;
+
+    for (auto const cit : optional_types_per_maroon) {
+      auto& maroon_types = out.maroon[cit.first].types;
+      for (auto const& t : cit.second) {
+        std::string const name = "OPTIONAL_" + t.first;
+        if (maroon_types.count(name)) {
+          std::cerr << "Internal error, type `" << name << "` should not be defined explicitly." << std::endl;
+          std::exit(1);
+        }
+        MaroonIRType out_t;
+        out_t.line = t.second;
+        MaroonIRTypeDefOptional def;
+        def.type = t.first;
+        out_t.def = std::move(def);
+        maroon_types[name] = std::move(out_t);
+      }
+    }
   }
 };
 
@@ -343,6 +382,14 @@ inline void RegisterVar(Ctx& ctx, std::string name, std::string type, std::strin
   if (!ctx.InFunction()) {
     std::cerr << "`VAR()` is only legal inside an `FN()`." << std::endl;
     std::exit(1);
+  }
+
+  static std::string const optional_prefix("OPTIONAL<");
+  if (type.substr(0, optional_prefix.length()) == optional_prefix && type.back() == '>') {
+    std::string inner = type.substr(optional_prefix.length());
+    inner.pop_back();
+    ctx.ConsiderOptionalType(inner, line);
+    type = "OPTIONAL_" + inner;
   }
 
   MaroonIRVar var;
