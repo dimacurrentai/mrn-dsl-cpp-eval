@@ -77,6 +77,8 @@ static MAROON_INSTANCE_NONE NONE;
       value = nullptr;                                                                                        \
       return *this;                                                                                           \
     }                                                                                                         \
+    bool EXISTS() const { return Exists(value); }                                                             \
+    MAROON_TYPE_##inner const& VALUE() const { return Value(value); }                                         \
   }
 
 class MaroonDefinition {
