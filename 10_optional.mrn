@@ -26,6 +26,9 @@ MAROON(optional) {
           STMT(DEBUG_EXPR(f));
         };
       };
+      IF(d.EXISTS(), STMT(DEBUG("D EXISTS")), STMT(DEBUG("D IS NONE")));
+      STMT(d = NONE);
+      IF(d.EXISTS(), STMT(DEBUG("D EXISTS")), STMT(DEBUG("D IS NONE")));
       STMT(RETURN());  // TODO(dkorolev): Perhaps we could support `RETURN()` w/o `STMT`?
     };
   };
@@ -42,4 +45,6 @@ TEST_FIBER(
     "e=Some(2)",
     "f=0",
     "f=2",
+    "D EXISTS",
+    "D IS NONE",
   });
