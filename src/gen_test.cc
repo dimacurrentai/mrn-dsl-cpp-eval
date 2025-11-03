@@ -82,7 +82,6 @@ int main(int argc, char** argv) {
     auto const& maroon = iter.second;
     fo << std::endl;
     fo << "namespace MAROON_NAMESPACE_" << maroon_name << " {" << std::endl;
-    std::ostringstream extra_types;  // TODO(dkorolev): REFACTOR remove this.
     std::vector<std::string> extra_types_list;
 
     // Topologically sort the types to figure out their dependencies and the right declaratio order.
@@ -133,11 +132,9 @@ int main(int argc, char** argv) {
       auto const& second = maroon.types.at(first);
       if (Exists<MaroonIRTypeDefStruct>(second.def)) {
         auto const& def = Value<MaroonIRTypeDefStruct>(second.def);
-        extra_types << ", MAROON_TYPE_" << first;
         extra_types_list.push_back(first);
         fo << "  struct MAROON_TYPE_" << first << ";" << std::endl;
       } else if (Exists<MaroonIRTypeDefOptional>(second.def)) {
-        extra_types << ", MAROON_TYPE_" << first;
         extra_types_list.push_back(first);
         fo << "  FORWARD_DECLARE_MAROON_OPTIONAL_TYPE(" << first << ");\n";
       }
@@ -219,24 +216,7 @@ int main(int argc, char** argv) {
       }
     }
 
-    fo << "  template <class F>\n"
-       << "  void MAROON_dispatch(current::variant::object_base_t* val, F&& f) {\n"
-       << "    if (MAROON_standard_dispatch(val, std::forward<F>(f))) {\n"
-       << "      return;\n";
-    for (auto const& t : extra_types_list) {
-      fo << "    } else if (auto * instance = dynamic_cast<MAROON_TYPE_" << t << "*>(val)) {\n"
-         << "      f(*instance);\n"
-         << "      return;\n";
-    }
-    fo << "    }\n"
-       << "    std::cerr << \"Somehow, dynamic dispatch has failed. Internal error indeed.\";\n"
-       << "    std::exit(1);\n"
-       << "  }\n";
-
     fo << "  using MAROON_NAMESPACE_TYPELIST = std::unique_ptr<MaroonTypeBase>;\n";
-
-    // TODO(dkorolev): Refactor this away.
-    // fo << "  CURRENT_VARIANT(MAROON_NAMESPACE_TYPELIST, MAROON_BASE_TYPES_CSV" << extra_types.str() << ");\n";
 
     fo << "  struct MAROON_spec final : MaroonDefinition {" << std::endl;
     fo << "    using maroon_namespace_types_t = MAROON_NAMESPACE_TYPELIST;" << std::endl;

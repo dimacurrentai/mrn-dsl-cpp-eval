@@ -414,8 +414,11 @@ struct ImplEnv final {
     ImplVar<T_VARS_TYPELIST> var;
     var.name = std::move(name);
     // TODO(dkorolev): Check that we're not out of `args_used_`!
-    // TODO(dkorolev): REFACTOR: Confirm the type matches!
     var.value = std::move(call_stack_.back().args_[call_stack_.back().args_used_++]);
+    if (std::string(T_VAR::MAROON_type_name_static()) != var.value->MAROON_type_name()) {
+      std::cerr << "Internal error: function argument type does not match (should not happen)." << std::endl;
+      std::exit(1);
+    }
     call_stack_.back().vars_.push_back(std::move(var));
   }
 
