@@ -137,50 +137,14 @@
                             "code": [
                               {
                                 "MaroonIRStmt": {
-                                  "line": 24,
-                                  "stmt": "DEBUG_EXPR(f)"
-                                }
-                              },
-                              {
-                                "MaroonIRStmt": {
-                                  "line": 25,
-                                  "stmt": "f = VALUE(a)"
-                                }
-                              },
-                              {
-                                "MaroonIRStmt": {
-                                  "line": 26,
-                                  "stmt": "DEBUG_EXPR(f)"
+                                  "line": 28,
+                                  "stmt": "{ DEBUG_EXPR(f); f = VALUE(a); DEBUG_EXPR(f); }"
                                 }
                               }
                             ]
                           }
                         }
                       ]
-                    }
-                  },
-                  {
-                    "MaroonIRIf": {
-                      "line": 29,
-                      "cond": "EXISTS(d)",
-                      "yes": {
-                        "MaroonIRStmt": {
-                          "line": 29,
-                          "stmt": "DEBUG(\"D EXISTS\")"
-                        }
-                      },
-                      "no": {
-                        "MaroonIRStmt": {
-                          "line": 29,
-                          "stmt": "DEBUG(\"D IS NONE\")"
-                        }
-                      }
-                    }
-                  },
-                  {
-                    "MaroonIRStmt": {
-                      "line": 30,
-                      "stmt": "d = NONE"
                     }
                   },
                   {
@@ -204,6 +168,30 @@
                   {
                     "MaroonIRStmt": {
                       "line": 32,
+                      "stmt": "d = NONE"
+                    }
+                  },
+                  {
+                    "MaroonIRIf": {
+                      "line": 33,
+                      "cond": "EXISTS(d)",
+                      "yes": {
+                        "MaroonIRStmt": {
+                          "line": 33,
+                          "stmt": "DEBUG(\"D EXISTS\")"
+                        }
+                      },
+                      "no": {
+                        "MaroonIRStmt": {
+                          "line": 33,
+                          "stmt": "DEBUG(\"D IS NONE\")"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 34,
                       "stmt": "RETURN()"
                     }
                   }
@@ -236,7 +224,7 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 50,
+        "line": 52,
         "maroon": "optional",
         "fiber": "demo",
         "golden_output": [
