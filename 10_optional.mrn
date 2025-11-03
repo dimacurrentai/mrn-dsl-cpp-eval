@@ -21,9 +21,11 @@ MAROON(optional) {
         STMT(DEBUG_EXPR(e));
         BLOCK {
           VAR(f, U64, 0);
-          STMT(DEBUG_EXPR(f));
-          STMT(f = VALUE(a));
-          STMT(DEBUG_EXPR(f));
+          STMT({
+            DEBUG_EXPR(f);
+            f = VALUE(a);
+            DEBUG_EXPR(f);
+          });
         };
       };
       IF(EXISTS(d), STMT(DEBUG("D EXISTS")), STMT(DEBUG("D IS NONE")));
