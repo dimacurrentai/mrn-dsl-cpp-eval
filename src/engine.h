@@ -154,33 +154,31 @@ struct ImplException : current::Exception {
   using current::Exception::Exception;
 };
 
-template <class, class, class...>
+template <class, class...>
 struct MaroonPackArgsImpl;
 
-template <class T_VARS_TYPELIST, class OUT_TYPE, class... OUT_TYPES, typename IN_TYPE, typename... IN_TYPES>
-struct MaroonPackArgsImpl<T_VARS_TYPELIST, std::tuple<OUT_TYPE, OUT_TYPES...>, IN_TYPE, IN_TYPES...> final {
-  static void DoIt(std::vector<T_VARS_TYPELIST>& res, IN_TYPE&& x, IN_TYPES&&... xs) {
+template <class OUT_TYPE, class... OUT_TYPES, typename IN_TYPE, typename... IN_TYPES>
+struct MaroonPackArgsImpl<std::tuple<OUT_TYPE, OUT_TYPES...>, IN_TYPE, IN_TYPES...> final {
+  static void DoIt(std::vector<std::unique_ptr<MaroonTypeBase>>& res, IN_TYPE&& x, IN_TYPES&&... xs) {
     res.push_back(std::make_unique<OUT_TYPE>(std::forward<IN_TYPE>(x)));
-    MaroonPackArgsImpl<T_VARS_TYPELIST, std::tuple<OUT_TYPES...>, IN_TYPES...>::DoIt(res,
-                                                                                     std::forward<IN_TYPES>(xs)...);
+    MaroonPackArgsImpl<std::tuple<OUT_TYPES...>, IN_TYPES...>::DoIt(res, std::forward<IN_TYPES>(xs)...);
   }
 };
 
-template <class T_VARS_TYPELIST>
-struct MaroonPackArgsImpl<T_VARS_TYPELIST, std::tuple<>> {
-  static void DoIt(std::vector<T_VARS_TYPELIST>&) {}
+template <>
+struct MaroonPackArgsImpl<std::tuple<>> {
+  static void DoIt(std::vector<std::unique_ptr<MaroonTypeBase>>&) {}
 };
 
-template <class T_VARS_TYPELIST, class OUT_TYPELIST, typename... IN_TYPES>
-std::vector<T_VARS_TYPELIST> pack_args(IN_TYPES&&... args) {
-  std::vector<T_VARS_TYPELIST> res;
-  MaroonPackArgsImpl<T_VARS_TYPELIST, OUT_TYPELIST, IN_TYPES...>::DoIt(res, std::forward<IN_TYPES>(args)...);
+template <class OUT_TYPELIST, typename... IN_TYPES>
+std::vector<std::unique_ptr<MaroonTypeBase>> pack_args(IN_TYPES&&... args) {
+  std::vector<std::unique_ptr<MaroonTypeBase>> res;
+  MaroonPackArgsImpl<OUT_TYPELIST, IN_TYPES...>::DoIt(res, std::forward<IN_TYPES>(args)...);
   return res;
 }
 
 enum TmpNextStatus { None = 0, Branch, Call, Return };
 
-template <class T_VARS_TYPELIST>
 struct ImplResultCollector final {
   MaroonStateIndex next_idx_;
   TmpNextStatus status_ = TmpNextStatus::None;
@@ -189,10 +187,10 @@ struct ImplResultCollector final {
   std::string call_f_;
   MaroonVarIndex call_retval_var_idx_;
 
-  std::vector<T_VARS_TYPELIST> call_args_;
+  std::vector<std::unique_ptr<MaroonTypeBase>> call_args_;
 
   bool has_retval_;
-  T_VARS_TYPELIST retval_;
+  std::unique_ptr<MaroonTypeBase> retval_;
 
   void branch(MaroonStateIndex idx) {
     if (status_ != TmpNextStatus::None) {
@@ -205,7 +203,7 @@ struct ImplResultCollector final {
   void call_ignore_return(size_t number_of_args,
                           MaroonStateIndex idx,
                           std::string f,
-                          std::vector<T_VARS_TYPELIST> args) {
+                          std::vector<std::unique_ptr<MaroonTypeBase>> args) {
     if (status_ != TmpNextStatus::None) {
       CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `CALL()` in the wrong place."));
     }
@@ -220,8 +218,11 @@ struct ImplResultCollector final {
     call_args_ = std::move(args);
   }
 
-  void call_capture_return(
-      MaroonVarIndex v, size_t number_of_args, MaroonStateIndex idx, std::string f, std::vector<T_VARS_TYPELIST> args) {
+  void call_capture_return(MaroonVarIndex v,
+                           size_t number_of_args,
+                           MaroonStateIndex idx,
+                           std::string f,
+                           std::vector<std::unique_ptr<MaroonTypeBase>> args) {
     if (status_ != TmpNextStatus::None) {
       CURRENT_THROW(ImplException("TODO(dkorolev): FIXME: Attempted `CALL()` in the wrong place."));
     }
@@ -259,22 +260,20 @@ struct ImplResultCollector final {
   TmpNextStatus status() const { return status_; }
 };
 
-template <class T_VARS_TYPELIST>
 struct ImplVar final {
   std::string name;
-  T_VARS_TYPELIST value;
+  std::unique_ptr<MaroonTypeBase> value;
 };
 
-template <class T_VARS_TYPELIST>
 struct ImplCallStackEntry final {
   MaroonStateIndex current_idx_;
 
   std::string f_;
   MaroonVarIndex call_retval_var_idx_;
-  std::vector<ImplVar<T_VARS_TYPELIST>> vars_;
+  std::vector<ImplVar> vars_;
 
   size_t args_used_ = 0u;
-  std::vector<T_VARS_TYPELIST> args_;
+  std::vector<std::unique_ptr<MaroonTypeBase>> args_;
 
   ImplCallStackEntry() = delete;
   explicit ImplCallStackEntry(MaroonStateIndex idx,
@@ -313,11 +312,10 @@ std::string VariantCaseNameAsString(T const& obj) {
   return visitor.name;
 }
 
-template <class T_VARS_TYPELIST>
 struct ImplEnv final {
   std::ostream& os_;
 
-  std::vector<ImplCallStackEntry<T_VARS_TYPELIST>> call_stack_;
+  std::vector<ImplCallStackEntry> call_stack_;
 
   explicit ImplEnv(std::ostream& os) : os_(os) {}
 
@@ -351,10 +349,7 @@ struct ImplEnv final {
     os_ << s << std::endl;
   }
 
-  void do_debug_dump_vars(std::ostringstream& oss,
-                          std::vector<ImplVar<T_VARS_TYPELIST>> const& vars,
-                          char const* const file,
-                          int line) {
+  void do_debug_dump_vars(std::ostringstream& oss, std::vector<ImplVar> const& vars, char const* const file, int line) {
     oss << '[';
     bool first = true;
     for (auto const& v : vars) {
@@ -390,12 +385,12 @@ struct ImplEnv final {
     os_ << s << std::endl;
   }
 
-  void DeclareVar(size_t idx, std::string name, T_VARS_TYPELIST init) {
+  void DeclareVar(size_t idx, std::string name, std::unique_ptr<MaroonTypeBase> init) {
     if (idx != call_stack_.back().vars_.size()) {
       std::cerr << "Internal invariant error: corrupted stack." << std::endl;
       std::exit(1);
     }
-    ImplVar<T_VARS_TYPELIST> var;
+    ImplVar var;
     var.name = std::move(name);
     var.value = std::move(init);
     call_stack_.back().vars_.push_back(std::move(var));
@@ -411,7 +406,7 @@ struct ImplEnv final {
       std::cerr << "Internal invariant error: not enough args, should never happen." << std::endl;
       std::exit(1);
     }
-    ImplVar<T_VARS_TYPELIST> var;
+    ImplVar var;
     var.name = std::move(name);
     // TODO(dkorolev): Check that we're not out of `args_used_`!
     var.value = std::move(call_stack_.back().args_[call_stack_.back().args_used_++]);
@@ -446,18 +441,14 @@ struct ImplEnv final {
   }
 };
 
-template <class T_VARS_TYPELIST>
-using step_function_t = void (*)(ImplEnv<T_VARS_TYPELIST>& env, ImplResultCollector<T_VARS_TYPELIST>& result);
+using step_function_t = void (*)(ImplEnv& env, ImplResultCollector& result);
+using vars_function_t = void (*)(ImplEnv& env);
 
-template <class T_VARS_TYPELIST>
-using vars_function_t = void (*)(ImplEnv<T_VARS_TYPELIST>& env);
-
-template <class T_VARS_TYPELIST>
 struct MaroonStep final {
-  step_function_t<T_VARS_TYPELIST> code;
+  step_function_t code;
   size_t num_vars_available_before_step;
   size_t num_vars_declared_for_step;
-  vars_function_t<T_VARS_TYPELIST> new_vars;
+  vars_function_t new_vars;
 };
 
 #define DEBUG(s) MAROON_env.debug(s, __FILE__, __LINE__)
@@ -470,12 +461,12 @@ struct MaroonStep final {
 #define CALL(...) CALL_DISPATCH(__VA_ARGS__, CALL3, CALL2, NONEXISTENT_CALL1)(__VA_ARGS__)
 
 #define CALL2(f, args) \
-  MAROON_result.call_ignore_return(NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args<types_t, MAROON_F_ARGS_##f> args)
+  MAROON_result.call_ignore_return(NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args<MAROON_F_ARGS_##f> args)
 #define CALL3(v, f, args)                                                           \
   static_assert(std::is_same<MAROON_VAR_TYPE_##v, MAROON_F_RETURN_TYPE_##f>::value, \
                 "Function call return type mismatch.");                             \
   MAROON_result.call_capture_return(                                                \
-      MAROON_VAR_INDEX_##v, NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args<types_t, MAROON_F_ARGS_##f> args)
+      MAROON_VAR_INDEX_##v, NUMBER_OF_ARGS_##f, FN_##f, #f, pack_args<MAROON_F_ARGS_##f> args)
 
 #define RETURN(...) MAROON_result.ret<T_FUNCTION_RETURN_TYPE>(__VA_ARGS__)
 
@@ -483,7 +474,6 @@ template <class T_MAROON, class T_FIBER>
 struct MaroonEngine final {
   static_assert(std::is_base_of<MaroonDefinition, T_MAROON>::value, "");
   // TODO(dkorolev): Perhaps add a `static_assert` that this `T_FIBER` is from the right `T_MAROON`.
-  using T_VARS_TYPELIST = typename T_MAROON::maroon_namespace_types_t;
 
   // NOTE(dkorolev): This will not compile if there's no `main` in the `global` fiber.
   static_assert(T_FIBER::kIsFiber, "");
@@ -493,18 +483,17 @@ struct MaroonEngine final {
   std::pair<std::string, std::string> run() {
     try {
       std::ostringstream oss;
-      ImplEnv<T_VARS_TYPELIST> env(oss);
+      ImplEnv env(oss);
 
       auto const fiber_steps = T_FIBER::MAROON_steps();
 
       // TODO(dkorolev): Proper engine =)
-      env.call_stack_.push_back(ImplCallStackEntry<T_VARS_TYPELIST>(T_FIBER::FN_main));
+      env.call_stack_.push_back(ImplCallStackEntry(T_FIBER::FN_main));
       while (!env.call_stack_.empty()) {
         if (static_cast<uint32_t>(env.call_stack_.back().current_idx_) >= T_FIBER::kStepsCount) {
           CURRENT_THROW(ImplException("Need `RETURN()` at least at the last `STMT()` of the `FN()`."));
         }
-        MaroonStep<T_VARS_TYPELIST> const& step =
-            fiber_steps[static_cast<uint32_t>(env.call_stack_.back().current_idx_)];
+        MaroonStep const& step = fiber_steps[static_cast<uint32_t>(env.call_stack_.back().current_idx_)];
 
         if (env.call_stack_.back().vars_.size() < step.num_vars_available_before_step) {
           std::cerr << "Internal invariant failed: pre-step vars count mismatch." << std::endl;
@@ -524,7 +513,7 @@ struct MaroonEngine final {
           std::exit(1);
         }
 
-        ImplResultCollector<T_VARS_TYPELIST> result;
+        ImplResultCollector result;
         step.code(env, result);
 
         if (result.status() == TmpNextStatus::Branch) {
@@ -532,8 +521,8 @@ struct MaroonEngine final {
         } else if (result.status() == TmpNextStatus::Call) {
           env.call_stack_.back().current_idx_ =
               static_cast<MaroonStateIndex>(static_cast<uint32_t>(env.call_stack_.back().current_idx_) + 1);
-          env.call_stack_.push_back(ImplCallStackEntry<T_VARS_TYPELIST>(
-              result.call_idx_, std::move(result.call_f_), result.call_retval_var_idx_));
+          env.call_stack_.push_back(
+              ImplCallStackEntry(result.call_idx_, std::move(result.call_f_), result.call_retval_var_idx_));
           env.call_stack_.back().args_ = std::move(result.call_args_);
         } else if (result.status() == TmpNextStatus::Return) {
           auto const retval_var_idx = env.call_stack_.back().call_retval_var_idx_;
