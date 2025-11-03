@@ -378,12 +378,7 @@ struct RegisterBlock final {
   }
 };
 
-inline void RegisterVar(Ctx& ctx, std::string name, std::string type, std::string const& init, uint32_t line) {
-  if (!ctx.InFunction()) {
-    std::cerr << "`VAR()` is only legal inside an `FN()`." << std::endl;
-    std::exit(1);
-  }
-
+inline void SupportOptionalTypes(Ctx& ctx, std::string& type, uint32_t line) {
   static std::string const optional_prefix("OPTIONAL<");
   if (type.substr(0, optional_prefix.length()) == optional_prefix && type.back() == '>') {
     std::string inner = type.substr(optional_prefix.length());
@@ -391,6 +386,15 @@ inline void RegisterVar(Ctx& ctx, std::string name, std::string type, std::strin
     ctx.ConsiderOptionalType(inner, line);
     type = "OPTIONAL_" + inner;
   }
+}
+
+inline void RegisterVar(Ctx& ctx, std::string name, std::string type, std::string const& init, uint32_t line) {
+  if (!ctx.InFunction()) {
+    std::cerr << "`VAR()` is only legal inside an `FN()`." << std::endl;
+    std::exit(1);
+  }
+
+  SupportOptionalTypes(ctx, type, line);
 
   MaroonIRVar var;
   var.line = line;
@@ -421,11 +425,13 @@ inline void RegisterArg(Ctx& ctx, std::string name, std::string type, uint32_t l
   ctx.AddVarToBlock(std::move(var));
 }
 
-inline void RegisterField(Ctx& ctx, std::string name, std::string type) {
+inline void RegisterField(Ctx& ctx, std::string name, std::string type, uint32_t line) {
   if (ctx.current_type_name.empty()) {
     std::cerr << "`FIELD()` is only legal inside `TYPE()`." << std::endl;
     std::exit(1);
   }
+
+  SupportOptionalTypes(ctx, type, line);
 
   auto& p = ctx.out.maroon[ctx.current_maroon_name].types[ctx.current_type_name].def;
   if (!Exists<MaroonIRTypeDefStruct>(p)) {

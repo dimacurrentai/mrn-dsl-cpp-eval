@@ -64,11 +64,15 @@ struct MAROON_INSTANCE_NONE final {};
 
 static MAROON_INSTANCE_NONE NONE;
 
+#define FORWARD_DECLARE_MAROON_OPTIONAL_TYPE(alias) CURRENT_FORWARD_DECLARE_STRUCT(MAROON_TYPE_##alias)
+
 #define DEFINE_MAROON_OPTIONAL_TYPE(alias, inner)                                                             \
   CURRENT_STRUCT(MAROON_TYPE_##alias) {                                                                       \
     CURRENT_FIELD(value, Optional<MAROON_TYPE_##inner>);                                                      \
     CURRENT_CONSTRUCTOR(MAROON_TYPE_##alias)(MaroonLegalInit, MAROON_INSTANCE_NONE) {}                        \
     CURRENT_CONSTRUCTOR(MAROON_TYPE_##alias)(MaroonLegalInit, MAROON_TYPE_##inner v) : value(std::move(v)) {} \
+    CURRENT_CONSTRUCTOR(MAROON_TYPE_##alias)(MAROON_INSTANCE_NONE) {}                                         \
+    CURRENT_CONSTRUCTOR(MAROON_TYPE_##alias)(MAROON_TYPE_##inner v) : value(std::move(v)) {}                  \
     MAROON_TYPE_##alias& operator=(MAROON_TYPE_##inner v) {                                                   \
       value = std::move(v);                                                                                   \
       return *this;                                                                                           \
