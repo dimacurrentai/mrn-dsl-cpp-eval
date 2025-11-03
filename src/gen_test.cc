@@ -48,9 +48,8 @@ inline void GenerateTestCase(std::ostream& fo, MaroonTestCase const& test, std::
   fo << '}' << std::endl;
 }
 
-constexpr static char const* const kVarsFunctionSignature = "(ImplEnv<types_t>& MAROON_env)";
-constexpr static char const* const kStepFunctionSignature =
-    "(ImplEnv<types_t>& MAROON_env, ImplResultCollector<types_t>& MAROON_result)";
+constexpr static char const* const kVarsFunctionSignature = "(ImplEnv& MAROON_env)";
+constexpr static char const* const kStepFunctionSignature = "(ImplEnv& MAROON_env, ImplResultCollector& MAROON_result)";
 
 int main(int argc, char** argv) {
   ParseDFlags(&argc, &argv);
@@ -216,13 +215,9 @@ int main(int argc, char** argv) {
       }
     }
 
-    fo << "  using MAROON_NAMESPACE_TYPELIST = std::unique_ptr<MaroonTypeBase>;\n";
-
     fo << "  struct MAROON_spec final : MaroonDefinition {" << std::endl;
-    fo << "    using maroon_namespace_types_t = MAROON_NAMESPACE_TYPELIST;" << std::endl;
     fo << "    char const* const maroon_name() const override { return \"" << maroon_name << "\"; }" << std::endl;
     fo << "  };" << std::endl;
-    fo << "  using types_t = typename MAROON_spec::maroon_namespace_types_t;" << std::endl;
     for (auto const& iter : maroon.fibers) {
       auto const& fiber_name = iter.first;
       auto const& fiber = iter.second;
@@ -290,7 +285,6 @@ int main(int argc, char** argv) {
 
           fo << "    static void IMPL_" << step_idx << kStepFunctionSignature << " {  // " << fn_name << std::endl;
           ExposeVarsAccessors();
-          // TODO(dkorolev): Put the proper type here.
           if (Exists(fn_return_type)) {
             fo << "    using T_FUNCTION_RETURN_TYPE = MAROON_TYPE_" << Value(fn_return_type) << ";\n";
           } else {
@@ -399,13 +393,13 @@ int main(int argc, char** argv) {
         visitor.fn_return_type = nullptr;
       }
       fo << "    constexpr static uint32_t kStepsCount = " << visitor.nvars.size() << ";" << std::endl;
-      fo << "    static std::array<MaroonStep<types_t>, kStepsCount> MAROON_steps() { return {";
+      fo << "    static std::array<MaroonStep, kStepsCount> MAROON_steps() { return {";
       for (uint32_t i = 0; i < visitor.nvars.size(); ++i) {
         if (i) {
           fo << ",";
         }
-        fo << "MaroonStep<types_t>{IMPL_" << i << ',' << visitor.nvars[i].first << ',' << visitor.nvars[i].second
-           << ",VARS_" << i << '}';
+        fo << "MaroonStep{IMPL_" << i << ',' << visitor.nvars[i].first << ',' << visitor.nvars[i].second << ",VARS_"
+           << i << '}';
       }
       fo << "  };" << std::endl;
       fo << "}" << std::endl;
