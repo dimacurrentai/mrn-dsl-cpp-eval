@@ -10,28 +10,38 @@
 #include "../current/bricks/exception.h"
 #include "../current/typesystem/typename.h"
 
-struct MaroonLegalInit final {};
+struct MaroonLegalInit final {};  // NOTE(dkorolev): Keeping this for verbosity of constructors.
 
-CURRENT_STRUCT(MAROON_TYPE_U64) {
-  CURRENT_FIELD(value, uint64_t);
-  CURRENT_CONSTRUCTOR(MAROON_TYPE_U64)(MaroonLegalInit, uint64_t v) : value(v) {}
+struct MaroonTypeBase {
+  virtual ~MaroonTypeBase() = default;
+  virtual char const* const MAROON_type_name() const = 0;
+  virtual void MAROON_display(std::ostream&) const = 0;
+};
+
+struct MAROON_TYPE_U64 final : MaroonTypeBase {
+  uint64_t value;
+  MAROON_TYPE_U64(MaroonLegalInit, uint64_t value = uint64_t()) : value(value) {}
   MAROON_TYPE_U64& operator=(uint64_t v) {
     value = v;
     return *this;
   }
-  inline char const* const MAROON_type_name() { return "U64"; }
+  static char const* const MAROON_type_name_static() { return "U64"; }
+  char const* const MAROON_type_name() const override { return "U64"; }
+  void MAROON_display(std::ostream& os) const override { os << value; }
 };
 
 inline MAROON_TYPE_U64 U64(uint64_t v) { return MAROON_TYPE_U64(MaroonLegalInit(), v); }
 
-CURRENT_STRUCT(MAROON_TYPE_BOOL) {
-  CURRENT_FIELD(value, bool);
-  CURRENT_CONSTRUCTOR(MAROON_TYPE_BOOL)(MaroonLegalInit, bool v) : value(v) {}
+struct MAROON_TYPE_BOOL final : MaroonTypeBase {
+  bool value;
+  MAROON_TYPE_BOOL(MaroonLegalInit, bool value = bool()) : value(value) {}
   MAROON_TYPE_BOOL& operator=(bool v) {
     value = v;
     return *this;
   }
-  inline char const* const MAROON_type_name() { return "BOOL"; }
+  static char const* const MAROON_type_name_static() { return "BOOL"; }
+  char const* const MAROON_type_name() const override { return "BOOL"; }
+  void MAROON_display(std::ostream& os) const override { os << std::boolalpha << value; }
 };
 
 inline MAROON_TYPE_BOOL BOOL(bool v) { return MAROON_TYPE_BOOL(MaroonLegalInit(), v); }
@@ -78,26 +88,37 @@ struct MAROON_INSTANCE_NONE final {};
 
 static MAROON_INSTANCE_NONE NONE;
 
-#define FORWARD_DECLARE_MAROON_OPTIONAL_TYPE(alias) CURRENT_FORWARD_DECLARE_STRUCT(MAROON_TYPE_##alias)
+#define FORWARD_DECLARE_MAROON_OPTIONAL_TYPE(alias) struct MAROON_TYPE_##alias
 
-#define DEFINE_MAROON_OPTIONAL_TYPE(alias, inner)                                                             \
-  CURRENT_STRUCT(MAROON_TYPE_##alias) {                                                                       \
-    CURRENT_FIELD(value, Optional<MAROON_TYPE_##inner>);                                                      \
-    CURRENT_CONSTRUCTOR(MAROON_TYPE_##alias)(MaroonLegalInit, MAROON_INSTANCE_NONE) {}                        \
-    CURRENT_CONSTRUCTOR(MAROON_TYPE_##alias)(MaroonLegalInit, MAROON_TYPE_##inner v) : value(std::move(v)) {} \
-    CURRENT_CONSTRUCTOR(MAROON_TYPE_##alias)(MAROON_INSTANCE_NONE) {}                                         \
-    CURRENT_CONSTRUCTOR(MAROON_TYPE_##alias)(MAROON_TYPE_##inner v) : value(std::move(v)) {}                  \
-    MAROON_TYPE_##alias& operator=(MAROON_TYPE_##inner v) {                                                   \
-      value = std::move(v);                                                                                   \
-      return *this;                                                                                           \
-    }                                                                                                         \
-    MAROON_TYPE_##alias& operator=(MAROON_INSTANCE_NONE) {                                                    \
-      value = nullptr;                                                                                        \
-      return *this;                                                                                           \
-    }                                                                                                         \
-    bool _EXISTS() const { return Exists(value); }                                                            \
-    MAROON_TYPE_##inner const& _VALUE() const { return Value(value); }                                        \
-    MAROON_TYPE_##inner& _MUTATE() { return Value(value); }                                                   \
+#define DEFINE_MAROON_OPTIONAL_TYPE(alias, inner)                                        \
+  struct MAROON_TYPE_##alias final : MaroonTypeBase {                                    \
+    Optional<MAROON_TYPE_##inner> value;                                                 \
+    MAROON_TYPE_##alias(MaroonLegalInit, MAROON_INSTANCE_NONE) {}                        \
+    MAROON_TYPE_##alias(MaroonLegalInit, MAROON_TYPE_##inner v) : value(std::move(v)) {} \
+    MAROON_TYPE_##alias(MAROON_INSTANCE_NONE) {}                                         \
+    MAROON_TYPE_##alias(MAROON_TYPE_##inner v) : value(std::move(v)) {}                  \
+    MAROON_TYPE_##alias& operator=(MAROON_TYPE_##inner v) {                              \
+      value = std::move(v);                                                              \
+      return *this;                                                                      \
+    }                                                                                    \
+    MAROON_TYPE_##alias& operator=(MAROON_INSTANCE_NONE) {                               \
+      value = nullptr;                                                                   \
+      return *this;                                                                      \
+    }                                                                                    \
+    static char const* const MAROON_type_name_static() { return #inner; }                \
+    char const* const MAROON_type_name() const override { return #inner; }               \
+    void MAROON_display(std::ostream& os) const override {                               \
+      if (Exists(value)) {                                                               \
+        os << "Some(";                                                                   \
+        Value(value).MAROON_display(os);                                                 \
+        os << ')';                                                                       \
+      } else {                                                                           \
+        os << "None";                                                                    \
+      }                                                                                  \
+    }                                                                                    \
+    bool _EXISTS() const { return Exists(value); }                                       \
+    MAROON_TYPE_##inner const& _VALUE() const { return Value(value); }                   \
+    MAROON_TYPE_##inner& _MUTATE() { return Value(value); }                              \
   }
 
 template <class T>
@@ -139,8 +160,7 @@ struct MaroonPackArgsImpl;
 template <class T_VARS_TYPELIST, class OUT_TYPE, class... OUT_TYPES, typename IN_TYPE, typename... IN_TYPES>
 struct MaroonPackArgsImpl<T_VARS_TYPELIST, std::tuple<OUT_TYPE, OUT_TYPES...>, IN_TYPE, IN_TYPES...> final {
   static void DoIt(std::vector<T_VARS_TYPELIST>& res, IN_TYPE&& x, IN_TYPES&&... xs) {
-    OUT_TYPE y(std::forward<IN_TYPE>(x));
-    res.push_back(std::move(y));
+    res.push_back(std::make_unique<OUT_TYPE>(std::forward<IN_TYPE>(x)));
     MaroonPackArgsImpl<T_VARS_TYPELIST, std::tuple<OUT_TYPES...>, IN_TYPES...>::DoIt(res,
                                                                                      std::forward<IN_TYPES>(xs)...);
   }
@@ -233,8 +253,7 @@ struct ImplResultCollector final {
     }
     status_ = TmpNextStatus::Return;
     has_retval_ = true;
-    T_FUNCTION_RETURN_TYPE tmp = T_FUNCTION_RETURN_TYPE(std::forward<T_ARG>(val));
-    retval_ = T_VARS_TYPELIST(std::move(tmp));
+    retval_ = std::make_unique<T_FUNCTION_RETURN_TYPE>(std::forward<T_ARG>(val));
   }
 
   TmpNextStatus status() const { return status_; }
@@ -263,52 +282,12 @@ struct ImplCallStackEntry final {
                               MaroonVarIndex call_retval_var_idx = static_cast<MaroonVarIndex>(-1))
       : current_idx_(idx), f_(std::move(f)), call_retval_var_idx_(call_retval_var_idx) {}
 
-  ImplCallStackEntry(ImplCallStackEntry const&) = default;
-  ImplCallStackEntry& operator=(ImplCallStackEntry const&) = default;
+  ImplCallStackEntry(ImplCallStackEntry&&) = default;
+  ImplCallStackEntry& operator=(ImplCallStackEntry&&) = default;
+
+  ImplCallStackEntry(ImplCallStackEntry const&) = delete;
+  ImplCallStackEntry& operator=(ImplCallStackEntry const&) = delete;
 };
-
-template <typename T>
-struct MaroonFormatValueHelperImpl;
-
-template <>
-struct MaroonFormatValueHelperImpl<MAROON_TYPE_U64> final {
-  static void DoIt(std::ostream& os, MAROON_TYPE_U64 const& v) { os << v.value; }
-};
-
-template <>
-struct MaroonFormatValueHelperImpl<MAROON_TYPE_BOOL> final {
-  static void DoIt(std::ostream& os, MAROON_TYPE_BOOL const& v) { os << std::boolalpha << v.value; }
-};
-
-#define DECLARE_MAROON_OPTIONAL_TYPE(nmspc, alias)                                                                  \
-  template <>                                                                                                       \
-  struct MaroonFormatValueHelperImpl<MAROON_NAMESPACE_##nmspc::MAROON_TYPE_##alias> final {                         \
-    static void DoIt(std::ostream& os, MAROON_NAMESPACE_##nmspc::MAROON_TYPE_##alias const& v) {                    \
-      if (Exists(v.value)) {                                                                                        \
-        os << "Some(";                                                                                              \
-        MaroonFormatValueHelperImpl<typename std::decay<decltype(Value(v.value))>::type>::DoIt(os, Value(v.value)); \
-        os << ')';                                                                                                  \
-      } else {                                                                                                      \
-        os << "None";                                                                                               \
-      }                                                                                                             \
-    }                                                                                                               \
-  };
-
-struct MaroonFormatValueHelper final {
-  std::ostream& os;
-  MaroonFormatValueHelper(std::ostream& os) : os(os) {}
-
-  template <class T>
-  void operator()(T const& v) const {
-    MaroonFormatValueHelperImpl<T>::DoIt(os, v);
-  }
-};
-
-template <typename T>
-void MaroonFormatValue(std::ostream& os, T const& var) {
-  MaroonFormatValueHelper helper(os);
-  var.Call(helper);
-}
 
 inline static std::string StripMaroonTypeNamePrefix(std::string const& s) {
   static std::string prefix = "MAROON_TYPE_";
@@ -356,7 +335,7 @@ struct ImplEnv final {
   void debug_expr(char const* const expr, T&& v, char const* const file, int line) {
     std::ostringstream oss;
     oss << expr << '=';
-    (MaroonFormatValueHelper(oss))(std::forward<T>(v));
+    v.MAROON_display(oss);
     std::string const s = oss.str();
     // std::cerr << "Impl DEBUG: " << s << " @ " << file << ':' << line << std::endl;
     // TODO(dkorolev): Tick index / time.
@@ -385,7 +364,7 @@ struct ImplEnv final {
         oss << ',';
       }
       oss << v.name << ':';
-      MaroonFormatValue(oss, v.value);
+      v.value->MAROON_display(oss);
     }
     oss << ']';
   }
@@ -411,15 +390,14 @@ struct ImplEnv final {
     os_ << s << std::endl;
   }
 
-  template <typename T_VAR>
-  void DeclareVar(size_t idx, std::string name, T_VAR init) {
+  void DeclareVar(size_t idx, std::string name, T_VARS_TYPELIST init) {
     if (idx != call_stack_.back().vars_.size()) {
       std::cerr << "Internal invariant error: corrupted stack." << std::endl;
       std::exit(1);
     }
     ImplVar<T_VARS_TYPELIST> var;
     var.name = std::move(name);
-    var.value = T_VARS_TYPELIST(std::move(init));
+    var.value = std::move(init);
     call_stack_.back().vars_.push_back(std::move(var));
   }
 
@@ -436,6 +414,7 @@ struct ImplEnv final {
     ImplVar<T_VARS_TYPELIST> var;
     var.name = std::move(name);
     // TODO(dkorolev): Check that we're not out of `args_used_`!
+    // TODO(dkorolev): REFACTOR: Confirm the type matches!
     var.value = std::move(call_stack_.back().args_[call_stack_.back().args_used_++]);
     call_stack_.back().vars_.push_back(std::move(var));
   }
@@ -452,13 +431,13 @@ struct ImplEnv final {
       std::exit(1);
     }
     auto& v = call_stack_.back().vars_[idx].value;
-    if (Exists<T_VAR>(v)) {
-      return Value<T_VAR>(v);
+    T_VAR* instance = dynamic_cast<T_VAR*>(v.get());
+    if (instance) {
+      return *instance;
     } else {
       std::ostringstream oss;
-      oss << "Attempted to use `" << name << "` of type `"
-          << StripMaroonTypeNamePrefix(current::reflection::CurrentTypeName<T_VAR>()) << "` as `"
-          << StripMaroonTypeNamePrefix(VariantCaseNameAsString(v)) << "`.";
+      oss << "Attempted to use `" << name << "` of type `" << StripMaroonTypeNamePrefix(v->MAROON_type_name())
+          << "` as `" << StripMaroonTypeNamePrefix(T_VAR::MAROON_type_name_static()) << "`.";
       CURRENT_THROW(ImplException(oss.str()));
     }
   }
@@ -563,7 +542,7 @@ struct MaroonEngine final {
               std::exit(1);
             }
             if (retval_var_idx != static_cast<MaroonVarIndex>(-1)) {
-              env.call_stack_.back().vars_[static_cast<size_t>(retval_var_idx)].value = result.retval_;
+              env.call_stack_.back().vars_[static_cast<size_t>(retval_var_idx)].value = std::move(result.retval_);
             }
             // NOTE(dkorolev): Perfectly fine to ignore the returned value!
           } else if (retval_var_idx != static_cast<MaroonVarIndex>(-1)) {
