@@ -144,7 +144,7 @@
                               {
                                 "MaroonIRStmt": {
                                   "line": 25,
-                                  "stmt": "f = a.VALUE()"
+                                  "stmt": "f = VALUE(a)"
                                 }
                               },
                               {
@@ -162,7 +162,7 @@
                   {
                     "MaroonIRIf": {
                       "line": 29,
-                      "cond": "d.EXISTS()",
+                      "cond": "EXISTS(d)",
                       "yes": {
                         "MaroonIRStmt": {
                           "line": 29,
@@ -186,7 +186,7 @@
                   {
                     "MaroonIRIf": {
                       "line": 31,
-                      "cond": "d.EXISTS()",
+                      "cond": "EXISTS(d)",
                       "yes": {
                         "MaroonIRStmt": {
                           "line": 31,

@@ -77,24 +77,26 @@ static MAROON_INSTANCE_NONE NONE;
       value = nullptr;                                                                                        \
       return *this;                                                                                           \
     }                                                                                                         \
-    bool EXISTS() const { return Exists(value); }                                                             \
-    MAROON_TYPE_##inner const& VALUE() const { return Value(value); }                                         \
-    MAROON_TYPE_##inner& MUTATE() { return Value(value); }                                                    \
+    bool _EXISTS() const { return Exists(value); }                                                            \
+    MAROON_TYPE_##inner const& _VALUE() const { return Value(value); }                                        \
+    MAROON_TYPE_##inner& _MUTATE() { return Value(value); }                                                   \
   }
 
 template <class T>
 bool EXISTS(T&& x) {
-  return x.EXISTS();
+  return x._EXISTS();
 }
 
 template <class T>
-decltype(std::declval<T const&>().VALUE()) VALUE(T&& x) {
-  return x.VALUE();
+decltype(std::declval<T const&>()._VALUE()) VALUE(T&& x) {
+  // TODO(dkorolev): Need to handle errors / exceptions properly one day.
+  return x._VALUE();
 }
 
 template <class T>
-decltype(std::declval<T&>().MUTATE()) MUTATE(T&& x) {
-  return x.MUTATE();
+decltype(std::declval<T&>()._MUTATE()) MUTATE(T&& x) {
+  // TODO(dkorolev): Need to handle errors / exceptions properly one day.
+  return x._MUTATE();
 }
 
 class MaroonDefinition {
