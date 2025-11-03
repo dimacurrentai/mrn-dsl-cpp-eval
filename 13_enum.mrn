@@ -8,17 +8,24 @@ MAROON(enum) {
   };
   ENUM(Enum) {
     CASE(A, XY);
-    // CASE(B, XY);  <--  TODO(dkorolev): Make sure we support different cases with the same inner type.
+    CASE(B, XY);
     CASE(C, Z);
-    // CASE(D, Z)
+    CASE(D, Z);
   };
   FIBER(global) {
     FN(main) {
       VAR(xy, XY, (U64(1), U64(2)));
-      // VAR(v, Enum, A, xy);  // <-- TODO(dkorolev): Check other syntaxes!
+      VAR(z, Z, (BOOL(true)));
+      VAR(v, Enum, ENUM);
       STMT({
-        DEBUG_EXPR(xy);
-        // DEBUG_EXPR(v);
+        v = A(xy);
+        DEBUG_EXPR(v);
+        v = B(xy);
+        DEBUG_EXPR(v);
+        v = C(z);
+        DEBUG_EXPR(v);
+        v = D(z);
+        DEBUG_EXPR(v);
       });
       STMT(RETURN());
     };
@@ -29,5 +36,8 @@ TEST_FIBER(
   enum,
   global,
   {
-    "xy={x:1,y:2}",
+    "v=A({x:1,y:2})",
+    "v=B({x:1,y:2})",
+    "v=C({z:true})",
+    "v=D({z:true})",
   });
