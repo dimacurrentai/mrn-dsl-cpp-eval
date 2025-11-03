@@ -1,0 +1,33 @@
+MAROON(enum) {
+  TYPE(XY) {
+    FIELD(x, U64);
+    FIELD(y, U64);
+  };
+  TYPE(Z) {
+    FIELD(z, BOOL);
+  };
+  ENUM(Enum) {
+    CASE(A, XY);
+    // CASE(B, XY);  <--  TODO(dkorolev): Make sure we support different cases with the same inner type.
+    CASE(C, Z);
+    // CASE(D, Z)
+  };
+  FIBER(global) {
+    FN(main) {
+      VAR(xy, XY, (U64(1), U64(2)));
+      // VAR(v, Enum, A, xy);  // <-- TODO(dkorolev): Check other syntaxes!
+      STMT({
+        DEBUG_EXPR(xy);
+        // DEBUG_EXPR(v);
+      });
+      STMT(RETURN());
+    };
+  };
+};
+
+TEST_FIBER(
+  enum,
+  global,
+  {
+    "xy={x:1,y:2}",
+  });

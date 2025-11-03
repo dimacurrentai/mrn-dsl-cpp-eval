@@ -73,6 +73,19 @@ Algebraic type, `MaroonIRStmt` or `MaroonIRIf` or `MaroonIRBlock` or `MaroonIRBl
 | `fields` | Array of `MaroonIRTypeDefStructField` |
 
 
+### `MaroonIRTypeDefEnumCase`
+| **Field** | **Type** | **Description** |
+| ---: | :--- | :--- |
+| `key` | String |
+| `type` | String |
+
+
+### `MaroonIRTypeDefEnum`
+| **Field** | **Type** | **Description** |
+| ---: | :--- | :--- |
+| `cases` | Array of `MaroonIRTypeDefEnumCase` |
+
+
 ### `MaroonIRTypeDefOptional`
 | **Field** | **Type** | **Description** |
 | ---: | :--- | :--- |
@@ -80,14 +93,14 @@ Algebraic type, `MaroonIRStmt` or `MaroonIRIf` or `MaroonIRBlock` or `MaroonIRBl
 
 
 ### `MaroonIRTypeDef`
-Algebraic type, `MaroonIRTypeDefStruct` or `MaroonIRTypeDefOptional`
+Algebraic type, `MaroonIRTypeDefStruct` or `MaroonIRTypeDefEnum` or `MaroonIRTypeDefOptional`
 
 
 ### `MaroonIRType`
 | **Field** | **Type** | **Description** |
 | ---: | :--- | :--- |
 | `line` | Integer (32-bit unsigned) |
-| `def` | Algebraic `MaroonIRTypeDefStruct` / `MaroonIRTypeDefOptional` (a.k.a. `MaroonIRTypeDef`) |
+| `def` | Algebraic `MaroonIRTypeDefStruct` / `MaroonIRTypeDefEnum` / `MaroonIRTypeDefOptional` (a.k.a. `MaroonIRTypeDef`) |
 
 
 ### `MaroonIRNamespace`

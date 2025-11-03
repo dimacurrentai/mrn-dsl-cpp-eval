@@ -229,7 +229,7 @@ struct RegisterType final {
       std::exit(1);
     }
     if (ctx.out.maroon[ctx.current_maroon_name].types.count(name)) {
-      std::cerr << "`TYPE(" << name << ")` is defined more than once in `MAROON(" << ctx.current_maroon_name << ")`."
+      std::cerr << "Type `" << name << "` is defined more than once in `MAROON(" << ctx.current_maroon_name << ")`."
                 << std::endl;
       std::exit(1);
     }
@@ -241,18 +241,54 @@ struct RegisterType final {
 
   ~RegisterType() {
     if (!entered) {
-      std::cerr << "BAZ1" << std::endl;
       std::exit(1);
     }
   }
 
   void operator<<(std::function<void()> f) {
     if (ctx.current_type_name.empty()) {
-      std::cerr << "BAZ2" << std::endl;
       std::exit(1);
     }
     if (entered) {
-      std::cerr << "BAZ3" << std::endl;
+      std::exit(1);
+    }
+    entered = true;
+    f();
+    ctx.current_type_name = "";
+  }
+};
+
+struct RegisterEnum final {
+  Ctx& ctx;
+  bool entered = false;
+
+  RegisterEnum(Ctx& ctx, std::string const& name, uint32_t line) : ctx(ctx) {
+    if (ctx.current_maroon_name.empty()) {
+      std::cerr << "`ENUM(" << name << ")` should be defined within some `MAROON()`." << std::endl;
+      std::exit(1);
+    }
+    if (ctx.out.maroon[ctx.current_maroon_name].types.count(name)) {
+      std::cerr << "Type `" << name << "` is defined more than once in `MAROON(" << ctx.current_maroon_name << ")`."
+                << std::endl;
+      std::exit(1);
+    }
+    ctx.current_type_name = name;
+    auto& r = ctx.out.maroon[ctx.current_maroon_name].types[ctx.current_type_name];
+    r.line = line;
+    r.def = MaroonIRTypeDefEnum();
+  }
+
+  ~RegisterEnum() {
+    if (!entered) {
+      std::exit(1);
+    }
+  }
+
+  void operator<<(std::function<void()> f) {
+    if (ctx.current_type_name.empty()) {
+      std::exit(1);
+    }
+    if (entered) {
       std::exit(1);
     }
     entered = true;
@@ -442,6 +478,27 @@ inline void RegisterField(Ctx& ctx, std::string name, std::string type, uint32_t
   f.name = std::move(name);
   f.type = std::move(type);
   Value<MaroonIRTypeDefStruct>(p).fields.push_back(std::move(f));
+}
+
+inline void RegisterCase(Ctx& ctx, std::string key, std::string type, uint32_t line) {
+  if (ctx.current_type_name.empty()) {
+    std::cerr << "`CASE()` is only legal inside `ENUM()`." << std::endl;
+    std::exit(1);
+  }
+
+  SupportOptionalTypes(ctx, type, line);
+
+  auto& p = ctx.out.maroon[ctx.current_maroon_name].types[ctx.current_type_name].def;
+  if (!Exists<MaroonIRTypeDefEnum>(p)) {
+    std::cerr << "`CASE()` is only legal inside the type that is a proper `ENUM()`." << std::endl;
+    std::exit(1);
+  }
+  MaroonIRTypeDefEnumCase c;
+  c.key = std::move(key);
+  c.type = std::move(type);
+  Value<MaroonIRTypeDefEnum>(p).cases.push_back(std::move(c));
+
+  // TODO(dkorolev): Should allow no empty `ENUM`-s, right?
 }
 
 int main() {

@@ -83,9 +83,16 @@ CURRENT_STRUCT(MaroonIRTypeDefStructField) {
 
 CURRENT_STRUCT(MaroonIRTypeDefStruct) { CURRENT_FIELD(fields, std::vector<MaroonIRTypeDefStructField>); };
 
+CURRENT_STRUCT(MaroonIRTypeDefEnumCase) {
+  CURRENT_FIELD(key, std::string);
+  CURRENT_FIELD(type, std::string);
+};
+
+CURRENT_STRUCT(MaroonIRTypeDefEnum) { CURRENT_FIELD(cases, std::vector<MaroonIRTypeDefEnumCase>); };
+
 CURRENT_STRUCT(MaroonIRTypeDefOptional) { CURRENT_FIELD(type, std::string); };
 
-CURRENT_VARIANT(MaroonIRTypeDef, MaroonIRTypeDefStruct, MaroonIRTypeDefOptional);
+CURRENT_VARIANT(MaroonIRTypeDef, MaroonIRTypeDefStruct, MaroonIRTypeDefEnum, MaroonIRTypeDefOptional);
 
 CURRENT_STRUCT(MaroonIRType) {
   CURRENT_FIELD(line, uint32_t);

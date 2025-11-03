@@ -18,8 +18,13 @@
 
 #define MAROON_SOURCE(s) ctx.out.src = s;
 #define MAROON(name) RegisterMaroon(ctx, #name, __LINE__) << [&]()
+
 #define TYPE(name) RegisterType(ctx, #name, __LINE__) << [&]()
 #define FIELD(name, type) RegisterField(ctx, #name, #type, __LINE__)
+
+#define ENUM(name) RegisterEnum(ctx, #name, __LINE__) << [&]()
+#define CASE(key, type) RegisterCase(ctx, #key, #type, __LINE__)
+
 #define FIBER(name) RegisterFiber(ctx, #name, __LINE__) << [&]()
 
 #define FN_DISPATCH(_1, _2, NAME, ...) NAME
