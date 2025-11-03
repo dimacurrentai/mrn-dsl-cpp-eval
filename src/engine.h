@@ -88,8 +88,8 @@ struct MAROON_INSTANCE_NONE final {};
 static MAROON_INSTANCE_NONE NONE;
 
 // NOTE(dkorolev): This is ugly, but we can not initialize from other vars' values yet :-(
-struct MAROON_INSTANCE_ENUM final {};
-static MAROON_INSTANCE_ENUM ENUM;
+struct MAROON_INSTANCE_PLACEHOLDER final {};
+static MAROON_INSTANCE_PLACEHOLDER _;
 
 #define DEFINE_MAROON_OPTIONAL_TYPE(alias, inner)                                        \
   struct MAROON_TYPE_##alias final : MaroonTypeBase {                                    \

@@ -226,14 +226,17 @@ int main(int argc, char** argv) {
              << "        return;  // NOTE(dkorolev): Assuming at most one option is set.\n"
              << "      }\n";
         }
-        fo << "    os << \"UNUNITIALIZED_ENUM\";\n";
+        fo << "    os << \"<_>\";\n";
         fo << "  }\n";
-        fo << "  MAROON_TYPE_" << first << "(MaroonLegalInit, MAROON_INSTANCE_ENUM) {}\n";
+        fo << "    MAROON_TYPE_" << first << "(MaroonLegalInit, MAROON_INSTANCE_PLACEHOLDER) {}\n";
+        fo << "    MAROON_TYPE_" << first << "(MaroonLegalInit, MAROON_TYPE_" << first << " rhs) {\n"
+           << "      *this = std::move(rhs);\n"
+           << "      }\n";
         fo << "  };\n";
 
         for (auto const& fcase : def.cases) {
           fo << "    inline MAROON_TYPE_" << first << ' ' << fcase.key << "(MAROON_TYPE_" << fcase.type << " val) {\n"
-             << "      MAROON_TYPE_" << first << " retval(MaroonLegalInit(), ENUM);\n"
+             << "      MAROON_TYPE_" << first << " retval(MaroonLegalInit(), _);\n"
              << "      retval.MAROON_CASE_" << fcase.key << " = std::move(val);\n"
              << "      return retval;\n"
              << "    }\n";

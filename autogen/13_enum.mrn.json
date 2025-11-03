@@ -29,19 +29,19 @@
                     "line": 19,
                     "name": "v",
                     "type": "Enum",
-                    "init": "ENUM"
+                    "init": "D(Z(BOOL(false)))"
                   }
                 ],
                 "code": [
                   {
                     "MaroonIRStmt": {
-                      "line": 29,
-                      "stmt": "{ v = A(xy); DEBUG_EXPR(v); v = B(xy); DEBUG_EXPR(v); v = C(z); DEBUG_EXPR(v); v = D(z); DEBUG_EXPR(v); }"
+                      "line": 30,
+                      "stmt": "{ DEBUG_EXPR(v); v = A(xy); DEBUG_EXPR(v); v = B(xy); DEBUG_EXPR(v); v = C(z); DEBUG_EXPR(v); v = D(z); DEBUG_EXPR(v); }"
                     }
                   },
                   {
                     "MaroonIRStmt": {
-                      "line": 30,
+                      "line": 31,
                       "stmt": "RETURN()"
                     }
                   }
@@ -113,10 +113,11 @@
   "tests": [
     {
       "MaroonTestCaseRunFiber": {
-        "line": 43,
+        "line": 45,
         "maroon": "enum",
         "fiber": "global",
         "golden_output": [
+          "v=D({z:false})",
           "v=A({x:1,y:2})",
           "v=B({x:1,y:2})",
           "v=C({z:true})",

@@ -16,8 +16,9 @@ MAROON(enum) {
     FN(main) {
       VAR(xy, XY, (U64(1), U64(2)));
       VAR(z, Z, (BOOL(true)));
-      VAR(v, Enum, ENUM);
+      VAR(v, Enum, D(Z(BOOL(false))));  // NOTE(dkorolev): Can also initialize with `_` as of now.
       STMT({
+        DEBUG_EXPR(v);
         v = A(xy);
         DEBUG_EXPR(v);
         v = B(xy);
@@ -36,6 +37,7 @@ TEST_FIBER(
   enum,
   global,
   {
+    "v=D({z:false})",
     "v=A({x:1,y:2})",
     "v=B({x:1,y:2})",
     "v=C({z:true})",
