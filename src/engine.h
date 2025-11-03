@@ -19,6 +19,7 @@ CURRENT_STRUCT(MAROON_TYPE_U64) {
     value = v;
     return *this;
   }
+  inline char const* const MAROON_type_name() { return "U64"; }
 };
 
 inline MAROON_TYPE_U64 U64(uint64_t v) { return MAROON_TYPE_U64(MaroonLegalInit(), v); }
@@ -30,11 +31,24 @@ CURRENT_STRUCT(MAROON_TYPE_BOOL) {
     value = v;
     return *this;
   }
+  inline char const* const MAROON_type_name() { return "BOOL"; }
 };
 
 inline MAROON_TYPE_BOOL BOOL(bool v) { return MAROON_TYPE_BOOL(MaroonLegalInit(), v); }
 
 #define MAROON_BASE_TYPES_CSV MAROON_TYPE_U64, MAROON_TYPE_BOOL
+
+template <class F>
+bool MAROON_standard_dispatch(current::variant::object_base_t* val, F&& f) {
+  if (auto* instance = dynamic_cast<MAROON_TYPE_U64*>(val)) {
+    f(val);
+    return true;
+  } else if (auto* instance = dynamic_cast<MAROON_TYPE_BOOL*>(val)) {
+    f(val);
+    return true;
+  }
+  return false;
+}
 
 // TODO(dkorolev): This is kinda ugly, although seemingly necessary — need to reconcile for the future.
 
