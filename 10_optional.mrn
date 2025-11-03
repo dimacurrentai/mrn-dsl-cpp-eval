@@ -22,13 +22,13 @@ MAROON(optional) {
         BLOCK {
           VAR(f, U64, 0);
           STMT(DEBUG_EXPR(f));
-          STMT(f = a.VALUE());
+          STMT(f = VALUE(a));
           STMT(DEBUG_EXPR(f));
         };
       };
-      IF(d.EXISTS(), STMT(DEBUG("D EXISTS")), STMT(DEBUG("D IS NONE")));
+      IF(EXISTS(d), STMT(DEBUG("D EXISTS")), STMT(DEBUG("D IS NONE")));
       STMT(d = NONE);
-      IF(d.EXISTS(), STMT(DEBUG("D EXISTS")), STMT(DEBUG("D IS NONE")));
+      IF(EXISTS(d), STMT(DEBUG("D EXISTS")), STMT(DEBUG("D IS NONE")));
       STMT(RETURN());  // TODO(dkorolev): Perhaps we could support `RETURN()` w/o `STMT`?
     };
   };
