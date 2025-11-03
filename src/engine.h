@@ -79,7 +79,23 @@ static MAROON_INSTANCE_NONE NONE;
     }                                                                                                         \
     bool EXISTS() const { return Exists(value); }                                                             \
     MAROON_TYPE_##inner const& VALUE() const { return Value(value); }                                         \
+    MAROON_TYPE_##inner& MUTATE() { return Value(value); }                                                    \
   }
+
+template <class T>
+bool EXISTS(T&& x) {
+  return x.EXISTS();
+}
+
+template <class T>
+decltype(std::declval<T const&>().VALUE()) VALUE(T&& x) {
+  return x.VALUE();
+}
+
+template <class T>
+decltype(std::declval<T&>().MUTATE()) MUTATE(T&& x) {
+  return x.MUTATE();
+}
 
 class MaroonDefinition {
  public:
