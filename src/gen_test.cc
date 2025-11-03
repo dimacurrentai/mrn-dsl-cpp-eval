@@ -118,6 +118,10 @@ int main(int argc, char** argv) {
           for (auto const& cit : Value<MaroonIRTypeDefStruct>(def).fields) {
             dfs(cit.type);
           }
+        } else if (Exists<MaroonIRTypeDefEnum>(def)) {
+          for (auto const& cit : Value<MaroonIRTypeDefEnum>(def).cases) {
+            dfs(cit.type);
+          }
         }
 
         types_in_order.push_back(type);
@@ -127,16 +131,9 @@ int main(int argc, char** argv) {
     TopologicalSorter const sorter(maroon.types);
 
     // Then first forward-declare stuff.
-    for (auto const& first : sorter.types_in_order) {
-      auto const& second = maroon.types.at(first);
-      if (Exists<MaroonIRTypeDefStruct>(second.def)) {
-        auto const& def = Value<MaroonIRTypeDefStruct>(second.def);
-        extra_types_list.push_back(first);
-        fo << "  struct MAROON_TYPE_" << first << ";" << std::endl;
-      } else if (Exists<MaroonIRTypeDefOptional>(second.def)) {
-        extra_types_list.push_back(first);
-        fo << "  FORWARD_DECLARE_MAROON_OPTIONAL_TYPE(" << first << ");\n";
-      }
+    for (auto const& type_name : sorter.types_in_order) {
+      extra_types_list.push_back(type_name);
+      fo << "  struct MAROON_TYPE_" << type_name << ";" << std::endl;
     }
 
     // And afterwards declare the actual types.
@@ -155,7 +152,7 @@ int main(int argc, char** argv) {
         fo << "      using namespace MAROON_NAMESPACE_" << maroon_name << ";\n";
         bool first_debug_field = true;
         fo << "      os << '{';\n";
-        for (auto const& fiter : Value<MaroonIRTypeDefStruct>(second.def).fields) {
+        for (auto const& fiter : def.fields) {
           if (first_debug_field) {
             first_debug_field = false;
           } else {
@@ -212,6 +209,35 @@ int main(int argc, char** argv) {
         }
         fo << ");\n";
         fo << "  }\n";
+      } else if (Exists<MaroonIRTypeDefEnum>(second.def)) {
+        auto const& def = Value<MaroonIRTypeDefEnum>(second.def);
+        fo << "  struct MAROON_TYPE_" << first << " final : MaroonTypeBase {" << std::endl;
+        fo << "    static char const* const MAROON_type_name_static() { return \"" << first << "\"; }" << std::endl;
+        fo << "    char const* const MAROON_type_name() const override { return \"" << first << "\"; }" << std::endl;
+        for (auto const& citer : def.cases) {
+          fo << "    Optional<MAROON_TYPE_" << citer.type << "> MAROON_CASE_" << citer.key << ";\n";
+        }
+        fo << "    void MAROON_display(std::ostream& os) const override {\n";
+        for (auto const& citer : def.cases) {
+          fo << "      if (Exists(MAROON_CASE_" << citer.key << ")) {\n"
+             << "        os << \"" << citer.key << "(\";\n"
+             << "        Value(MAROON_CASE_" << citer.key << ").MAROON_display(os);\n"
+             << "        os << ')';\n"
+             << "        return;  // NOTE(dkorolev): Assuming at most one option is set.\n"
+             << "      }\n";
+        }
+        fo << "    os << \"UNUNITIALIZED_ENUM\";\n";
+        fo << "  }\n";
+        fo << "  MAROON_TYPE_" << first << "(MaroonLegalInit, MAROON_INSTANCE_ENUM) {}\n";
+        fo << "  };\n";
+
+        for (auto const& fcase : def.cases) {
+          fo << "    inline MAROON_TYPE_" << first << ' ' << fcase.key << "(MAROON_TYPE_" << fcase.type << " val) {\n"
+             << "      MAROON_TYPE_" << first << " retval(MaroonLegalInit(), ENUM);\n"
+             << "      retval.MAROON_CASE_" << fcase.key << " = std::move(val);\n"
+             << "      return retval;\n"
+             << "    }\n";
+        }
       }
     }
 

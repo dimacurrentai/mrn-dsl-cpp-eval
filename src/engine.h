@@ -85,10 +85,11 @@ DEFINE_BOOLEAN_OP(MAROON_TYPE_U64, >)
 DEFINE_BOOLEAN_OP(MAROON_TYPE_U64, >=)
 
 struct MAROON_INSTANCE_NONE final {};
-
 static MAROON_INSTANCE_NONE NONE;
 
-#define FORWARD_DECLARE_MAROON_OPTIONAL_TYPE(alias) struct MAROON_TYPE_##alias
+// NOTE(dkorolev): This is ugly, but we can not initialize from other vars' values yet :-(
+struct MAROON_INSTANCE_ENUM final {};
+static MAROON_INSTANCE_ENUM ENUM;
 
 #define DEFINE_MAROON_OPTIONAL_TYPE(alias, inner)                                        \
   struct MAROON_TYPE_##alias final : MaroonTypeBase {                                    \
