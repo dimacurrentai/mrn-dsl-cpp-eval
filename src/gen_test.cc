@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
         auto const& def = Value<MaroonIRTypeDefStruct>(second.def);
         extra_types << ", MAROON_TYPE_" << first;
         extra_types_list.push_back(first);
-        fo << "  CURRENT_FORWARD_DECLARE_STRUCT(MAROON_TYPE_" << first << ");" << std::endl;
+        fo << "  struct MAROON_TYPE_" << first << ";" << std::endl;
       } else if (Exists<MaroonIRTypeDefOptional>(second.def)) {
         extra_types << ", MAROON_TYPE_" << first;
         extra_types_list.push_back(first);
@@ -151,14 +151,32 @@ int main(int argc, char** argv) {
         fo << "  DEFINE_MAROON_OPTIONAL_TYPE(" << first << ", " << def.type << ");\n";
       } else if (Exists<MaroonIRTypeDefStruct>(second.def)) {
         auto const& def = Value<MaroonIRTypeDefStruct>(second.def);
-        fo << "  CURRENT_STRUCT(MAROON_TYPE_" << first << ") {" << std::endl;
-        fo << "    inline char const* const MAROON_type_name() { return \"" << first << "\"; }" << std::endl;
+        fo << "  struct MAROON_TYPE_" << first << " final : MaroonTypeBase {" << std::endl;
+        fo << "    static char const* const MAROON_type_name_static() { return \"" << first << "\"; }" << std::endl;
+        fo << "    char const* const MAROON_type_name() const override { return \"" << first << "\"; }" << std::endl;
+
+        fo << "    void MAROON_display(std::ostream& os) const override {\n";
+        fo << "      using namespace MAROON_NAMESPACE_" << maroon_name << ";\n";
+        bool first_debug_field = true;
+        fo << "      os << '{';\n";
+        for (auto const& fiter : Value<MaroonIRTypeDefStruct>(second.def).fields) {
+          if (first_debug_field) {
+            first_debug_field = false;
+          } else {
+            fo << "      os << ',';\n";
+          }
+          fo << "      os << \"" << fiter.name << ":\";\n"
+             << "      " << fiter.name << ".MAROON_display(os);\n";
+        }
+        fo << "    os << '}';\n";
+        fo << "  }\n";
+
         bool has_fields = false;
         for (auto const& fiter : def.fields) {
           has_fields = true;
-          fo << "    CURRENT_FIELD(" << fiter.name << ", MAROON_TYPE_" << fiter.type << ");" << std::endl;
+          fo << "    MAROON_TYPE_" << fiter.type << ' ' << fiter.name << ";\n";
         }
-        fo << "    CURRENT_CONSTRUCTOR(MAROON_TYPE_" << first << ")(MaroonLegalInit";
+        fo << "    MAROON_TYPE_" << first << "(MaroonLegalInit";
         for (auto const& fiter : def.fields) {
           fo << ", MAROON_TYPE_" << fiter.type << ' ' << fiter.name;
         }
@@ -215,7 +233,11 @@ int main(int argc, char** argv) {
        << "    std::exit(1);\n"
        << "  }\n";
 
-    fo << "  CURRENT_VARIANT(MAROON_NAMESPACE_TYPELIST, MAROON_BASE_TYPES_CSV" << extra_types.str() << ");\n";
+    fo << "  using MAROON_NAMESPACE_TYPELIST = std::unique_ptr<MaroonTypeBase>;\n";
+
+    // TODO(dkorolev): Refactor this away.
+    // fo << "  CURRENT_VARIANT(MAROON_NAMESPACE_TYPELIST, MAROON_BASE_TYPES_CSV" << extra_types.str() << ");\n";
+
     fo << "  struct MAROON_spec final : MaroonDefinition {" << std::endl;
     fo << "    using maroon_namespace_types_t = MAROON_NAMESPACE_TYPELIST;" << std::endl;
     fo << "    char const* const maroon_name() const override { return \"" << maroon_name << "\"; }" << std::endl;
@@ -268,8 +290,8 @@ int main(int argc, char** argv) {
           fo << "      static_cast<void>(MAROON_env);" << std::endl;
           for (auto const& var : next_step_init_vars) {
             if (Exists(var.init)) {
-              fo << "      MAROON_env.DeclareVar<MAROON_TYPE_" << var.type << ">(" << local_vars.size() << ",\""
-                 << var.name << "\", MAROON_TYPE_" << var.type << "(MaroonLegalInit()";
+              fo << "      MAROON_env.DeclareVar(" << local_vars.size() << ",\"" << var.name
+                 << "\", std::make_unique<MAROON_TYPE_" << var.type << ">(MaroonLegalInit()";
               // TODO(dkorolev): If it does not `Exist`, it's an internal error.
               std::string const init = Value(var.init);
               if (!init.empty()) {
@@ -410,36 +432,6 @@ int main(int argc, char** argv) {
       fo << "  };  // fiber `" << fiber_name << '`' << std::endl;
     }
     fo << "}  // namespace MAROON_NAMESPACE_" << maroon_name << std::endl;
-
-    // Finally, in the global output namespace, provide dumpers -- in the right order too.
-    for (auto const& first : sorter.types_in_order) {
-      auto const& second = maroon.types.at(first);
-      if (Exists<MaroonIRTypeDefStruct>(second.def)) {
-        fo << "template <>\n";
-        fo << "struct MaroonFormatValueHelperImpl<MAROON_NAMESPACE_" << maroon_name << "::MAROON_TYPE_" << first
-           << "> final {\n";
-        fo << "  static void DoIt(std::ostream& os, MAROON_NAMESPACE_" << maroon_name << "::MAROON_TYPE_" << first
-           << " const& v) {\n";
-        fo << "    using namespace MAROON_NAMESPACE_" << maroon_name << ";\n";
-        bool first = true;
-        fo << "    os << '{';\n";
-        for (auto const& fiter : Value<MaroonIRTypeDefStruct>(second.def).fields) {
-          if (first) {
-            first = false;
-          } else {
-            fo << "    os << ',';\n";
-          }
-          fo << "    os << \"" << fiter.name << ":\";\n";
-          fo << "    MaroonFormatValueHelperImpl<MAROON_TYPE_" << fiter.type << ">::DoIt(os, v." << fiter.name
-             << ");\n";
-        }
-        fo << "    os << '}';\n";
-        fo << "  }\n";
-        fo << "};\n";
-      } else if (Exists<MaroonIRTypeDefOptional>(second.def)) {
-        fo << "  DECLARE_MAROON_OPTIONAL_TYPE(" << maroon_name << ", " << first << ");\n";
-      }
-    }
   }
 
   size_t index = 0;
