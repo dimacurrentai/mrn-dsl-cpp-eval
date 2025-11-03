@@ -1,0 +1,105 @@
+{
+  "src": "13_enum.mrn",
+  "maroon": {
+    "enum": {
+      "line": 1,
+      "fibers": {
+        "global": {
+          "line": 15,
+          "functions": {
+            "main": {
+              "line": 16,
+              "args": [],
+              "body": {
+                "line": 16,
+                "vars": [
+                  {
+                    "line": 17,
+                    "name": "xy",
+                    "type": "XY",
+                    "init": "U64(1), U64(2)"
+                  }
+                ],
+                "code": [
+                  {
+                    "MaroonIRStmt": {
+                      "line": 22,
+                      "stmt": "{ DEBUG_EXPR(xy); }"
+                    }
+                  },
+                  {
+                    "MaroonIRStmt": {
+                      "line": 23,
+                      "stmt": "RETURN()"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "types": {
+        "Enum": {
+          "line": 9,
+          "def": {
+            "MaroonIRTypeDefEnum": {
+              "cases": [
+                {
+                  "key": "A",
+                  "type": "XY"
+                },
+                {
+                  "key": "C",
+                  "type": "Z"
+                }
+              ]
+            }
+          }
+        },
+        "XY": {
+          "line": 2,
+          "def": {
+            "MaroonIRTypeDefStruct": {
+              "fields": [
+                {
+                  "name": "x",
+                  "type": "U64"
+                },
+                {
+                  "name": "y",
+                  "type": "U64"
+                }
+              ]
+            }
+          }
+        },
+        "Z": {
+          "line": 6,
+          "def": {
+            "MaroonIRTypeDefStruct": {
+              "fields": [
+                {
+                  "name": "z",
+                  "type": "BOOL"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "tests": [
+    {
+      "MaroonTestCaseRunFiber": {
+        "line": 33,
+        "maroon": "enum",
+        "fiber": "global",
+        "golden_output": [
+          "xy={x:1,y:2}"
+        ]
+      }
+    }
+  ]
+}
