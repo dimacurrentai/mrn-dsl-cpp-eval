@@ -3,24 +3,32 @@ use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct MaroonIRVar {
+pub struct MaroonIRVarRegular {
   pub line: u32,
   pub name: String,
   pub r#type: String,
-  pub init: Option<String>,
+  pub init: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct MaroonIREnumCaptureVar {
+pub struct MaroonIRVarFunctionArg {
+  pub line: u32,
+  pub name: String,
+  pub r#type: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct MaroonIRVarEnumCaseCapture {
   pub name: String,
   pub key: String,
   pub src: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub enum MaroonIRVarEnum {
-  MaroonIRVar(MaroonIRVar),
-  MaroonIREnumCaptureVar(MaroonIREnumCaptureVar),
+pub enum MaroonIRVar {
+  MaroonIRVarRegular(MaroonIRVarRegular),
+  MaroonIRVarFunctionArg(MaroonIRVarFunctionArg),
+  MaroonIRVarEnumCaseCapture(MaroonIRVarEnumCaseCapture),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -70,7 +78,7 @@ pub enum MaroonIRStmtOrBlock {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MaroonIRBlock {
   pub line: u32,
-  pub vars: Vec<MaroonIRVarEnum>,
+  pub vars: Vec<MaroonIRVar>,
   pub code: Vec<MaroonIRStmtOrBlock>,
 }
 

@@ -1,15 +1,23 @@
 # Data Dictionary
 
-### `MaroonIRVar`
+### `MaroonIRVarRegular`
 | **Field** | **Type** | **Description** |
 | ---: | :--- | :--- |
 | `line` | Integer (32-bit unsigned) |
 | `name` | String |
 | `type` | String |
-| `init` | `null` or String |
+| `init` | String |
 
 
-### `MaroonIREnumCaptureVar`
+### `MaroonIRVarFunctionArg`
+| **Field** | **Type** | **Description** |
+| ---: | :--- | :--- |
+| `line` | Integer (32-bit unsigned) |
+| `name` | String |
+| `type` | String |
+
+
+### `MaroonIRVarEnumCaseCapture`
 | **Field** | **Type** | **Description** |
 | ---: | :--- | :--- |
 | `name` | String |
@@ -17,8 +25,8 @@
 | `src` | String |
 
 
-### `MaroonIRVarEnum`
-Algebraic type, `MaroonIRVar` or `MaroonIREnumCaptureVar`
+### `MaroonIRVar`
+Algebraic type, `MaroonIRVarRegular` or `MaroonIRVarFunctionArg` or `MaroonIRVarEnumCaseCapture`
 
 
 ### `MaroonIRStmt`
@@ -69,7 +77,7 @@ Algebraic type, `MaroonIRStmt` or `MaroonIRIf` or `MaroonIRBlock` or `MaroonIRMa
 | **Field** | **Type** | **Description** |
 | ---: | :--- | :--- |
 | `line` | Integer (32-bit unsigned) |
-| `vars` | Array of Algebraic `MaroonIRVar` / `MaroonIREnumCaptureVar` (a.k.a. `MaroonIRVarEnum`) |
+| `vars` | Array of Algebraic `MaroonIRVarRegular` / `MaroonIRVarFunctionArg` / `MaroonIRVarEnumCaseCapture` (a.k.a. `MaroonIRVar`) |
 | `code` | Array of Algebraic `MaroonIRStmt` / `MaroonIRIf` / `MaroonIRBlock` / `MaroonIRMatchEnumStmt` / `MaroonIRBlockPlaceholder` (a.k.a. `MaroonIRStmtOrBlock`) |
 
 

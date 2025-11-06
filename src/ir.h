@@ -17,21 +17,26 @@
 
 // TODO(dkorolev): Add a `make` target to generate the `.md` describing this schema.
 
-CURRENT_STRUCT(MaroonIRVar) {
+CURRENT_STRUCT(MaroonIRVarRegular) {
   CURRENT_FIELD(line, uint32_t);
   CURRENT_FIELD(name, std::string);
-  CURRENT_FIELD(type, std::string);            // NOTE(dkorolev): Would love to `enum` this somehow.
-  CURRENT_FIELD(init, Optional<std::string>);  // NOTE(dkorolev): Not sure I like this as `string`, but works for now.
+  CURRENT_FIELD(type, std::string);  // NOTE(dkorolev): Would love to `enum` this somehow.
+  CURRENT_FIELD(init, std::string);  // NOTE(dkorolev): Not sure I like this as `string`, but works for now.
 };
 
-CURRENT_STRUCT(MaroonIREnumCaptureVar) {
+CURRENT_STRUCT(MaroonIRVarFunctionArg) {
+  CURRENT_FIELD(line, uint32_t);
+  CURRENT_FIELD(name, std::string);
+  CURRENT_FIELD(type, std::string);  // NOTE(dkorolev): Would love to `enum` this somehow.
+};
+
+CURRENT_STRUCT(MaroonIRVarEnumCaseCapture) {
   CURRENT_FIELD(name, std::string);
   CURRENT_FIELD(key, std::string);
   CURRENT_FIELD(src, std::string);
 };
 
-// TODO(dkorolev): Rename this!
-CURRENT_VARIANT(MaroonIRVarEnum, MaroonIRVar, MaroonIREnumCaptureVar);
+CURRENT_VARIANT(MaroonIRVar, MaroonIRVarRegular, MaroonIRVarFunctionArg, MaroonIRVarEnumCaseCapture);
 
 CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRStmt);
 CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRIf);
@@ -65,7 +70,7 @@ CURRENT_STRUCT(MaroonIRIf) {
 // TODO(dkorolev): We now have hoisting, like in the 1st version of JavaScript, lolwut! Fix this.
 CURRENT_STRUCT(MaroonIRBlock) {
   CURRENT_FIELD(line, uint32_t);
-  CURRENT_FIELD(vars, std::vector<MaroonIRVarEnum>);
+  CURRENT_FIELD(vars, std::vector<MaroonIRVar>);
   CURRENT_FIELD(code, std::vector<MaroonIRStmtOrBlock>);
 };
 

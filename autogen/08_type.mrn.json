@@ -14,7 +14,7 @@
                 "line": 13,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 14,
                       "name": "ab",
                       "type": "AB",
@@ -40,7 +40,7 @@
                       "line": 23,
                       "vars": [
                         {
-                          "MaroonIRVar": {
+                          "MaroonIRVarRegular": {
                             "line": 24,
                             "name": "e",
                             "type": "Empty",
@@ -60,7 +60,7 @@
                             "line": 29,
                             "vars": [
                               {
-                                "MaroonIRVar": {
+                                "MaroonIRVarRegular": {
                                   "line": 30,
                                   "name": "t",
                                   "type": "Nested",

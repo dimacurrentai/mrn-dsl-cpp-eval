@@ -322,11 +322,11 @@ struct RegisterMatchEnumStmt final {
           std::cerr << "Internal error: should have a var in arm's block." << std::endl;
           std::exit(1);
         }
-        if (!Exists<MaroonIREnumCaptureVar>(in.code.vars.back())) {
+        if (!Exists<MaroonIRVarEnumCaseCapture>(in.code.vars.back())) {
           std::cerr << "Internal error: should have a captured enum var in arm's block." << std::endl;
           std::exit(1);
         }
-        Value<MaroonIREnumCaptureVar>(in.code.vars.back()).src = match.var;
+        Value<MaroonIRVarEnumCaseCapture>(in.code.vars.back()).src = match.var;
       }
 
       match.arms.push_back(std::move(in));
@@ -343,7 +343,7 @@ inline MaroonIRBlock AsBlock(Optional<std::string> capture, std::string key, uin
     block.code.push_back(std::move(in));
   }
   if (Exists(capture)) {
-    MaroonIREnumCaptureVar captured_var;
+    MaroonIRVarEnumCaseCapture captured_var;
     captured_var.name = std::move(Value(capture));
     captured_var.key = std::move(key);
     captured_var.src = "THIS_WILL_BE_REPLACED_BY_SOURCE_VAR_NAME";
@@ -504,7 +504,7 @@ inline void RegisterVar(Ctx& ctx, std::string name, std::string type, std::strin
 
   SupportOptionalTypes(ctx, type, line);
 
-  MaroonIRVar var;
+  MaroonIRVarRegular var;
   var.line = line;
   var.name = std::move(name);
   var.type = std::move(type);
@@ -524,7 +524,7 @@ inline void RegisterArg(Ctx& ctx, std::string name, std::string type, uint32_t l
     std::exit(1);
   }
 
-  MaroonIRVar var;
+  MaroonIRVarFunctionArg var;
   var.line = line;
   var.name = std::move(name);
   var.type = std::move(type);

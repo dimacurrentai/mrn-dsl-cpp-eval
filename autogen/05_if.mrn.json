@@ -14,7 +14,7 @@
                 "line": 3,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 4,
                       "name": "a",
                       "type": "U64",
@@ -62,7 +62,7 @@
                 "line": 19,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 20,
                       "name": "a",
                       "type": "U64",
