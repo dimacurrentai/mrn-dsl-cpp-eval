@@ -80,10 +80,12 @@
                 "line": 89,
                 "vars": [
                   {
-                    "line": 90,
-                    "name": "a",
-                    "type": "U64",
-                    "init": "1"
+                    "MaroonIRVar": {
+                      "line": 90,
+                      "name": "a",
+                      "type": "U64",
+                      "init": "1"
+                    }
                   }
                 ],
                 "code": [
@@ -98,10 +100,12 @@
                       "line": 94,
                       "vars": [
                         {
-                          "line": 95,
-                          "name": "b",
-                          "type": "U64",
-                          "init": "2"
+                          "MaroonIRVar": {
+                            "line": 95,
+                            "name": "b",
+                            "type": "U64",
+                            "init": "2"
+                          }
                         }
                       ],
                       "code": [
@@ -135,10 +139,12 @@
                 "line": 3,
                 "vars": [
                   {
-                    "line": 4,
-                    "name": "a",
-                    "type": "U64",
-                    "init": "100"
+                    "MaroonIRVar": {
+                      "line": 4,
+                      "name": "a",
+                      "type": "U64",
+                      "init": "100"
+                    }
                   }
                 ],
                 "code": [
@@ -169,10 +175,12 @@
                 "line": 18,
                 "vars": [
                   {
-                    "line": 19,
-                    "name": "x",
-                    "type": "U64",
-                    "init": "1"
+                    "MaroonIRVar": {
+                      "line": 19,
+                      "name": "x",
+                      "type": "U64",
+                      "init": "1"
+                    }
                   }
                 ],
                 "code": [
@@ -187,10 +195,12 @@
                       "line": 24,
                       "vars": [
                         {
-                          "line": 25,
-                          "name": "y",
-                          "type": "U64",
-                          "init": "2"
+                          "MaroonIRVar": {
+                            "line": 25,
+                            "name": "y",
+                            "type": "U64",
+                            "init": "2"
+                          }
                         }
                       ],
                       "code": [
@@ -205,10 +215,12 @@
                             "line": 31,
                             "vars": [
                               {
-                                "line": 32,
-                                "name": "z",
-                                "type": "U64",
-                                "init": "3"
+                                "MaroonIRVar": {
+                                  "line": 32,
+                                  "name": "z",
+                                  "type": "U64",
+                                  "init": "3"
+                                }
                               }
                             ],
                             "code": [
@@ -226,10 +238,12 @@
                             "line": 40,
                             "vars": [
                               {
-                                "line": 41,
-                                "name": "t",
-                                "type": "U64",
-                                "init": "4"
+                                "MaroonIRVar": {
+                                  "line": 41,
+                                  "name": "t",
+                                  "type": "U64",
+                                  "init": "4"
+                                }
                               }
                             ],
                             "code": [
@@ -266,10 +280,12 @@
                 "line": 57,
                 "vars": [
                   {
-                    "line": 58,
-                    "name": "b",
-                    "type": "BOOL",
-                    "init": "false"
+                    "MaroonIRVar": {
+                      "line": 58,
+                      "name": "b",
+                      "type": "BOOL",
+                      "init": "false"
+                    }
                   }
                 ],
                 "code": [

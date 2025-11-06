@@ -14,10 +14,12 @@
                 "line": 3,
                 "vars": [
                   {
-                    "line": 4,
-                    "name": "a",
-                    "type": "U64",
-                    "init": "7"
+                    "MaroonIRVar": {
+                      "line": 4,
+                      "name": "a",
+                      "type": "U64",
+                      "init": "7"
+                    }
                   }
                 ],
                 "code": [
@@ -60,10 +62,12 @@
                 "line": 19,
                 "vars": [
                   {
-                    "line": 20,
-                    "name": "a",
-                    "type": "U64",
-                    "init": "17"
+                    "MaroonIRVar": {
+                      "line": 20,
+                      "name": "a",
+                      "type": "U64",
+                      "init": "17"
+                    }
                   }
                 ],
                 "code": [

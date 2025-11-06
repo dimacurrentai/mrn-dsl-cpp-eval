@@ -258,8 +258,8 @@ int main(int argc, char** argv) {
         std::vector<std::pair<size_t, size_t>> nvars;  // { # upon entering, # to be added on block entry }
         std::string fn_name = "\n#error \"`fn_name` unset.\"\n";
         Optional<std::string> fn_return_type;
-        std::vector<MaroonIRVar> local_vars;
-        std::vector<MaroonIRVar> next_step_init_vars;
+        std::vector<MaroonIRVarEnum> local_vars;
+        std::vector<MaroonIRVarEnum> next_step_init_vars;
 
         StatementsRecursiveVisitor(std::ostream& fo) : fo(fo) {}
 
@@ -272,11 +272,26 @@ int main(int argc, char** argv) {
 
         void ExposeVarsAccessors() {
           size_t tmp_idx = 0;
-          for (auto const& var : local_vars) {
-            fo << "      using MAROON_VAR_TYPE_" << var.name << " = MAROON_TYPE_" << var.type << ";\n"
-               << "      auto& " << var.name << " = MAROON_env.AccessVar<MAROON_VAR_TYPE_" << var.name << ">("
-               << tmp_idx << ",\"" << var.name << "\");\n"
-               << "      auto MAROON_VAR_INDEX_" << var.name << " = static_cast<MaroonVarIndex>(" << tmp_idx << ");\n";
+          for (auto const& var0 : local_vars) {
+            if (Exists<MaroonIRVar>(var0)) {
+              MaroonIRVar const& var = Value<MaroonIRVar>(var0);
+              fo << "      using MAROON_VAR_TYPE_" << var.name << " = MAROON_TYPE_" << var.type << ";\n"
+                 << "      auto& " << var.name << " = MAROON_env.AccessVar<MAROON_VAR_TYPE_" << var.name << ">("
+                 << tmp_idx << ",\"" << var.name << "\");\n"
+                 << "      auto MAROON_VAR_INDEX_" << var.name << " = static_cast<MaroonVarIndex>(" << tmp_idx
+                 << ");\n";
+            } else if (Exists<MaroonIREnumCaptureVar>(var0)) {
+              MaroonIREnumCaptureVar const& var = Value<MaroonIREnumCaptureVar>(var0);
+              if (!var.name.empty()) {
+                fo << "      using MAROON_VAR_TYPE_" << var.name << " = typename decltype(" << var.src
+                   << ".MAROON_CASE_" << var.key << ")::optional_underlying_t;\n"
+                   << "      MAROON_VAR_TYPE_" << var.name << "& " << var.name << " = Value(" << var.src
+                   << ".MAROON_CASE_" << var.key << ");\n";
+              }
+            } else {
+              std::cerr << "Internal error at " << __LINE__ << std::endl;
+              std::exit(1);
+            }
             ++tmp_idx;
           }
         }
@@ -292,22 +307,32 @@ int main(int argc, char** argv) {
           fo << "    static void VARS_" << step_idx << kVarsFunctionSignature << "{ // " << fn_name << std::endl;
           ExposeVarsAccessors();
           fo << "      static_cast<void>(MAROON_env);" << std::endl;
-          for (auto const& var : next_step_init_vars) {
-            if (Exists(var.init)) {
-              fo << "      MAROON_env.DeclareVar(" << local_vars.size() << ",\"" << var.name
-                 << "\", std::make_unique<MAROON_TYPE_" << var.type << ">(MaroonLegalInit()";
-              // TODO(dkorolev): If it does not `Exist`, it's an internal error.
-              std::string const init = Value(var.init);
-              if (!init.empty()) {
-                fo << ", " << init;
+          for (auto const& var0 : next_step_init_vars) {
+            if (Exists<MaroonIRVar>(var0)) {
+              MaroonIRVar const& var = Value<MaroonIRVar>(var0);
+              if (Exists(var.init)) {
+                fo << "      MAROON_env.DeclareVar(" << local_vars.size() << ",\"" << var.name
+                   << "\", std::make_unique<MAROON_TYPE_" << var.type << ">(MaroonLegalInit()";
+                // TODO(dkorolev): If it does not `Exist`, it's an internal error.
+                std::string const init = Value(var.init);
+                if (!init.empty()) {
+                  fo << ", " << init;
+                }
+                fo << "));" << std::endl;
+              } else {
+                // TODO(dkorolev): Vars with no `init` are all function arguments, right?
+                fo << "      MAROON_env.DeclareFunctionArg<MAROON_TYPE_" << var.type << ">(" << local_vars.size()
+                   << ",\"" << var.name << "\");" << std::endl;
               }
-              fo << "));" << std::endl;
+            } else if (Exists<MaroonIREnumCaptureVar>(var0)) {
+              MaroonIREnumCaptureVar const& var = Value<MaroonIREnumCaptureVar>(var0);
+              fo << "      MAROON_env.DeclareCapturedAlias(" << local_vars.size() << ",\"" << var.name << "\");"
+                 << std::endl;
             } else {
-              // TODO(dkorolev): Vars with no `init` are all function arguments, right?
-              fo << "      MAROON_env.DeclareFunctionArg<MAROON_TYPE_" << var.type << ">(" << local_vars.size() << ",\""
-                 << var.name << "\");" << std::endl;
+              std::cerr << "Internal error at " << __LINE__ << std::endl;
+              std::exit(1);
             }
-            local_vars.push_back(var);
+            local_vars.push_back(var0);
           }
           next_step_init_vars.clear();
           fo << "    }" << std::endl;
@@ -320,8 +345,19 @@ int main(int argc, char** argv) {
             // TODO(dkorolev): Unsure if we even need this, but for extra sanity.
             fo << "    using T_FUNCTION_RETURN_TYPE = void;\n";
           }
-          for (auto const& var : local_vars) {
-            fo << "      static_cast<void>(" << var.name << ");" << std::endl;
+          for (auto const& var0 : local_vars) {
+            if (Exists<MaroonIRVar>(var0)) {
+              MaroonIRVar const& var = Value<MaroonIRVar>(var0);
+              fo << "      static_cast<void>(" << var.name << ");" << std::endl;
+            } else if (Exists<MaroonIREnumCaptureVar>(var0)) {
+              MaroonIREnumCaptureVar const& var = Value<MaroonIREnumCaptureVar>(var0);
+              if (!var.name.empty()) {
+                fo << "      static_cast<void>(" << var.name << ");" << std::endl;
+              }
+            } else {
+              std::cerr << "Internal error at " << __LINE__ << std::endl;
+              std::exit(1);
+            }
           }
           fo << "      ";
         }
@@ -377,6 +413,40 @@ int main(int argc, char** argv) {
             std::exit(1);
           }
           local_vars.resize(local_vars.size() - blk.vars.size());
+        }
+
+        void operator()(MaroonIRMatchEnumStmt const& enum_stmt) {
+          size_t const step_idx = nvars.size();
+          PrintHeader();
+          size_t in_idx = 0;
+          fo << "      if (false) {" << std::endl;
+          for (auto const& arm : enum_stmt.arms) {
+            ++in_idx;
+            if (Exists(arm.key)) {
+              fo << "      } else if (Exists(" << enum_stmt.var << ".MAROON_CASE_" << Value(arm.key) << ")) {\n";
+              fo << "        MAROON_result.branch(MATCH_" << step_idx << "_ARM_" << in_idx << "());" << std::endl;
+            } else {
+              fo << "      } else {" << std::endl;
+              fo << "        MAROON_result.branch(MATCH_" << step_idx << "_ARM_" << in_idx << "());" << std::endl;
+            }
+          }
+          fo << "      }" << std::endl;
+          PrintFooter();
+
+          size_t out_idx = 0;
+          for (auto& arm : enum_stmt.arms) {
+            ++out_idx;
+            fo << "  constexpr static MaroonStateIndex MATCH_" << step_idx << "_ARM_" << out_idx
+               << "() { return static_cast<MaroonStateIndex>(" << nvars.size() << "); }" << std::endl;
+            (*this)(arm.code);
+            if (out_idx != in_idx) {
+              PrintHeader();
+              fo << "      MAROON_result.branch(MATCH_" << step_idx << "_DONE());";
+              PrintFooter();
+            }
+          }
+          fo << "  constexpr static MaroonStateIndex MATCH_" << step_idx << "_DONE"
+             << "() { return static_cast<MaroonStateIndex>(" << nvars.size() << "); }" << std::endl;
         }
 
         void operator()(MaroonIRBlockPlaceholder const&) {

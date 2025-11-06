@@ -418,6 +418,18 @@ struct ImplEnv final {
     call_stack_.back().vars_.push_back(std::move(var));
   }
 
+  void DeclareCapturedAlias(size_t idx, std::string name) {
+    if (idx != call_stack_.back().vars_.size()) {
+      std::cerr << "Internal invariant error: corrupted stack." << std::endl;
+      std::exit(1);
+    }
+    ImplVar var;
+    var.name = std::move(name);
+    // TODO(dkorolev): Uncertain if this is correct to just leave the var handing, but it is never accesssed,
+    //                 this piece of logic with `vars_` is just to keep the counters of local vars in sync.
+    call_stack_.back().vars_.push_back(std::move(var));
+  }
+
   template <class T_VAR>
   T_VAR& AccessVar(size_t idx, char const* const name) {
     if (idx >= call_stack_.back().vars_.size()) {

@@ -297,6 +297,82 @@ struct RegisterEnum final {
   }
 };
 
+struct RegisterMatchEnumStmt final {
+  Ctx& ctx;
+
+  MaroonIRMatchEnumStmt match;
+
+  RegisterMatchEnumStmt(Ctx& ctx, std::string var, uint32_t line) : ctx(ctx) {
+    match.line = line;
+    match.var = var;
+    ctx.current_fn_blocks_stack.push_back(std::unique_ptr<MaroonIRBlock>(new MaroonIRBlock()));
+  }
+
+  ~RegisterMatchEnumStmt() {
+    ctx.current_fn_blocks_stack.pop_back();
+    ctx.AddToBlock(std::move(match));
+  }
+
+  void AddArms(std::vector<MaroonIRMatchEnumStmtArm> arms) {
+    for (auto& arm : arms) {
+      MaroonIRMatchEnumStmtArm in = std::move(arm);
+
+      if (Exists(in.capture)) {
+        if (in.code.vars.empty()) {
+          std::cerr << "Internal error: should have a var in arm's block." << std::endl;
+          std::exit(1);
+        }
+        if (!Exists<MaroonIREnumCaptureVar>(in.code.vars.back())) {
+          std::cerr << "Internal error: should have a captured enum var in arm's block." << std::endl;
+          std::exit(1);
+        }
+        Value<MaroonIREnumCaptureVar>(in.code.vars.back()).src = match.var;
+      }
+
+      match.arms.push_back(std::move(in));
+    }
+  }
+};
+
+inline MaroonIRBlock AsBlock(Optional<std::string> capture, std::string key, uint32_t line, MaroonIRStmtOrBlock in) {
+  MaroonIRBlock block;
+  if (Exists<MaroonIRBlock>(in)) {
+    block = std::move(Value<MaroonIRBlock>(in));
+  } else {
+    block.line = line;
+    block.code.push_back(std::move(in));
+  }
+  if (Exists(capture)) {
+    MaroonIREnumCaptureVar captured_var;
+    captured_var.name = std::move(Value(capture));
+    captured_var.key = std::move(key);
+    captured_var.src = "THIS_WILL_BE_REPLACED_BY_SOURCE_VAR_NAME";
+    block.vars.push_back(std::move(captured_var));
+  }
+  return block;
+}
+
+inline MaroonIRMatchEnumStmtArm RegisterEnumArm(
+    Ctx& ctx, std::string key, std::string capture, uint32_t line, std::function<void()> code) {
+  // TODO(dkorolev): Will ultimately require a cleaner check that we're inside the `MATCH` construct; on `pest` level!
+  MaroonIRMatchEnumStmtArm arm;
+  arm.line = line;
+  arm.key = key;
+  arm.capture = capture;
+  code();
+  arm.code = AsBlock(std::move(capture), std::move(key), line, ctx.ExtractLastStmt());
+  return arm;
+}
+
+inline MaroonIRMatchEnumStmtArm RegisterEnumDefaultArm(Ctx& ctx, uint32_t line, std::function<void()> code) {
+  // TODO(dkorolev): Will ultimately require a cleaner check that we're inside the `MATCH` construct; on `pest` level!
+  MaroonIRMatchEnumStmtArm arm;
+  arm.line = line;
+  code();
+  arm.code = AsBlock(nullptr, "", line, ctx.ExtractLastStmt());
+  return arm;
+}
+
 struct RegisterFn final {
   Ctx& ctx;
   bool entered = false;
@@ -336,22 +412,18 @@ struct RegisterFn final {
   }
 };
 
-struct RegisterStmt final {
-  Ctx& ctx;
-
-  RegisterStmt(Ctx& ctx, uint32_t line, std::string const& stmt) : ctx(ctx) {
-    if (!ctx.InFunction()) {
-      std::cerr << "`STMT()` is only legal inside an `FN()`." << std::endl;
-      std::exit(1);
-    }
-
-    MaroonIRStmt obj;
-    obj.line = line;
-    obj.stmt = stmt;
-
-    ctx.AddToBlock(std::move(obj));
+inline void RegisterStmt(Ctx& ctx, uint32_t line, std::string const& stmt) {
+  if (!ctx.InFunction()) {
+    std::cerr << "`STMT()` is only legal inside an `FN()`." << std::endl;
+    std::exit(1);
   }
-};
+
+  MaroonIRStmt obj;
+  obj.line = line;
+  obj.stmt = stmt;
+
+  ctx.AddToBlock(std::move(obj));
+}
 
 struct RegisterIf final {
   Ctx& ctx;

@@ -14,16 +14,20 @@
                 "line": 7,
                 "vars": [
                   {
-                    "line": 8,
-                    "name": "c",
-                    "type": "OPTIONAL_Complex",
-                    "init": "NONE"
+                    "MaroonIRVar": {
+                      "line": 8,
+                      "name": "c",
+                      "type": "OPTIONAL_Complex",
+                      "init": "NONE"
+                    }
                   },
                   {
-                    "line": 9,
-                    "name": "d",
-                    "type": "OPTIONAL_Complex",
-                    "init": "Complex(U64(1), U64(2))"
+                    "MaroonIRVar": {
+                      "line": 9,
+                      "name": "d",
+                      "type": "OPTIONAL_Complex",
+                      "init": "Complex(U64(1), U64(2))"
+                    }
                   }
                 ],
                 "code": [

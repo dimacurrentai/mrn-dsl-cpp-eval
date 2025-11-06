@@ -107,6 +107,15 @@ inline void ZeroLineNumbers(MaroonIRScenarios& m) {
       (*this)(m.no);
     }
 
+    void operator()(MaroonIRMatchEnumStmt& m) {
+      m.line = 0;
+      for (auto& a : m.arms) {
+        (*this)(a);
+      }
+    }
+
+    void operator()(MaroonIRMatchEnumStmtArm& a) { a.line = 0; }
+
     void operator()(MaroonTestCaseRunFiber& m) { m.line = 0; }
     void operator()(MaroonTestCaseFiberShouldThrow& m) { m.line = 0; }
   };

@@ -14,16 +14,20 @@
                 "line": 7,
                 "vars": [
                   {
-                    "line": 8,
-                    "name": "x",
-                    "type": "Inner",
-                    "init": "BOOL(true), NONE"
+                    "MaroonIRVar": {
+                      "line": 8,
+                      "name": "x",
+                      "type": "Inner",
+                      "init": "BOOL(true), NONE"
+                    }
                   },
                   {
-                    "line": 9,
-                    "name": "y",
-                    "type": "Inner",
-                    "init": "BOOL(false), BOOL(true)"
+                    "MaroonIRVar": {
+                      "line": 9,
+                      "name": "y",
+                      "type": "Inner",
+                      "init": "BOOL(false), BOOL(true)"
+                    }
                   }
                 ],
                 "code": [

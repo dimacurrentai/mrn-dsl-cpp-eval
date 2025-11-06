@@ -36,6 +36,16 @@
 #define STMT(stmt) RegisterStmt(ctx, __LINE__, #stmt);
 #define BLOCK RegisterBlock(ctx, __LINE__) << [&]()
 
+#define MATCH_ENUM_STMT(enum_var, ...) RegisterMatchEnumStmt(ctx, #enum_var, __LINE__).AddArms({__VA_ARGS__});
+
+#define ENUM_ARM_DISPATCH(_1, _2, _3, NAME, ...) NAME
+#define ENUM_ARM(...) ENUM_ARM_DISPATCH(__VA_ARGS__, ENUM_ARM3, ENUM_ARM2, )(__VA_ARGS__)
+
+#define ENUM_ARM2(key, stmt) RegisterEnumArm(ctx, #key, "", __LINE__, [&]() { NOPARENS(stmt); })
+#define ENUM_ARM3(key, capture, stmt) RegisterEnumArm(ctx, #key, #capture, __LINE__, [&]() { NOPARENS(stmt); })
+
+#define ENUM_DEFAULT(stmt) RegisterEnumDefaultArm(ctx, __LINE__, [&]() { NOPARENS(stmt); })
+
 // NOTE(dkorolev): Requires extra parentheses around (yes) and (no) in user code. Sigh.
 #define IF(cond, yes, no) RegisterIf(ctx, #cond, [&]() { NOPARENS(yes); }, [&]() { NOPARENS(no); }, __LINE__)
 

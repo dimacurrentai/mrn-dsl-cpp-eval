@@ -11,6 +11,19 @@ pub struct MaroonIRVar {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct MaroonIREnumCaptureVar {
+  pub name: String,
+  pub key: String,
+  pub src: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum MaroonIRVarEnum {
+  MaroonIRVar(MaroonIRVar),
+  MaroonIREnumCaptureVar(MaroonIREnumCaptureVar),
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct MaroonIRStmt {
   pub line: u32,
   pub stmt: String,
@@ -25,6 +38,21 @@ pub struct MaroonIRIf {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct MaroonIRMatchEnumStmtArm {
+  pub line: u32,
+  pub key: Option<String>,
+  pub capture: Option<String>,
+  pub code: MaroonIRBlock,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct MaroonIRMatchEnumStmt {
+  pub line: u32,
+  pub var: String,
+  pub arms: Vec<MaroonIRMatchEnumStmtArm>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct MaroonIRBlockPlaceholder {
   pub line: u32,
   pub _idx: u32,
@@ -35,13 +63,14 @@ pub enum MaroonIRStmtOrBlock {
   MaroonIRStmt(MaroonIRStmt),
   MaroonIRIf(MaroonIRIf),
   MaroonIRBlock(MaroonIRBlock),
+  MaroonIRMatchEnumStmt(MaroonIRMatchEnumStmt),
   MaroonIRBlockPlaceholder(MaroonIRBlockPlaceholder),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MaroonIRBlock {
   pub line: u32,
-  pub vars: Vec<MaroonIRVar>,
+  pub vars: Vec<MaroonIRVarEnum>,
   pub code: Vec<MaroonIRStmtOrBlock>,
 }
 

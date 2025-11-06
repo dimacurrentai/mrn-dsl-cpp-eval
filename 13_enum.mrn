@@ -6,6 +6,7 @@ MAROON(enum) {
   TYPE(Z) {
     FIELD(z, BOOL);
   };
+  // TODO(dkorolev): Should we support no-value, "empty" cases? Rust does.
   ENUM(Enum) {
     CASE(A, XY);
     CASE(B, XY);
@@ -28,6 +29,35 @@ MAROON(enum) {
         v = D(z);
         DEBUG_EXPR(v);
       });
+      MATCH_ENUM_STMT(
+        v,
+        ENUM_ARM(C, STMT({
+          DEBUG("HAS C (WRONG!)");
+        })),
+        ENUM_ARM(D, d, STMT({
+          DEBUG("HAS D, CORRECT");
+          DEBUG_EXPR(d);
+          d.z = false;
+        })),
+        ENUM_DEFAULT(STMT(DEBUG("NOT C OR D (WRONG!)")))
+      );
+      STMT(DEBUG_EXPR(v));  // Should have `d.z` turn to `false`.
+      MATCH_ENUM_STMT(
+        v,
+        ENUM_ARM(A, a, BLOCK {
+          STMT({
+            DEBUG("HAS A (WRONG!)");
+            DEBUG_EXPR(a);
+          })
+        }),
+        ENUM_ARM(B, b, BLOCK {
+          STMT({
+            DEBUG("HAS B (WRONG!)");
+            DEBUG_EXPR(b);
+          })
+        }),
+        ENUM_DEFAULT(STMT(DEBUG("NOT A OR B, CORRECT")))
+      );
       STMT(RETURN());
     };
   };
@@ -42,4 +72,8 @@ TEST_FIBER(
     "v=B({x:1,y:2})",
     "v=C({z:true})",
     "v=D({z:true})",
+    "HAS D, CORRECT",
+    "d={z:true}",
+    "v=D({z:false})",
+    "NOT A OR B, CORRECT",
   });

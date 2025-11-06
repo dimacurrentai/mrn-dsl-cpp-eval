@@ -14,10 +14,12 @@
                 "line": 41,
                 "vars": [
                   {
-                    "line": 42,
-                    "name": "b",
-                    "type": "U64",
-                    "init": "1"
+                    "MaroonIRVar": {
+                      "line": 42,
+                      "name": "b",
+                      "type": "U64",
+                      "init": "1"
+                    }
                   }
                 ],
                 "code": [
@@ -37,10 +39,12 @@
                 "line": 26,
                 "vars": [
                   {
-                    "line": 27,
-                    "name": "a",
-                    "type": "U64",
-                    "init": "1"
+                    "MaroonIRVar": {
+                      "line": 27,
+                      "name": "a",
+                      "type": "U64",
+                      "init": "1"
+                    }
                   }
                 ],
                 "code": [
@@ -191,9 +195,11 @@
                 "line": 84,
                 "vars": [
                   {
-                    "line": 85,
-                    "name": "a",
-                    "type": "U64"
+                    "MaroonIRVar": {
+                      "line": 85,
+                      "name": "a",
+                      "type": "U64"
+                    }
                   }
                 ],
                 "code": [
@@ -213,10 +219,12 @@
                 "line": 75,
                 "vars": [
                   {
-                    "line": 76,
-                    "name": "x",
-                    "type": "U64",
-                    "init": "10"
+                    "MaroonIRVar": {
+                      "line": 76,
+                      "name": "x",
+                      "type": "U64",
+                      "init": "10"
+                    }
                   }
                 ],
                 "code": [
@@ -259,10 +267,12 @@
                 "line": 54,
                 "vars": [
                   {
-                    "line": 55,
-                    "name": "b",
-                    "type": "BOOL",
-                    "init": "false"
+                    "MaroonIRVar": {
+                      "line": 55,
+                      "name": "b",
+                      "type": "BOOL",
+                      "init": "false"
+                    }
                   }
                 ],
                 "code": [
@@ -322,10 +332,12 @@
                 "line": 96,
                 "vars": [
                   {
-                    "line": 97,
-                    "name": "x",
-                    "type": "U64",
-                    "init": "10"
+                    "MaroonIRVar": {
+                      "line": 97,
+                      "name": "x",
+                      "type": "U64",
+                      "init": "10"
+                    }
                   }
                 ],
                 "code": [
@@ -361,14 +373,18 @@
                 "line": 105,
                 "vars": [
                   {
-                    "line": 106,
-                    "name": "a",
-                    "type": "U64"
+                    "MaroonIRVar": {
+                      "line": 106,
+                      "name": "a",
+                      "type": "U64"
+                    }
                   },
                   {
-                    "line": 107,
-                    "name": "b",
-                    "type": "U64"
+                    "MaroonIRVar": {
+                      "line": 107,
+                      "name": "b",
+                      "type": "U64"
+                    }
                   }
                 ],
                 "code": [

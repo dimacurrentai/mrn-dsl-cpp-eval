@@ -14,28 +14,36 @@
                 "line": 3,
                 "vars": [
                   {
-                    "line": 4,
-                    "name": "a",
-                    "type": "OPTIONAL_U64",
-                    "init": "NONE"
+                    "MaroonIRVar": {
+                      "line": 4,
+                      "name": "a",
+                      "type": "OPTIONAL_U64",
+                      "init": "NONE"
+                    }
                   },
                   {
-                    "line": 5,
-                    "name": "b",
-                    "type": "OPTIONAL_U64",
-                    "init": "U64(1)"
+                    "MaroonIRVar": {
+                      "line": 5,
+                      "name": "b",
+                      "type": "OPTIONAL_U64",
+                      "init": "U64(1)"
+                    }
                   },
                   {
-                    "line": 6,
-                    "name": "c",
-                    "type": "OPTIONAL_BOOL",
-                    "init": "NONE"
+                    "MaroonIRVar": {
+                      "line": 6,
+                      "name": "c",
+                      "type": "OPTIONAL_BOOL",
+                      "init": "NONE"
+                    }
                   },
                   {
-                    "line": 7,
-                    "name": "d",
-                    "type": "OPTIONAL_BOOL",
-                    "init": "BOOL(true)"
+                    "MaroonIRVar": {
+                      "line": 7,
+                      "name": "d",
+                      "type": "OPTIONAL_BOOL",
+                      "init": "BOOL(true)"
+                    }
                   }
                 ],
                 "code": [
@@ -98,10 +106,12 @@
                       "line": 17,
                       "vars": [
                         {
-                          "line": 18,
-                          "name": "e",
-                          "type": "OPTIONAL_U64",
-                          "init": "NONE"
+                          "MaroonIRVar": {
+                            "line": 18,
+                            "name": "e",
+                            "type": "OPTIONAL_U64",
+                            "init": "NONE"
+                          }
                         }
                       ],
                       "code": [
@@ -128,10 +138,12 @@
                             "line": 22,
                             "vars": [
                               {
-                                "line": 23,
-                                "name": "f",
-                                "type": "U64",
-                                "init": "0"
+                                "MaroonIRVar": {
+                                  "line": 23,
+                                  "name": "f",
+                                  "type": "U64",
+                                  "init": "0"
+                                }
                               }
                             ],
                             "code": [
