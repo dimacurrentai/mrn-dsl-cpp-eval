@@ -74,6 +74,9 @@ inline void ZeroLineNumbers(MaroonIRScenarios& m) {
       for (auto& kv : m.fibers) {
         (*this)(kv.second);
       }
+      for (auto& kv : m.types) {
+        kv.second.line = 0;
+      }
     }
 
     void operator()(MaroonIRFiber& m) {
