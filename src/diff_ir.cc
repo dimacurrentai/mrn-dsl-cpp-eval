@@ -90,6 +90,9 @@ inline void ZeroLineNumbers(MaroonIRScenarios& m) {
 
     void operator()(MaroonIRBlock& m) {
       m.line = 0;
+      for (auto& v : m.vars) {
+        (*this)(v);
+      }
       for (auto& v : m.code) {
         (*this)(v);
       }
@@ -115,6 +118,12 @@ inline void ZeroLineNumbers(MaroonIRScenarios& m) {
     }
 
     void operator()(MaroonIRMatchEnumStmtArm& a) { a.line = 0; }
+
+    void operator()(MaroonIRVar& v) { v.Call(*this); }
+
+    void operator()(MaroonIRVarRegular& v) { v.line = 0; }
+    void operator()(MaroonIRVarFunctionArg& v) { v.line = 0; }
+    void operator()(MaroonIRVarEnumCaseCapture&) {}
 
     void operator()(MaroonTestCaseRunFiber& m) { m.line = 0; }
     void operator()(MaroonTestCaseFiberShouldThrow& m) { m.line = 0; }

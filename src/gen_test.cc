@@ -327,8 +327,8 @@ int main(int argc, char** argv) {
               fo << "));" << std::endl;
             } else if (Exists<MaroonIRVarFunctionArg>(var0)) {
               MaroonIRVarFunctionArg const& var = Value<MaroonIRVarFunctionArg>(var0);
-              fo << "      MAROON_env.DeclareFunctionArg<MAROON_TYPE_" << var.type << ">(" << local_vars.size()
-                 << ",\"" << var.name << "\");" << std::endl;
+              fo << "      MAROON_env.DeclareFunctionArg<MAROON_TYPE_" << var.type << ">(" << local_vars.size() << ",\""
+                 << var.name << "\");" << std::endl;
             } else if (Exists<MaroonIRVarEnumCaseCapture>(var0)) {
               MaroonIRVarEnumCaseCapture const& var = Value<MaroonIRVarEnumCaseCapture>(var0);
               fo << "      MAROON_env.DeclareCapturedAlias(" << local_vars.size() << ",\"" << var.name << "\");"
