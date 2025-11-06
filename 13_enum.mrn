@@ -32,7 +32,7 @@ MAROON(enum) {
       MATCH_ENUM_STMT(
         v,
         ENUM_ARM(C, STMT({
-          DEBUG("HAS C (WRONG!)");
+          DEBUG("HAS C (WRONG!)"); // Test matching w/o the captured var, since macro overloading it tricky.
         })),
         ENUM_ARM(D, d, STMT({
           DEBUG("HAS D, CORRECT");
