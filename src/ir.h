@@ -24,14 +24,27 @@ CURRENT_STRUCT(MaroonIRVar) {
   CURRENT_FIELD(init, Optional<std::string>);  // NOTE(dkorolev): Not sure I like this as `string`, but works for now.
 };
 
+CURRENT_STRUCT(MaroonIREnumCaptureVar) {
+  CURRENT_FIELD(name, std::string);
+  CURRENT_FIELD(key, std::string);
+  CURRENT_FIELD(src, std::string);
+};
+
+// TODO(dkorolev): Rename this!
+CURRENT_VARIANT(MaroonIRVarEnum, MaroonIRVar, MaroonIREnumCaptureVar);
+
 CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRStmt);
 CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRIf);
 CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRBlock);
+CURRENT_FORWARD_DECLARE_STRUCT(MaroonIRMatchEnumStmt);
+
+// TODO(dkorolev): Refactor to remove this one.
 CURRENT_STRUCT(MaroonIRBlockPlaceholder) {  // NOTE(dkorolev): To avoid pointers.
   CURRENT_FIELD(line, uint32_t);
   CURRENT_FIELD(_idx, uint32_t);
 };
-CURRENT_VARIANT(MaroonIRStmtOrBlock, MaroonIRStmt, MaroonIRIf, MaroonIRBlock, MaroonIRBlockPlaceholder);
+CURRENT_VARIANT(
+    MaroonIRStmtOrBlock, MaroonIRStmt, MaroonIRIf, MaroonIRBlock, MaroonIRMatchEnumStmt, MaroonIRBlockPlaceholder);
 
 // A piece of "O(1)" code to execute.
 // TODO(dkorolev): Handle the `AWAIT`-condition separately here, on the type system level.
@@ -52,8 +65,31 @@ CURRENT_STRUCT(MaroonIRIf) {
 // TODO(dkorolev): We now have hoisting, like in the 1st version of JavaScript, lolwut! Fix this.
 CURRENT_STRUCT(MaroonIRBlock) {
   CURRENT_FIELD(line, uint32_t);
-  CURRENT_FIELD(vars, std::vector<MaroonIRVar>);
+  CURRENT_FIELD(vars, std::vector<MaroonIRVarEnum>);
   CURRENT_FIELD(code, std::vector<MaroonIRStmtOrBlock>);
+};
+
+// TODO(dkorolev): Think if this IR should think of mutability / immutability of enum cases.
+CURRENT_STRUCT(MaroonIRMatchEnumStmtArm) {
+  CURRENT_FIELD(line, uint32_t);
+
+  // NOTE(dkorolev): This JSON construct creates indirect dependencies:
+  // 1) At most one default arm.
+  // 2) All arms of valid types.
+  // 3) No multiple arms for the same case.
+  CURRENT_FIELD(key, Optional<std::string>);  // Which enum case should match. Unset for default arm.
+
+  // NOTE(dkorolev): Another indirect dependency: var names should match, here and in the block.
+  // NOTE(dkorolev): And another indirect dependency: with no `key` there should be no `var`.
+  CURRENT_FIELD(capture, Optional<std::string>);  // If the value should be captured, what name to capture it under.
+
+  CURRENT_FIELD(code, MaroonIRBlock);
+};
+
+CURRENT_STRUCT(MaroonIRMatchEnumStmt) {
+  CURRENT_FIELD(line, uint32_t);
+  CURRENT_FIELD(var, std::string);
+  CURRENT_FIELD(arms, std::vector<MaroonIRMatchEnumStmtArm>);
 };
 
 CURRENT_STRUCT(MaroonIRFunction) {

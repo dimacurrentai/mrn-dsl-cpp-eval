@@ -9,6 +9,18 @@
 | `init` | `null` or String |
 
 
+### `MaroonIREnumCaptureVar`
+| **Field** | **Type** | **Description** |
+| ---: | :--- | :--- |
+| `name` | String |
+| `key` | String |
+| `src` | String |
+
+
+### `MaroonIRVarEnum`
+Algebraic type, `MaroonIRVar` or `MaroonIREnumCaptureVar`
+
+
 ### `MaroonIRStmt`
 | **Field** | **Type** | **Description** |
 | ---: | :--- | :--- |
@@ -21,8 +33,25 @@
 | ---: | :--- | :--- |
 | `line` | Integer (32-bit unsigned) |
 | `cond` | String |
-| `yes` | Algebraic `MaroonIRStmt` / `MaroonIRIf` / `MaroonIRBlock` / `MaroonIRBlockPlaceholder` (a.k.a. `MaroonIRStmtOrBlock`) |
-| `no` | Algebraic `MaroonIRStmt` / `MaroonIRIf` / `MaroonIRBlock` / `MaroonIRBlockPlaceholder` (a.k.a. `MaroonIRStmtOrBlock`) |
+| `yes` | Algebraic `MaroonIRStmt` / `MaroonIRIf` / `MaroonIRBlock` / `MaroonIRMatchEnumStmt` / `MaroonIRBlockPlaceholder` (a.k.a. `MaroonIRStmtOrBlock`) |
+| `no` | Algebraic `MaroonIRStmt` / `MaroonIRIf` / `MaroonIRBlock` / `MaroonIRMatchEnumStmt` / `MaroonIRBlockPlaceholder` (a.k.a. `MaroonIRStmtOrBlock`) |
+
+
+### `MaroonIRMatchEnumStmtArm`
+| **Field** | **Type** | **Description** |
+| ---: | :--- | :--- |
+| `line` | Integer (32-bit unsigned) |
+| `key` | `null` or String |
+| `capture` | `null` or String |
+| `code` | `MaroonIRBlock` |
+
+
+### `MaroonIRMatchEnumStmt`
+| **Field** | **Type** | **Description** |
+| ---: | :--- | :--- |
+| `line` | Integer (32-bit unsigned) |
+| `var` | String |
+| `arms` | Array of `MaroonIRMatchEnumStmtArm` |
 
 
 ### `MaroonIRBlockPlaceholder`
@@ -33,15 +62,15 @@
 
 
 ### `MaroonIRStmtOrBlock`
-Algebraic type, `MaroonIRStmt` or `MaroonIRIf` or `MaroonIRBlock` or `MaroonIRBlockPlaceholder`
+Algebraic type, `MaroonIRStmt` or `MaroonIRIf` or `MaroonIRBlock` or `MaroonIRMatchEnumStmt` or `MaroonIRBlockPlaceholder`
 
 
 ### `MaroonIRBlock`
 | **Field** | **Type** | **Description** |
 | ---: | :--- | :--- |
 | `line` | Integer (32-bit unsigned) |
-| `vars` | Array of `MaroonIRVar` |
-| `code` | Array of Algebraic `MaroonIRStmt` / `MaroonIRIf` / `MaroonIRBlock` / `MaroonIRBlockPlaceholder` (a.k.a. `MaroonIRStmtOrBlock`) |
+| `vars` | Array of Algebraic `MaroonIRVar` / `MaroonIREnumCaptureVar` (a.k.a. `MaroonIRVarEnum`) |
+| `code` | Array of Algebraic `MaroonIRStmt` / `MaroonIRIf` / `MaroonIRBlock` / `MaroonIRMatchEnumStmt` / `MaroonIRBlockPlaceholder` (a.k.a. `MaroonIRStmtOrBlock`) |
 
 
 ### `MaroonIRFunction`

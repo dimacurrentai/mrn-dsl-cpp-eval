@@ -14,10 +14,12 @@
                 "line": 13,
                 "vars": [
                   {
-                    "line": 14,
-                    "name": "ab",
-                    "type": "AB",
-                    "init": "U64(0), U64(0)"
+                    "MaroonIRVar": {
+                      "line": 14,
+                      "name": "ab",
+                      "type": "AB",
+                      "init": "U64(0), U64(0)"
+                    }
                   }
                 ],
                 "code": [
@@ -38,10 +40,12 @@
                       "line": 23,
                       "vars": [
                         {
-                          "line": 24,
-                          "name": "e",
-                          "type": "Empty",
-                          "init": ""
+                          "MaroonIRVar": {
+                            "line": 24,
+                            "name": "e",
+                            "type": "Empty",
+                            "init": ""
+                          }
                         }
                       ],
                       "code": [
@@ -56,10 +60,12 @@
                             "line": 29,
                             "vars": [
                               {
-                                "line": 30,
-                                "name": "t",
-                                "type": "Nested",
-                                "init": "AB(U64(3), U64(4)), BOOL(true), Empty()"
+                                "MaroonIRVar": {
+                                  "line": 30,
+                                  "name": "t",
+                                  "type": "Nested",
+                                  "init": "AB(U64(3), U64(4)), BOOL(true), Empty()"
+                                }
                               }
                             ],
                             "code": [

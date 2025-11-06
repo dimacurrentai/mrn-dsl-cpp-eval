@@ -17,9 +17,11 @@
                 "line": 11,
                 "vars": [
                   {
-                    "line": 12,
-                    "name": "n",
-                    "type": "U64"
+                    "MaroonIRVar": {
+                      "line": 12,
+                      "name": "n",
+                      "type": "U64"
+                    }
                   }
                 ],
                 "code": [
@@ -38,10 +40,12 @@
                           "line": 18,
                           "vars": [
                             {
-                              "line": 20,
-                              "name": "r",
-                              "type": "U64",
-                              "init": "0"
+                              "MaroonIRVar": {
+                                "line": 20,
+                                "name": "r",
+                                "type": "U64",
+                                "init": "0"
+                              }
                             }
                           ],
                           "code": [
@@ -72,10 +76,12 @@
                 "line": 3,
                 "vars": [
                   {
-                    "line": 4,
-                    "name": "result",
-                    "type": "U64",
-                    "init": "0"
+                    "MaroonIRVar": {
+                      "line": 4,
+                      "name": "result",
+                      "type": "U64",
+                      "init": "0"
+                    }
                   }
                 ],
                 "code": [
