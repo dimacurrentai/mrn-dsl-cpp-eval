@@ -14,7 +14,7 @@
                 "line": 7,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 8,
                       "name": "x",
                       "type": "Inner",
@@ -22,7 +22,7 @@
                     }
                   },
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 9,
                       "name": "y",
                       "type": "Inner",

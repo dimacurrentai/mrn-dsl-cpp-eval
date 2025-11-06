@@ -17,7 +17,7 @@
                 "line": 11,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarFunctionArg": {
                       "line": 12,
                       "name": "n",
                       "type": "U64"
@@ -40,7 +40,7 @@
                           "line": 18,
                           "vars": [
                             {
-                              "MaroonIRVar": {
+                              "MaroonIRVarRegular": {
                                 "line": 20,
                                 "name": "r",
                                 "type": "U64",
@@ -76,7 +76,7 @@
                 "line": 3,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 4,
                       "name": "result",
                       "type": "U64",

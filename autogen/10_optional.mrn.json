@@ -14,7 +14,7 @@
                 "line": 3,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 4,
                       "name": "a",
                       "type": "OPTIONAL_U64",
@@ -22,7 +22,7 @@
                     }
                   },
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 5,
                       "name": "b",
                       "type": "OPTIONAL_U64",
@@ -30,7 +30,7 @@
                     }
                   },
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 6,
                       "name": "c",
                       "type": "OPTIONAL_BOOL",
@@ -38,7 +38,7 @@
                     }
                   },
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 7,
                       "name": "d",
                       "type": "OPTIONAL_BOOL",
@@ -106,7 +106,7 @@
                       "line": 17,
                       "vars": [
                         {
-                          "MaroonIRVar": {
+                          "MaroonIRVarRegular": {
                             "line": 18,
                             "name": "e",
                             "type": "OPTIONAL_U64",
@@ -138,7 +138,7 @@
                             "line": 22,
                             "vars": [
                               {
-                                "MaroonIRVar": {
+                                "MaroonIRVarRegular": {
                                   "line": 23,
                                   "name": "f",
                                   "type": "U64",

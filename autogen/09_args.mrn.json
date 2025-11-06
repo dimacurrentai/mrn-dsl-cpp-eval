@@ -18,14 +18,14 @@
                 "line": 42,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarFunctionArg": {
                       "line": 43,
                       "name": "a",
                       "type": "XY"
                     }
                   },
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarFunctionArg": {
                       "line": 44,
                       "name": "b",
                       "type": "XY"
@@ -49,7 +49,7 @@
                 "line": 26,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 27,
                       "name": "p",
                       "type": "XY",
@@ -57,7 +57,7 @@
                     }
                   },
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 28,
                       "name": "q",
                       "type": "XY",
@@ -77,7 +77,7 @@
                       "line": 33,
                       "vars": [
                         {
-                          "MaroonIRVar": {
+                          "MaroonIRVarRegular": {
                             "line": 34,
                             "name": "r",
                             "type": "XY",
@@ -116,7 +116,7 @@
                 "line": 50,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 51,
                       "name": "m",
                       "type": "XY",
@@ -124,7 +124,7 @@
                     }
                   },
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 52,
                       "name": "n",
                       "type": "XY",
@@ -144,7 +144,7 @@
                       "line": 57,
                       "vars": [
                         {
-                          "MaroonIRVar": {
+                          "MaroonIRVarRegular": {
                             "line": 58,
                             "name": "r",
                             "type": "XY",
@@ -182,14 +182,14 @@
                 "line": 66,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarFunctionArg": {
                       "line": 67,
                       "name": "a",
                       "type": "XY"
                     }
                   },
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarFunctionArg": {
                       "line": 68,
                       "name": "b",
                       "type": "XY"
@@ -218,7 +218,7 @@
                 "line": 8,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 9,
                       "name": "a",
                       "type": "XY",
@@ -252,7 +252,7 @@
                 "line": 19,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarFunctionArg": {
                       "line": 20,
                       "name": "a",
                       "type": "XY"

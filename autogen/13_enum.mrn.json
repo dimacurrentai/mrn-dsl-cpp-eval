@@ -14,7 +14,7 @@
                 "line": 17,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 18,
                       "name": "xy",
                       "type": "XY",
@@ -22,7 +22,7 @@
                     }
                   },
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 19,
                       "name": "z",
                       "type": "Z",
@@ -30,7 +30,7 @@
                     }
                   },
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 20,
                       "name": "v",
                       "type": "Enum",
@@ -58,7 +58,7 @@
                             "line": 36,
                             "vars": [
                               {
-                                "MaroonIREnumCaptureVar": {
+                                "MaroonIRVarEnumCaseCapture": {
                                   "name": "",
                                   "key": "C",
                                   "src": "v"
@@ -83,7 +83,7 @@
                             "line": 41,
                             "vars": [
                               {
-                                "MaroonIREnumCaptureVar": {
+                                "MaroonIRVarEnumCaseCapture": {
                                   "name": "d",
                                   "key": "D",
                                   "src": "v"
@@ -137,7 +137,7 @@
                             "line": 47,
                             "vars": [
                               {
-                                "MaroonIREnumCaptureVar": {
+                                "MaroonIRVarEnumCaseCapture": {
                                   "name": "a",
                                   "key": "A",
                                   "src": "v"
@@ -162,7 +162,7 @@
                             "line": 53,
                             "vars": [
                               {
-                                "MaroonIREnumCaptureVar": {
+                                "MaroonIRVarEnumCaseCapture": {
                                   "name": "b",
                                   "key": "B",
                                   "src": "v"

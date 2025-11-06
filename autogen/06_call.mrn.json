@@ -14,7 +14,7 @@
                 "line": 41,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 42,
                       "name": "b",
                       "type": "U64",
@@ -39,7 +39,7 @@
                 "line": 26,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 27,
                       "name": "a",
                       "type": "U64",
@@ -195,7 +195,7 @@
                 "line": 84,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarFunctionArg": {
                       "line": 85,
                       "name": "a",
                       "type": "U64"
@@ -219,7 +219,7 @@
                 "line": 75,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 76,
                       "name": "x",
                       "type": "U64",
@@ -267,7 +267,7 @@
                 "line": 54,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 55,
                       "name": "b",
                       "type": "BOOL",
@@ -332,7 +332,7 @@
                 "line": 96,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarRegular": {
                       "line": 97,
                       "name": "x",
                       "type": "U64",
@@ -373,14 +373,14 @@
                 "line": 105,
                 "vars": [
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarFunctionArg": {
                       "line": 106,
                       "name": "a",
                       "type": "U64"
                     }
                   },
                   {
-                    "MaroonIRVar": {
+                    "MaroonIRVarFunctionArg": {
                       "line": 107,
                       "name": "b",
                       "type": "U64"
