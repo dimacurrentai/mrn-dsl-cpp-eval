@@ -8,13 +8,12 @@
 #include "../current/bricks/file/file.h"
 #include "../current/typesystem/serialization/json.h"
 
+#define NO_LINE_NUMBERS
 #include "ir.h"
 
 DEFINE_string(a, "", "One IR file as JSON.");
 DEFINE_string(b, "", "Another IR file as JSON.");
 DEFINE_bool(verbose, false, "Actually dump post-line-nullified JSONs.");
-
-void ZeroLineNumbers(MaroonIRScenarios& m);
 
 int main(int argc, char** argv) {
   ParseDFlags(&argc, &argv);
@@ -42,10 +41,6 @@ int main(int argc, char** argv) {
     std::exit(1);
   }
 
-  // NOTE(dkorolev): The `__LINE__` token prints different lines for multiline parameters.
-  ZeroLineNumbers(a);
-  ZeroLineNumbers(b);
-
   // Poor man's comparison.
   std::string const sa = JSON<JSONFormat::Minimalistic>(a);
   std::string const sb = JSON<JSONFormat::Minimalistic>(b);
@@ -56,81 +51,4 @@ int main(int argc, char** argv) {
     }
     std::exit(1);
   }
-}
-
-inline void ZeroLineNumbers(MaroonIRScenarios& m) {
-  struct Visitor final {
-    void operator()(MaroonIRScenarios& m) {
-      for (auto& kv : m.maroon) {
-        (*this)(kv.second);
-      }
-      for (auto& v : m.tests) {
-        v.Call(*this);
-      }
-    }
-
-    void operator()(MaroonIRNamespace& m) {
-      m.line = 0;
-      for (auto& kv : m.fibers) {
-        (*this)(kv.second);
-      }
-      for (auto& kv : m.types) {
-        kv.second.line = 0;
-      }
-    }
-
-    void operator()(MaroonIRFiber& m) {
-      m.line = 0;
-      for (auto& kv : m.functions) {
-        (*this)(kv.second);
-      }
-    }
-
-    void operator()(MaroonIRFunction& m) {
-      m.line = 0;
-      (*this)(m.body);
-    }
-
-    void operator()(MaroonIRBlock& m) {
-      m.line = 0;
-      for (auto& v : m.vars) {
-        (*this)(v);
-      }
-      for (auto& v : m.code) {
-        (*this)(v);
-      }
-    }
-
-    void operator()(MaroonIRStmtOrBlock& m) { m.Call(*this); }
-
-    void operator()(MaroonIRBlockPlaceholder&) {}
-
-    void operator()(MaroonIRStmt& m) { m.line = 0; }
-
-    void operator()(MaroonIRIf& m) {
-      m.line = 0;
-      (*this)(m.yes);
-      (*this)(m.no);
-    }
-
-    void operator()(MaroonIRMatchEnumStmt& m) {
-      m.line = 0;
-      for (auto& a : m.arms) {
-        (*this)(a);
-      }
-    }
-
-    void operator()(MaroonIRMatchEnumStmtArm& a) { a.line = 0; }
-
-    void operator()(MaroonIRVar& v) { v.Call(*this); }
-
-    void operator()(MaroonIRVarRegular& v) { v.line = 0; }
-    void operator()(MaroonIRVarFunctionArg& v) { v.line = 0; }
-    void operator()(MaroonIRVarEnumCaseCapture&) {}
-
-    void operator()(MaroonTestCaseRunFiber& m) { m.line = 0; }
-    void operator()(MaroonTestCaseFiberShouldThrow& m) { m.line = 0; }
-  };
-
-  Visitor()(m);
 }
