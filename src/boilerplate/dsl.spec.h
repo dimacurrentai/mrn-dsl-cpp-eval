@@ -58,7 +58,7 @@
 #define TEST_FIBER(maroon_name, maroon_fiber, ...) \
   {                                                \
     MaroonTestCaseRunFiber t;                      \
-    t.line = __LINE__;                             \
+    t.SetLine(__LINE__);                           \
     t.maroon = #maroon_name;                       \
     t.fiber = #maroon_fiber;                       \
     std::string v[] = __VA_ARGS__;                 \
@@ -71,7 +71,7 @@
 #define TEST_FIBER_SHOULD_THROW(maroon_name, maroon_fiber, err) \
   {                                                             \
     MaroonTestCaseFiberShouldThrow t;                           \
-    t.line = __LINE__;                                          \
+    t.SetLine(__LINE__);                                        \
     t.maroon = #maroon_name;                                    \
     t.fiber = #maroon_fiber;                                    \
     t.error = err;                                              \
