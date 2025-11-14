@@ -17,5 +17,5 @@ jobs:
       - name: git clone
         uses: actions/checkout@v4
 
-      - name: rust/manual_test.sh
-        run: rust/manual_test.sh
+      - name: cpp_ir/rust/manual_test.sh
+        run: cpp_ir/rust/manual_test.sh

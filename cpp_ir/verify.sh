@@ -3,7 +3,7 @@
 # NOTE(dkorolev): This file is run as the Github check, and it's best to install it as a git hook via:
 
 CMD="""
-ln -sf "../../verify.sh" ".git/hooks/pre-commit"
+ln -sf "../../cpp_ir/verify.sh" "../.git/hooks/pre-commit"
 """
 
 set -e -o pipefail

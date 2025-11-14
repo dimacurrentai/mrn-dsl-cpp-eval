@@ -16,6 +16,6 @@ jobs:
       - name: git clone
         uses: actions/checkout@v4
 
-      - name: make verify
-        run: make verify
+      - name: (cd cpp_ir; make verify)
+        run: (cd cpp_ir; make verify)
 
